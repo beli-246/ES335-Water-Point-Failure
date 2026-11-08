@@ -23,24 +23,30 @@ when the model has never seen data from the target country?**
 | Never features | `status`, `status_clean`, `water_point_history`, `served_population`, `crucialness`, `pressure`, `rehab_*`, `_pop_who_would_gain_access`, `source`, report date / `days_since_report` / `staleness_score`, IDs, admin names | Audit: leakage (AUC up to 0.99) or survey fingerprints |
 | Groups | District = `(country, adm1, adm2)` | Same adm2 name appears in two adm1s |
 | Test set | Per country, whole districts ≈ 20% of rows, chosen once by a seeded rule, prevalence matched; districts > 15% of a country's rows are never test districts | Ethiopia's largest district is 29.6% of rows |
-| Regimes | **A** = other 3 countries + target's training districts; **B** = other 3 countries only; same test districts | A − B = value of in-country data |
+| Regimes | **A** = other 3 countries + target's training districts; **B** = other 3 countries only; same test districts. **C** (added 6 Nov, see amendments) = target's training districts only | A − B = value of in-country data |
 | Tuning | GroupKFold by district inside training data only | Test districts never touched until the final score |
 | Primary metric | PR-AUC (average precision) of the no-water class, plus lift = PR-AUC / prevalence | Prevalence ranges 9-43% |
 | Also | ROC-AUC, precision/recall@N (tie-aware), Brier + reliability | Ranking for crews, calibration for trust |
 | Uncertainty | Paired bootstrap over test districts (2,000 resamples) for A − B | Same districts → paired test; "non-overlapping CIs" is too conservative |
+
+## Amendments after modelling started
+
+| Date | Change | Reason | What did not change |
+|---|---|---|---|
+| 6 Nov | Added regime **C** (target's training districts only) and comparisons C − B and A − C | The first main run gave pooled logistic regression an Ethiopia ROC-AUC of 0.38 (worse than random). A diagnostic showed coefficients flip sign between the pooled and Ethiopia-only fits (e.g. "missing install year" means low risk in Kenya but high risk in Ethiopia), so one shared linear model buries the local signal and A − B understates the value of in-country data. The diagnostic also scored the test districts once; the decision is supported by training districts alone (in-sample ROC 0.84 Ethiopia-only vs 0.67 pooled). | Test districts, features, metrics, tuning protocol (GroupKFold on training districts) |
 
 ## Phases
 
 | # | Dates | Phase | Output | Status |
 |---|---|---|---|---|
 | 0 | 6 Nov | Data audit | `results/audit/data_audit.md` | done |
-| 1 | 6-7 Nov | Cleaning + features + frozen splits | `src/data.py`, `src/splits.py`, `splits/test_districts.json` | |
-| 2 | 7-8 Nov | Evaluation harness + baselines + from-scratch LR | `src/evaluate.py`, `src/lr_scratch.py` | |
-| 3 | 8-10 Nov | Models, tuning curves, A/B transfer for 4 countries | `src/models.py`, `src/run_experiments.py`, `results/` | |
-| 4 | 10-11 Nov | Ablations + analysis | no-missing-signal, no-remoteness, +pay, Uganda subsample, random-split reference; calibration; permutation importance; error analysis | |
-| 5 | 11-12 Nov | Freeze results, export JSON for the site | `site/data/*.json` | |
-| 6 | 12-15 Nov | Website | map, crew-capacity slider, transfer toggle, error explorer, concept panels | |
-| 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | |
+| 1 | 6-7 Nov | Cleaning + features + frozen splits | `src/data.py`, `src/splits.py`, `splits/test_districts.json` | done |
+| 2 | 7-8 Nov | Evaluation harness + baselines + from-scratch LR | `src/evaluate.py`, `src/lr_scratch.py`, `tests/test_core.py` (16 checks) | done |
+| 3 | 8-10 Nov | Models, tuning curves, A/B/C transfer for 4 countries | `src/models.py`, `src/run_experiments.py`, `src/final.py`, `results/` | done (7 Nov) |
+| 4 | 10-11 Nov | Ablations + analysis | no-missing-signal, no-remoteness, +pay, Uganda subsample, random-split reference; calibration; permutation importance; error analysis | done, except the Uganda-subsample ablation (dropped for time; random-split reference is in `concepts.py`) |
+| 5 | 11-12 Nov | Freeze results, export JSON for the site | `docs/data/*.json` | done |
+| 6 | 12-15 Nov | Website | map, crew-capacity slider, transfer toggle, error explorer, concept panels | built and browser-tested; not deployed |
+| 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | README, AI-use, `notes/viva_notes.md` done; clean-clone run and deploy pending |
 | 8 | 17 Nov | Buffer + submit links | | |
 
 ## Algorithms and the concept each one demonstrates

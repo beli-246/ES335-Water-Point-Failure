@@ -1,0 +1,71 @@
+{
+ "cleaning": {
+  "raw_rows": 162726,
+  "unknown_status_dropped": 3397,
+  "duplicates_dropped": 1827,
+  "install_year_set_missing": 365,
+  "final_rows": 157502,
+  "per_country": {
+   "Ethiopia": {
+    "rows": 23637,
+    "no_water": 0.1057,
+    "districts": 74
+   },
+   "Kenya": {
+    "rows": 21013,
+    "no_water": 0.0875,
+    "districts": 157
+   },
+   "Tanzania": {
+    "rows": 17456,
+    "no_water": 0.4339,
+    "districts": 89
+   },
+   "Uganda": {
+    "rows": 95396,
+    "no_water": 0.1728,
+    "districts": 135
+   }
+  }
+ },
+ "splits": {
+  "Ethiopia": {
+   "n_test_districts": 33,
+   "n_districts": 74,
+   "test_rows": 4921,
+   "test_share": 0.2082,
+   "test_no_water": 0.1057,
+   "country_no_water": 0.1057,
+   "excluded_large_districts": [
+    "Ethiopia | Amhara | South Gondar"
+   ]
+  },
+  "Kenya": {
+   "n_test_districts": 53,
+   "n_districts": 157,
+   "test_rows": 4207,
+   "test_share": 0.2002,
+   "test_no_water": 0.0875,
+   "country_no_water": 0.0875,
+   "excluded_large_districts": []
+  },
+  "Tanzania": {
+   "n_test_districts": 16,
+   "n_districts": 89,
+   "test_rows": 3600,
+   "test_share": 0.2062,
+   "test_no_water": 0.4339,
+   "country_no_water": 0.4339,
+   "excluded_large_districts": []
+  },
+  "Uganda": {
+   "n_test_districts": 27,
+   "n_districts": 135,
+   "test_rows": 19430,
+   "test_share": 0.2037,
+   "test_no_water": 0.1728,
+   "country_no_water": 0.1728,
+   "excluded_large_districts": []
+  }
+ }
+}

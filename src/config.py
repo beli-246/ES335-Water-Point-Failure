@@ -6,7 +6,7 @@ RAW_CSV = ROOT / "data" / "raw" / "wpdx_plus_4countries.csv"
 CLEAN = ROOT / "data" / "processed" / "wpdx_clean.parquet"
 SPLITS = ROOT / "splits" / "test_districts.json"
 RESULTS = ROOT / "results"
-SITE_DATA = ROOT / "site" / "data"
+SITE_DATA = ROOT / "docs" / "data"
 
 COUNTRIES = ["Ethiopia", "Kenya", "Tanzania", "Uganda"]
 SEED = 335

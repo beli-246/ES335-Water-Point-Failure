@@ -1,0 +1,23 @@
+{
+  "n_train": 75966,
+  "n_features": 35,
+  "lambda": 0.001,
+  "scratch_newton": {
+    "test_pr_auc": 0.29792,
+    "test_roc_auc": 0.65846,
+    "iterations": 5
+  },
+  "scratch_gd": {
+    "test_pr_auc": 0.29747,
+    "test_roc_auc": 0.65843,
+    "iterations": 3000
+  },
+  "sklearn_lbfgs": {
+    "test_pr_auc": 0.29792,
+    "test_roc_auc": 0.65846,
+    "iterations": 125
+  },
+  "max_abs_coef_diff_newton_vs_sklearn": 3.22741072267263e-06,
+  "max_abs_coef_diff_gd_vs_sklearn": 0.031864351741973385,
+  "max_abs_prob_diff_newton_vs_sklearn": 5.984840913686451e-07
+}
