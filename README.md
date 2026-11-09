@@ -36,6 +36,7 @@ python src/run_experiments.py --variant main          # tune + fit + score all m
 python src/run_experiments.py --variant no_missing --models stump logreg tree xgb   # also no_remoteness, with_pay
 python src/analyze.py --variant main                  # paired district bootstrap (A-B, C-B, A-C, vs stump)
 python src/final.py                # final model per country: chosen by grouped CV on local districts, then one test score
+python src/operating.py            # crew operating points, accuracy, random null, survey-provider check
 python src/concepts.py             # concept figures (pruning, CV optimism, boosting, SVM grid, L1/L2 path)
 python src/export_site.py          # writes docs/data/*.json for the website
 ```

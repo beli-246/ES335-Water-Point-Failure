@@ -37,7 +37,11 @@ def main():
                "gaps": records(read("transfer_gap_main.csv")),
                "vs_baseline": records(read("vs_baseline_main.csv")),
                "final_cv": records(read("final_cv.csv")), "final_test": records(read("final_test.csv")),
-               "importance": records(read("final_importance.csv")), "reliability": records(read("final_reliability.csv"))}
+               "importance": records(read("final_importance.csv")), "reliability": records(read("final_reliability.csv")),
+               "operating": records(read("final_operating.csv")), "accuracy": records(read("final_accuracy.csv")),
+               "random": records(read("final_random.csv"))}
+    prov = read("final_provider.csv")
+    results["provider"] = records(prov[prov.n >= 100]) if len(prov) else []  # small providers: too few points to rank within
     ch = RESULTS / "final_choice.json"
     results["final_choice"] = json.loads(ch.read_text()) if ch.exists() else {}
     (SITE_DATA / "results.json").write_text(json.dumps(results))

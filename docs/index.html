@@ -170,7 +170,8 @@ districts, and the table shows them all, but the test scores did not choose anyt
 model that never saw the country, with 95% district-bootstrap intervals that exclude zero for both comparisons. The size of the
 gain varies a lot:</p>
 <ul>
-<li><b>Ethiopia</b>: test PR-AUC 0.41 vs a 10.6% no-water rate (3.8× random). The best foreign-only model scores 0.08, <em>worse than random</em>.</li>
+<li><b>Ethiopia</b>: test PR-AUC 0.41 vs a 10.6% no-water rate (3.8× random). The best foreign-only model scores 0.08, <em>worse than random</em>.
+Caveat: most of this skill comes from telling survey programs apart, not pumps (<a href="#provider">see the provider check</a>).</li>
 <li><b>Tanzania</b>: 0.58 vs 43.4% (skill 0.26). Of the top 10% flagged, 67% had no water.</li>
 <li><b>Uganda</b>: 0.34 vs 17.3% (1.9×).</li>
 <li><b>Kenya</b>: 0.19 vs 8.7% (2.2×), the weakest skill (0.11). Kenya's failures are rare and spread thin.</li>
@@ -182,6 +183,45 @@ pump works on a given day (rainfall, groundwater, spare parts, a committee that 
   <h4>Final model vs a model that never saw the country</h4>
   <p class="cap">Skill on the frozen test districts (0 = random ranking, 1 = perfect; comparable across countries with different no-water rates). The final model was chosen by cross-validation on local training districts, before the test districts were scored. Skill = (PR-AUC − no-water rate) ÷ (1 − no-water rate); whiskers are 95% district-bootstrap intervals. Hover a dot for the model name and its lift.</p>
   <div id="headline-chart"></div>
+</div>
+
+<h3>How much better than random?</h3>
+<div class="card">
+  <p class="cap">Lift = no-water rate among the riskiest 10% ÷ the overall rate (1× = random). Its ceiling is 1 ÷ the rate, so compare countries by skill. Intervals: 2,000 resamples of test districts. Last column: we shuffled each test set 10,000 times; 999 in 1,000 random orderings stay below this lift.</p>
+  <div id="random-table"></div>
+</div>
+<div id="random-text">
+<p>Every interval stays above random, and every model is far beyond what chance produces: the best of 10,000 random orderings
+reached a top-10% lift of only 1.17–1.63×. Tanzania's lift looks smallest only because 43% of its points are dry, so even a perfect model
+could reach just 2.3×; on skill, Tanzania is second. But see <a href="#provider">the survey-provider check</a> before reading
+Ethiopia's 3.8× as knowledge about pumps.</p>
+</div>
+
+<h3>What a crew would actually get</h3>
+<div class="card">
+  <div class="controls" id="op-controls"></div>
+  <p class="cap">The crew inspects the riskiest share of this country's test points. "Found" counts dry points found; random inspection and the best foreign-only model are shown for comparison.</p>
+  <div id="op-table"></div>
+</div>
+<div id="op-text">
+<p>For example, in Uganda a crew visiting the riskiest 10% (1,943 points) finds 733 dry points, against 336 for random visits and
+456 with the foreign-only model. It still misses 78% of the dry points, because most of them do not look risky from static attributes.
+In Kenya, only 1 in 5 of those trips finds a dry point: better than the 1 in 11 of random visits, but most trips still find water.</p>
+</div>
+
+<h3>Why we do not report accuracy</h3>
+<div class="card">
+  <p class="cap">Accuracy of a yes/no "no water" call. "Best possible" picks the threshold with hindsight on the test set, so it is an upper bound, not something a model could achieve.</p>
+  <div id="acc-table"></div>
+</div>
+<div id="acc-text">
+<p>Apart from Tanzania, no threshold beats the trivial rule "every point works". In Ethiopia and Kenya the calibrated model gives almost no
+point a risk above 50% (Ethiopia's highest is 48%), so the 50% rule flags almost nothing and its accuracy simply equals the majority rate. Even the
+best threshold, chosen with hindsight, adds at most 0.9 points. Only in Tanzania, where 43% of points are dry, does the model clearly beat it
+(63.5% at 50%, 64.9% at best, against 56.6%).</p>
+<p>This is what we expect, not a failure. When dry points are rare and even the riskiest points are below 50% likely to be dry,
+the accuracy-maximising answer is "working" for almost everyone. A crew does not need a yes/no label; it needs an <em>order</em> of visits.
+That is why the ranking metrics above are the primary ones.</p>
 </div>
 
 <h3>A vs B vs C: what local data is worth</h3>
@@ -239,6 +279,31 @@ We kept the rule we fixed beforehand rather than switching after seeing test res
 <p><b>What the models use.</b> Permutation importance differs by country, which is itself evidence against one-size-fits-all
 transfer. Technology, management, water source and age matter in Ethiopia. Age dominates in Tanzania, where the audit had already found it
 was the strongest single feature. Local population matters most in Uganda, partly through its 17.5% missingness (see ablations). Water source matters most in Kenya.</p>
+</div>
+
+<h3 id="provider">How much of the ranking is the survey provider?</h3>
+<p>WPdx records which organisation surveyed each point (<code>source</code>). It is <b>never</b> a model input, because it
+says more about survey practice than about pumps. We used it only afterwards, to check what the models learned.</p>
+<div class="card">
+  <div class="controls" id="prov-controls"></div>
+  <p class="cap">Test points by survey provider (providers with at least 100 test points). "Ranking within provider" is the final model's ROC-AUC among that provider's points only (0.5 = random). "Provider only" ranks every point by its provider's test-set no-water rate: an optimistic upper bound for a model that knows only who did the survey. Red: within-provider ranking below 0.6.</p>
+  <div id="prov-summary" class="note"></div>
+  <div id="prov-table"></div>
+</div>
+<div id="provider-text">
+<p><b>Ethiopia: most of the skill is telling survey programs apart.</b> Three programs (the Ministry, USAID's Lowland WASH Activity
+and charity: water) hold 21% of Ethiopia's test points but 77% of its dry points, and 87% of the points the model flags in its top
+20%. The largest program, COWASH, holds 76% of points, and only 3% of them are dry. Knowing only the provider would already give
+ROC-AUC 0.83, against the model's 0.87. <em>Within</em> each high-failure program, the model ranks only a little better than chance
+(ROC-AUC 0.51–0.62). The model has no <code>source</code> column, so it finds the program through the features that differ between programs:
+the Ministry's points are all missing an install year, and technology and management mixes differ.</p>
+<p>So Ethiopia's 3.8× lift is real for a ministry holding the same mix of surveys, but it is mostly not knowledge about pumps, and it
+would not carry over to a district surveyed by a single program. The <a href="#ablations">no-missing-signal ablation</a> agrees: without
+missing-value flags, Ethiopia's local XGBoost loses about a third of its skill.</p>
+<p><b>Elsewhere the provider explains much less.</b> Knowing only the provider gives ROC-AUC 0.66 in Kenya, 0.54 in Tanzania and 0.59 in Uganda,
+well below the models' 0.72, 0.64 and 0.68. Within each of these countries' two largest providers, the model ranks at 0.63–0.84. In Uganda, among the
+Ministry's survey alone (73% of test points), it scores 0.66, almost its overall 0.68. Not every provider is ranked well: within
+some smaller Ugandan surveys (Water For People, C &amp; D) the model is no better than chance.</p>
 </div>
 </section>
 
@@ -361,6 +426,11 @@ and years (73% of Uganda's rows were reported in a single year). "Transfer to a 
 we cannot separate the two.</li>
 <li><b>Missingness is informative and provider-driven</b> (missing not at random). It helps the models in Ethiopia and Uganda, and it would not help in a
 place surveyed differently. The ablation measures how much it contributes.</li>
+<li><b>Ethiopia's headline is mostly survey program.</b> Within each high-failure program the model ranks at ROC-AUC 0.51–0.62, and
+knowing only the provider gives ROC-AUC 0.83, close to the model's 0.87 (<a href="#provider">provider check</a>). Its 3.8× lift should not be read as
+pump-level knowledge.</li>
+<li><b>Accuracy does not beat "every point works"</b> except in Tanzania. The models are useful for ordering visits, not for
+yes/no labels.</li>
 <li><b>Few test districts in some countries</b> (Tanzania 16, Ethiopia 33), so intervals are wide and one district can move a result.
 Ethiopia's largest district (29.6% of rows) is never tested.</li>
 <li><b>No environmental features.</b> Rainfall, groundwater depth and conflict are absent; the error analysis shows this is where the
@@ -384,7 +454,8 @@ in different places.</p>
 <p>For a ministry, the practical message is: <b>label a sample of your own water points before trusting a model</b>. In Ethiopia,
 Kenya and Tanzania, 14,000–19,000 local labels beat a model trained on 134,000–140,000 points from elsewhere. For the method, the lessons are the ones the course stresses,
 measured here: validate on held-out <em>groups</em> when data is clustered (random CV overstated PR-AUC by 50%), compare against a
-baseline with a paired test, choose models without looking at the test set, and check which "signal" is really the data-collection process.</p>
+baseline with a paired test, choose models without looking at the test set, and check which "signal" is really the data-collection process.
+That last check matters here: Ethiopia's strongest result turned out to be mostly a survey-program effect.</p>
 </div>
 </section>
 
@@ -406,6 +477,7 @@ python src/run_experiments.py --variant no_remoteness --models stump logreg tree
 python src/run_experiments.py --variant with_pay --models stump logreg tree xgb
 python src/analyze.py --variant main # paired district bootstrap
 python src/final.py                  # CV model selection + stack, scored once on test
+python src/operating.py              # crew operating points, accuracy, random null, provider check
 python src/concepts.py               # concept experiments
 python src/export_site.py            # writes docs/data/*.json</pre>
 <p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot.</p>

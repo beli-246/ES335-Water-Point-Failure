@@ -361,6 +361,65 @@ function renderHeadline() {
       { value: f2((s.key === "F" ? r.F : s.key === "B" ? r.B : r.S) * (1 - r.prev) / r.prev + 1) + "×", label: "lift over random" }] });
 }
 
+function renderRandom() {
+  const box = $("#random-table"); if (!box || !R.random?.length) return; box.replaceChildren();
+  const ci = (a, b, f) => `${f(a)}–${f(b)}`, x = (v) => f2(v) + "×";
+  table(box, [
+    { label: "Country", get: (r) => r.target },
+    { label: "Lift, riskiest 10%", num: true, get: (r) => x(r.lift10) },
+    { label: "95% CI", num: true, get: (r) => ci(r.lift10_lo, r.lift10_hi, x) },
+    { label: "Ceiling", num: true, get: (r) => f2(r.lift_ceiling) + "×" },
+    { label: "Skill", num: true, get: (r) => f3(r.skill) },
+    { label: "95% CI", num: true, get: (r) => ci(r.skill_lo, r.skill_hi, f3) },
+    { label: "Random, 99.9th pct", num: true, get: (r) => x(r.null_lift10_p999) },
+  ], COUNTRIES.map((c) => R.random.find((r) => r.target === c)).filter(Boolean));
+}
+
+function renderOperating() {
+  const box = $("#op-table"); if (!box || !R.operating?.length) return;
+  const ctr = $("#op-controls"); ctr.replaceChildren();
+  segmented(ctr, COUNTRIES.map((c) => [c, c]), state.country, (c) => { state.country = c; renderOperating(); });
+  box.replaceChildren();
+  const rows = R.operating.filter((r) => r.target === state.country);
+  table(box, [
+    { label: "Inspect", get: (r) => `top ${pct(r.inspect)} (${fmtInt(r.k)})` },
+    { label: "Dry points found", num: true, get: (r) => `${fmtInt(r.found)} of ${fmtInt(r.broken)}` },
+    { label: "Random visits", num: true, get: (r) => fmtInt(r.found_random) },
+    { label: "Foreign-only model", num: true, get: (r) => fmtInt(r.found_foreign) },
+    { label: "Trips that find a dry point", num: true, get: (r) => pct(r.precision, 1) },
+    { label: "Share of dry points found", num: true, get: (r) => pct(r.recall, 1) },
+    { label: "Lift", num: true, get: (r) => f2(r.lift) + "×" },
+  ], rows);
+}
+
+function renderAccuracy() {
+  const box = $("#acc-table"); if (!box || !R.accuracy?.length) return; box.replaceChildren();
+  table(box, [
+    { label: "Country", get: (r) => r.target },
+    { label: "\"Every point works\"", num: true, get: (r) => pct(r.acc_all_working, 1) },
+    { label: "Model, 50% threshold", num: true, get: (r) => pct(r.acc_at_half, 1), cls: (r) => (r.acc_at_half > r.acc_all_working + 0.02 ? "pos" : "") },
+    { label: "Points flagged at 50%", num: true, get: (r) => pct(r.flagged_at_half, 1) },
+    { label: "Best possible threshold", num: true, get: (r) => pct(r.best_threshold_acc, 1) },
+  ], COUNTRIES.map((c) => R.accuracy.find((r) => r.target === c)).filter(Boolean));
+}
+
+function renderProvider() {
+  const box = $("#prov-table"); if (!box || !R.provider?.length) return;
+  const ctr = $("#prov-controls"); ctr.replaceChildren();
+  segmented(ctr, COUNTRIES.map((c) => [c, c]), state.country, (c) => { state.country = c; renderProvider(); });
+  box.replaceChildren();
+  const rows = R.provider.filter((r) => r.target === state.country).sort((a, b) => b.n - a.n);
+  if (!rows.length) return;
+  $("#prov-summary").textContent = `${state.country}: final model ROC-AUC ${f2(rows[0].model_roc)} on all test points; provider only ${f2(rows[0].provider_only_roc)}.`;
+  table(box, [
+    { label: "Survey provider", get: (r) => r.source },
+    { label: "Test points", num: true, get: (r) => fmtInt(r.n) },
+    { label: "No water", num: true, get: (r) => pct(r.no_water, 1) },
+    { label: "Share of model's top 20%", num: true, get: (r) => pct(r.share_of_flagged, 1) },
+    { label: "Ranking within provider (ROC-AUC)", num: true, get: (r) => f2(r.within_roc), cls: (r) => (r.within_roc != null && r.within_roc < 0.6 ? "negv" : "") },
+  ], rows);
+}
+
 function renderFinal() {
   const box = $("#final-table"); if (!box) return;
   const ctr = $("#final-controls"); ctr.replaceChildren();
@@ -622,7 +681,8 @@ function renderAblations() {
 
 /* ---------- boot ---------- */
 function renderAll() {
-  renderHero(); renderDataTable(); renderHeadline(); renderRegimes(); renderFinal(); renderConcepts(); renderAblations();
+  renderHero(); renderDataTable(); renderHeadline(); renderRandom(); renderOperating(); renderAccuracy(); renderRegimes(); renderFinal();
+  renderProvider(); renderConcepts(); renderAblations();
   if (window.L) renderMap();
 }
 async function boot() {
