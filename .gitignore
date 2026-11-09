@@ -6,3 +6,6 @@ data/raw/*.csv
 data/processed/
 results/cache/
 .DS_Store
+
+# private viva prep, never commit
+notes/viva_notes.md

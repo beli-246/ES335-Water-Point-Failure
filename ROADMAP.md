@@ -46,7 +46,7 @@ when the model has never seen data from the target country?**
 | 4 | 10-11 Nov | Ablations + analysis | no-missing-signal, no-remoteness, +pay, Uganda subsample, random-split reference; calibration; permutation importance; error analysis | done, except the Uganda-subsample ablation (dropped for time; random-split reference is in `concepts.py`) |
 | 5 | 11-12 Nov | Freeze results, export JSON for the site | `docs/data/*.json` | done |
 | 6 | 12-15 Nov | Website | map, crew-capacity slider, transfer toggle, error explorer, concept panels | built and browser-tested; not deployed |
-| 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | README, AI-use, `notes/viva_notes.md` done; clean-clone run and deploy pending |
+| 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | README and AI-use done; clean-clone run and deploy pending |
 | 8 | 17 Nov | Buffer + submit links | | |
 
 ## Algorithms and the concept each one demonstrates
