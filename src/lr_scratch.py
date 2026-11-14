@@ -7,7 +7,8 @@ Two optimisers: plain gradient descent (first order) and Newton / IRLS (second o
 H = (1/n) X^T diag(p(1-p)) X + lam I), to show why curvature information converges in a handful of steps.
 sklearn minimises C * sum(loss) + 0.5 ||w||^2, which is the same optimum when C = 1 / (n * lam).
 
-Usage: python src/lr_scratch.py   (fits on Uganda training districts, prints agreement with sklearn)
+Usage: python src/lr_scratch.py   (Uganda TRAINING districts only: fits on 80% of them and scores on the held-out 20%,
+so the frozen test districts are never touched; prints agreement with sklearn)
 """
 import json
 
@@ -64,9 +65,11 @@ if __name__ == "__main__":
     from features import frame, preprocessor
 
     df = pd.read_parquet(CLEAN)
+    from sklearn.model_selection import GroupShuffleSplit
     test = set(json.loads(SPLITS.read_text())["countries"]["Uganda"]["test_districts"])
-    u = df[df.country == "Uganda"]
-    tr, te = u[~u.district.isin(test)], u[u.district.isin(test)]
+    u = df[(df.country == "Uganda") & ~df.district.isin(test)].reset_index(drop=True)  # training districts only
+    a, b = next(GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=335).split(u, groups=u.district))
+    tr, te = u.iloc[a], u.iloc[b]  # te = held-out training districts
     pre = preprocessor(scale=True).fit(frame(tr))
     Xtr, Xte = pre.transform(frame(tr)), pre.transform(frame(te))
     ytr, yte = tr.y.to_numpy().astype(float), te.y.to_numpy()
@@ -76,10 +79,11 @@ if __name__ == "__main__":
     gd = ScratchLogReg(lam, "gd", lr=1.0, max_iter=3000, tol=1e-10).fit(Xtr, ytr)
     sk = LogisticRegression(C=1 / (len(ytr) * lam), max_iter=5000, tol=1e-10).fit(Xtr, ytr)
 
-    out = {"n_train": len(ytr), "n_features": Xtr.shape[1], "lambda": lam}
+    out = {"n_train": len(ytr), "n_heldout": len(yte), "heldout_districts": int(te.district.nunique()),
+           "n_features": Xtr.shape[1], "lambda": lam}
     for name, m in [("scratch_newton", newton), ("scratch_gd", gd), ("sklearn_lbfgs", sk)]:
         s = m.predict_proba(Xte)[:, 1]
-        out[name] = {"test_pr_auc": round(average_precision_score(yte, s), 5), "test_roc_auc": round(roc_auc_score(yte, s), 5)}
+        out[name] = {"heldout_pr_auc": round(average_precision_score(yte, s), 5), "heldout_roc_auc": round(roc_auc_score(yte, s), 5)}
         if hasattr(m, "n_iter_"):
             out[name]["iterations"] = int(np.max(m.n_iter_))
     out["max_abs_coef_diff_newton_vs_sklearn"] = float(np.max(np.abs(newton.w - sk.coef_[0])))

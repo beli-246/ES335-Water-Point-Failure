@@ -1,23 +1,25 @@
 {
-  "n_train": 75966,
+  "n_train": 63304,
+  "n_heldout": 12662,
+  "heldout_districts": 22,
   "n_features": 35,
   "lambda": 0.001,
   "scratch_newton": {
-    "test_pr_auc": 0.29792,
-    "test_roc_auc": 0.65846,
+    "heldout_pr_auc": 0.18996,
+    "heldout_roc_auc": 0.64909,
     "iterations": 5
   },
   "scratch_gd": {
-    "test_pr_auc": 0.29747,
-    "test_roc_auc": 0.65843,
+    "heldout_pr_auc": 0.18993,
+    "heldout_roc_auc": 0.64906,
     "iterations": 3000
   },
   "sklearn_lbfgs": {
-    "test_pr_auc": 0.29792,
-    "test_roc_auc": 0.65846,
-    "iterations": 125
+    "heldout_pr_auc": 0.18996,
+    "heldout_roc_auc": 0.64909,
+    "iterations": 116
   },
-  "max_abs_coef_diff_newton_vs_sklearn": 3.22741072267263e-06,
-  "max_abs_coef_diff_gd_vs_sklearn": 0.031864351741973385,
-  "max_abs_prob_diff_newton_vs_sklearn": 5.984840913686451e-07
+  "max_abs_coef_diff_newton_vs_sklearn": 2.0922032217263187e-06,
+  "max_abs_coef_diff_gd_vs_sklearn": 0.030132317029493157,
+  "max_abs_prob_diff_newton_vs_sklearn": 5.643552176137767e-07
 }

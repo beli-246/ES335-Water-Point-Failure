@@ -6,6 +6,8 @@ model input). Writes small committed CSVs that src/export_site.py puts on the si
   results/final_accuracy.csv    best accuracy any threshold reaches vs "every point works"
   results/final_random.csv      lift@10% and skill with district-bootstrap CIs, and the random-ranking null
   results/final_provider.csv    per survey provider: rows, no-water rate, share of the flagged top 20%, within-provider ROC
+  results/final_district_agreement.csv  correlation of predicted vs observed no-water rate across test districts with
+                                at least 20 points (the same filter as the site's error table)
 Usage: python src/operating.py
 """
 import numpy as np
@@ -42,7 +44,7 @@ def skill(y, s):
 def main():
     rng = np.random.default_rng(0)
     raw = pd.read_csv(RAW_CSV, usecols=["wpdx_id", "source"])
-    op, acc, rnd, prov = [], [], [], []
+    op, acc, rnd, prov, dist = [], [], [], [], []
     for c in COUNTRIES:
         d = pd.read_parquet(RESULTS / "cache" / f"final_{c}.parquet")
         y, s, n, pos = d.y.to_numpy().astype(int), d.score.to_numpy(), len(d), int(d.y.sum())
@@ -66,6 +68,11 @@ def main():
                     "skill": skill(y, s), "skill_lo": k_lo, "skill_hi": k_hi,
                     "null_lift10_p999": np.percentile(null, 99.9), "null_lift10_max": null.max(), "n_null": N_NULL})
 
+        g = d.groupby("district").agg(n=("y", "size"), obs=("y", "mean"), pred=("score", "mean"))
+        g20 = g[g.n >= 20]
+        dist.append({"target": c, "min_points": 20, "districts": len(g20), "districts_all": len(g),
+                     "corr": float(np.corrcoef(g20.obs, g20.pred)[0, 1]), "corr_all_districts": float(np.corrcoef(g.obs, g.pred)[0, 1])})
+
         x = d.merge(raw, on="wpdx_id", how="left")
         assert len(x) == n and x.source.notna().all()
         k = int(round(0.2 * n)); x["flag"] = x.score.rank(ascending=False, method="first") <= k
@@ -75,7 +82,7 @@ def main():
                          "within_roc": auc(g.y, g.score) if g.y.nunique() == 2 and len(g) >= 100 else np.nan,
                          "model_roc": auc(y, s), "provider_only_roc": upper})
 
-    for name, rows in [("operating", op), ("accuracy", acc), ("random", rnd), ("provider", prov)]:
+    for name, rows in [("operating", op), ("accuracy", acc), ("random", rnd), ("provider", prov), ("district_agreement", dist)]:
         df = pd.DataFrame(rows); df.to_csv(RESULTS / f"final_{name}.csv", index=False)
         print(f"\n== final_{name}.csv"); print(df.round(3).to_string(index=False))
 

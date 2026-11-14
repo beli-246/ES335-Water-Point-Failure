@@ -67,6 +67,34 @@
    }
   }
  },
+ "largest_district_share": {
+  "Ethiopia": {
+   "district": "Amhara | South Gondar",
+   "share": 0.29326902737233995
+  },
+  "Kenya": {
+   "district": "Busia | Butula",
+   "share": 0.050635320991767
+  },
+  "Tanzania": {
+   "district": "Kagera | Ngara",
+   "share": 0.048006416131989
+  },
+  "Uganda": {
+   "district": "Western | Kasese",
+   "share": 0.033156526479097656
+  }
+ },
+ "amendment_6nov_diagnostic": {
+  "pooled": {
+   "C": 10.0,
+   "in_sample_roc_on_ethiopia_training": 0.6732506308792101
+  },
+  "ethiopia_only": {
+   "C": 0.01,
+   "in_sample_roc_on_ethiopia_training": 0.8301104840544352
+  }
+ },
  "class_weighting": [
   {
    "target": "Ethiopia",

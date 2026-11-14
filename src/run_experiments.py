@@ -6,7 +6,7 @@ For every target country T and regime R:
   C ("local only"):     train = T's training districts only
   test = T's frozen test districts (identical for A, B and C)
 Regime C was added after the first main run: a pooled logistic regression ranked Ethiopia backwards (ROC 0.38) while an
-Ethiopia-only fit separated Ethiopia's own training districts far better (0.84 vs 0.67 in-sample), i.e. pooling can bury
+Ethiopia-only fit separated Ethiopia's own training districts far better (0.83 vs 0.67 in-sample; see src/extra_checks.py), i.e. pooling can bury
 the local signal, so A - B alone understates the value of in-country data.
 Each model is tuned with GroupKFold(3) over districts inside the training set only, refit on the whole training set,
 then scored once on the test districts. Test predictions are cached for bootstrap / site export.

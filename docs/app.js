@@ -607,7 +607,23 @@ function renderErrors(P, order, flagged) {
     { label: "Found", num: true, get: (r) => fmtInt(r.found) }, { label: "Missed", num: true, get: (r) => fmtInt(r.missed) },
     { label: "Wasted trips", num: true, get: (r) => fmtInt(r.alarm) },
   ], rows);
+  renderExamples(P, order);
   el("p", { class: "note", text: "Groups with fewer than 20 test points are hidden. Red: mean predicted risk is more than 10 points away from the observed rate (the model is miscalibrated for that group). Found / missed / wasted use the crew capacity set above." }, box);
+}
+
+/* the most confident wrong calls: highest-risk working points and lowest-risk dry points */
+function renderExamples(P, order) {
+  const box = $("#err-examples"); if (!box) return; box.replaceChildren();
+  const n = P.y.length, rank = new Int32Array(n); order.forEach((i, r) => (rank[i] = r + 1));
+  const alarms = order.filter((i) => P.y[i] === 0).slice(0, 4), misses = order.filter((i) => P.y[i] === 1).slice(-4).reverse();
+  const cat = (c, i) => P.cats[c].levels[P.cats[c].codes[i]];
+  const rows = [...alarms.map((i) => ["Flagged, but had water", i]), ...misses.map((i) => ["Dry, but ranked low", i])];
+  table(box, [
+    { label: "Mistake", get: ([k]) => k }, { label: "District", get: ([, i]) => P.districts[P.district[i]] },
+    { label: "Predicted risk", num: true, get: ([, i]) => pct(P[mapState.model][i], 1) }, { label: "Rank", num: true, get: ([, i]) => `${fmtInt(rank[i])} of ${fmtInt(n)}` },
+    { label: "Technology", get: ([, i]) => cat("water_tech_clean", i) }, { label: "Source", get: ([, i]) => cat("water_source_clean", i) },
+    { label: "Management", get: ([, i]) => cat("management_clean", i) }, { label: "Age", num: true, get: ([, i]) => (P.age[i] == null ? "unknown" : `${P.age[i]} y`) },
+  ], rows);
 }
 
 /* ---------- concepts ---------- */
@@ -621,9 +637,9 @@ function renderConcepts() {
     const ck = lr.check;
     $("#lr-table").replaceChildren();
     table($("#lr-table"), [{ label: "Implementation", get: (r) => r[0] }, { label: "Iterations", num: true, get: (r) => r[1].iterations ?? "–" },
-      { label: "Test PR-AUC", num: true, get: (r) => r[1].test_pr_auc.toFixed(5) }, { label: "Test ROC-AUC", num: true, get: (r) => r[1].test_roc_auc.toFixed(5) }],
+      { label: "Held-out PR-AUC", num: true, get: (r) => r[1].heldout_pr_auc.toFixed(5) }, { label: "Held-out ROC-AUC", num: true, get: (r) => r[1].heldout_roc_auc.toFixed(5) }],
       [["From scratch, Newton", ck.scratch_newton], ["From scratch, gradient descent", ck.scratch_gd], ["scikit-learn (L-BFGS)", ck.sklearn_lbfgs]]);
-    $("#lr-diff").textContent = `Largest coefficient difference vs scikit-learn: Newton ${ck.max_abs_coef_diff_newton_vs_sklearn.toExponential(1)}, gradient descent ${ck.max_abs_coef_diff_gd_vs_sklearn.toFixed(3)} after ${ck.scratch_gd.iterations} steps. Largest predicted-probability difference (Newton): ${ck.max_abs_prob_diff_newton_vs_sklearn.toExponential(1)}. Fitted on ${fmtInt(ck.n_train)} Uganda training points, ${ck.n_features} features, λ = ${ck.lambda}.`;
+    $("#lr-diff").textContent = `Largest coefficient difference vs scikit-learn: Newton ${ck.max_abs_coef_diff_newton_vs_sklearn.toExponential(1)}, gradient descent ${ck.max_abs_coef_diff_gd_vs_sklearn.toFixed(3)} after ${ck.scratch_gd.iterations} steps. Largest predicted-probability difference (Newton): ${ck.max_abs_prob_diff_newton_vs_sklearn.toExponential(1)}. Fitted on ${fmtInt(ck.n_train)} points from Uganda's training districts and scored on ${fmtInt(ck.n_heldout)} points in ${ck.heldout_districts} held-out training districts (the test districts are not used); ${ck.n_features} features, λ = ${ck.lambda}.`;
   }
   if (C.reg_path && $("#reg-l1")) {
     for (const pen of ["l1", "l2"]) {

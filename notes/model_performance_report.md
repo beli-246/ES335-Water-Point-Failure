@@ -254,7 +254,8 @@ fix this, because the miscalibration comes from differences between districts.
 The model has learned "old points fail", so it misses failures in young points. It also misses whole districts whose failure
 rate differs from what their attributes suggest. The site's error section lists them, for example Ethiopia's Somali region
 (49% observed vs 23% predicted in Siti) and Uganda's Kitgum (37% vs 22%). District-level average predictions track reality well
-in Ethiopia (correlation 0.89) and Kenya (0.84) but poorly in Tanzania (0.36) and Uganda (0.25).
+in Ethiopia (correlation 0.88) and Kenya (0.83), moderately in Tanzania (0.69, only 11 districts) and poorly in Uganda (0.25),
+over test districts with at least 20 points (`results/final_district_agreement.csv`).
 
 **Why**: the features describe the pump, not its environment or upkeep. Rainfall, groundwater depth, seasonal drying,
 spare-parts supply, fee collection and committee activity drive failure, and WPdx does not record them (fee payment only in Tanzania).

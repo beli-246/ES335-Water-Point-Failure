@@ -67,6 +67,22 @@ def imbalance_check(df, splits):
     return rows
 
 
+def amendment_diagnostic(df, splits):
+    """The training-data evidence behind the 6 Nov amendment (regime C): how well does a pooled logistic regression
+    separate Ethiopia's own TRAINING points, compared with an Ethiopia-only fit? In-sample ROC-AUC, no test rows used.
+    Each fit uses the C that grouped CV chose for it in the main run (regime A and regime C respectively)."""
+    from sklearn.metrics import roc_auc_score
+    main = pd.read_csv(RESULTS / "metrics_main.csv")
+    tr = df[~((df.country == "Ethiopia") & df.district.isin(splits["Ethiopia"]["test_districts"]))]
+    eth = tr[tr.country == "Ethiopia"]
+    out = {}
+    for name, regime, data in [("pooled", "A", tr), ("ethiopia_only", "C", eth)]:
+        C = json.loads(main[(main.target == "Ethiopia") & (main.regime == regime) & (main.model == "logreg")].best_params.iloc[0])["C"]
+        pipe = Pipeline([("pre", preprocessor(scale=True)), ("clf", MODELS["logreg"]["est"]().set_params(C=C))]).fit(frame(data), data.y)
+        out[name] = {"C": C, "in_sample_roc_on_ethiopia_training": float(roc_auc_score(eth.y, pipe.predict_proba(frame(eth))[:, 1]))}
+    return out
+
+
 def main():
     out = {"snapshot": {"raw_csv": RAW_CSV.name, "raw_sha256": sha256(RAW_CSV), "raw_bytes": RAW_CSV.stat().st_size,
                         "clean_parquet_rows": int(len(pd.read_parquet(CLEAN, columns=["wpdx_id"])))}}
@@ -112,6 +128,10 @@ def main():
 
     df = pd.read_parquet(CLEAN)
     splits = json.loads(SPLITS.read_text())["countries"]
+    out["largest_district_share"] = {c: {"district": g.district.value_counts().index[0].split(" | ", 1)[1],
+                                         "share": float(g.district.value_counts(normalize=True).iloc[0])}
+                                     for c, g in df.groupby("country")}
+    out["amendment_6nov_diagnostic"] = amendment_diagnostic(df, splits)
     out["class_weighting"] = imbalance_check(df, splits)
     (RESULTS / "extra_checks.json").write_text(json.dumps(out, indent=1))
     print(json.dumps({k: v for k, v in out.items() if k != "class_weighting"}, indent=1))
