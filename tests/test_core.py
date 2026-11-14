@@ -36,7 +36,8 @@ def test_precision_at_k_ties_equal_random_tie_breaking():
         for _ in range(4000):
             order = np.lexsort((RNG.random(len(s)), -s))  # sort by score desc, random among ties
             sims.append(y[order[:k]].mean())
-        assert abs(precision_at_k(y, s, k) - np.mean(sims)) < 0.01, k
+        se = np.std(sims) / np.sqrt(len(sims))  # Monte Carlo error of the simulated mean
+        assert abs(precision_at_k(y, s, k) - np.mean(sims)) < 4 * se + 1e-3, k
 
 
 def test_constant_score_pr_auc_equals_prevalence():
@@ -172,8 +173,35 @@ def test_scratch_logreg_matches_sklearn():
     assert all(a >= b - 1e-12 for a, b in zip(gd.history, gd.history[1:])), "GD loss must not increase"
 
 
+# ---------- country-interaction model and multiple testing (added 15 Nov) ----------
+def test_country_interactions_equal_separate_per_country_fits():
+    """Country x every feature, with (almost) no penalty, must reproduce a separate logistic regression per country:
+    the interaction model is one pooled fit that can express any per-country coefficient vector."""
+    from features import CountryInteractions
+    rng, n = np.random.default_rng(1), 1500  # own generator: do not shift the draws other tests see
+    X = pd.DataFrame({"a": rng.normal(size=n), "b": rng.normal(size=n), "country": rng.choice(["K", "E"], n)})
+    sign = np.where(X.country == "K", 1.0, -1.0)  # the effect of `a` flips between countries, as in our data
+    y = (rng.random(n) < 1 / (1 + np.exp(-(1.5 * sign * X.a + 0.5 * X.b)))).astype(int)
+    from sklearn.compose import ColumnTransformer
+    inner = ColumnTransformer([("num", "passthrough", ["a", "b"])])
+    Z = CountryInteractions(inner).fit(X).transform(X)
+    assert Z.shape == (n, 2 + 2 * 2 + 2)  # shared + per-country copies + country intercepts
+    pooled = LogisticRegression(C=1e6, max_iter=5000).fit(Z, y).predict_proba(Z)[:, 1]
+    for c in ["K", "E"]:
+        m = (X.country == c).to_numpy()
+        sep = LogisticRegression(C=1e6, max_iter=5000).fit(X.loc[m, ["a", "b"]], y[m]).predict_proba(X.loc[m, ["a", "b"]])[:, 1]
+        assert np.max(np.abs(pooled[m] - sep)) < 1e-3, c
+
+
+def test_holm_procedure():
+    from extra_checks import holm
+    # m = 4: thresholds 0.0125, 0.0167, 0.025, 0.05 -> the first two are rejected, then 0.03 > 0.025 stops the procedure
+    assert holm([0.01, 0.04, 0.012, 0.03]).tolist() == [True, False, True, False]
+    assert not holm([0.2, 0.3]).any() and holm([1e-6, 1e-6]).all()
+
+
 if __name__ == "__main__":
-    tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
+    tests =[(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
     failed = 0
     for name, fn in tests:
         try:

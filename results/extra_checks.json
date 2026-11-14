@@ -1,0 +1,184 @@
+{
+ "snapshot": {
+  "raw_csv": "wpdx_plus_4countries.csv",
+  "raw_sha256": "03eb8f845e51cd00f6dc518f9899dc620ac1be755a8326af89c127b683571f55",
+  "raw_bytes": 195813838,
+  "clean_parquet_rows": 157502
+ },
+ "unknown_status": {
+  "n": 3397,
+  "share": 0.020875582267123875,
+  "by_country": {
+   "Ethiopia": {
+    "n": 597,
+    "share": 0.024379287814439727
+   },
+   "Kenya": {
+    "n": 277,
+    "share": 0.012617865439803215
+   },
+   "Tanzania": {
+    "n": 0,
+    "share": 0.0
+   },
+   "Uganda": {
+    "n": 2523,
+    "share": 0.025544969473609607
+   }
+  },
+  "top_sources": {
+   "Evidence Action": 2152,
+   "World Vision": 683,
+   "COWASH": 109
+  },
+  "top_source_share_of_unknown": 0.633500147188696,
+  "top_source_no_water_by_country": {
+   "Kenya": 0.016021737093600674,
+   "Uganda": 0.0
+  },
+  "no_water_drop_if_all_working_pp": {
+   "Ethiopia": 0.2563340629939001,
+   "Kenya": 0.11147449860317016,
+   "Tanzania": 0.0,
+   "Uganda": 0.4389496541649912
+  }
+ },
+ "holm": {
+  "m": 48,
+  "alpha": 0.05,
+  "by_comparison": {
+   "A-B": {
+    "ci_excludes_zero": 11,
+    "holm_significant": 2,
+    "positive_and_holm": 2,
+    "negative_and_holm": 0
+   },
+   "A-C": {
+    "ci_excludes_zero": 8,
+    "holm_significant": 4,
+    "positive_and_holm": 0,
+    "negative_and_holm": 4
+   },
+   "C-B": {
+    "ci_excludes_zero": 14,
+    "holm_significant": 10,
+    "positive_and_holm": 10,
+    "negative_and_holm": 0
+   }
+  }
+ },
+ "class_weighting": [
+  {
+   "target": "Ethiopia",
+   "model": "logreg",
+   "weighted": false,
+   "cv_pr_auc": 0.2527142830074448,
+   "cv_sd": 0.09492441855498156
+  },
+  {
+   "target": "Ethiopia",
+   "model": "logreg",
+   "weighted": true,
+   "cv_pr_auc": 0.2498879651206692,
+   "cv_sd": 0.08797084841825056
+  },
+  {
+   "target": "Ethiopia",
+   "model": "xgb",
+   "weighted": false,
+   "cv_pr_auc": 0.28047418708026856,
+   "cv_sd": 0.07829966026464373
+  },
+  {
+   "target": "Ethiopia",
+   "model": "xgb",
+   "weighted": true,
+   "cv_pr_auc": 0.2792795494545218,
+   "cv_sd": 0.07922737190519454
+  },
+  {
+   "target": "Kenya",
+   "model": "logreg",
+   "weighted": false,
+   "cv_pr_auc": 0.2438599368688641,
+   "cv_sd": 0.03555058943784611
+  },
+  {
+   "target": "Kenya",
+   "model": "logreg",
+   "weighted": true,
+   "cv_pr_auc": 0.2295784387153926,
+   "cv_sd": 0.03129043079842163
+  },
+  {
+   "target": "Kenya",
+   "model": "xgb",
+   "weighted": false,
+   "cv_pr_auc": 0.245223085943248,
+   "cv_sd": 0.03359893713478741
+  },
+  {
+   "target": "Kenya",
+   "model": "xgb",
+   "weighted": true,
+   "cv_pr_auc": 0.24769965375025266,
+   "cv_sd": 0.04231068607150872
+  },
+  {
+   "target": "Tanzania",
+   "model": "logreg",
+   "weighted": false,
+   "cv_pr_auc": 0.6566199146379109,
+   "cv_sd": 0.09051671396712284
+  },
+  {
+   "target": "Tanzania",
+   "model": "logreg",
+   "weighted": true,
+   "cv_pr_auc": 0.6556545154654481,
+   "cv_sd": 0.08995283108169247
+  },
+  {
+   "target": "Tanzania",
+   "model": "xgb",
+   "weighted": false,
+   "cv_pr_auc": 0.6439858829170917,
+   "cv_sd": 0.10271181709533352
+  },
+  {
+   "target": "Tanzania",
+   "model": "xgb",
+   "weighted": true,
+   "cv_pr_auc": 0.6434124757239654,
+   "cv_sd": 0.10565920554179481
+  },
+  {
+   "target": "Uganda",
+   "model": "logreg",
+   "weighted": false,
+   "cv_pr_auc": 0.2805848071988626,
+   "cv_sd": 0.050469523426405996
+  },
+  {
+   "target": "Uganda",
+   "model": "logreg",
+   "weighted": true,
+   "cv_pr_auc": 0.2807385270004614,
+   "cv_sd": 0.050780932929988525
+  },
+  {
+   "target": "Uganda",
+   "model": "xgb",
+   "weighted": false,
+   "cv_pr_auc": 0.29125225626316276,
+   "cv_sd": 0.04202648003552638
+  },
+  {
+   "target": "Uganda",
+   "model": "xgb",
+   "weighted": true,
+   "cv_pr_auc": 0.2850108809636519,
+   "cv_sd": 0.03978416221474484
+  }
+ ]
+}

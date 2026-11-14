@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 data/raw/*.csv
-data/processed/
+data/processed/*
+!data/processed/wpdx_clean.parquet
 results/cache/
 .DS_Store
 

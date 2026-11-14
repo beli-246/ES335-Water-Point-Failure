@@ -12,7 +12,7 @@ Each model is tuned with GroupKFold(3) over districts inside the training set on
 then scored once on the test districts. Test predictions are cached for bootstrap / site export.
 
 Usage: python src/run_experiments.py --variant main [--models logreg xgb] [--targets Kenya] [--regimes A B C]
-Variants: main | no_missing | no_remoteness | with_pay
+Variants: main | no_missing | no_remoteness | with_pay | country | country_x (both --regimes A) | uganda_sub (--regimes A B)
 """
 import argparse
 import json
@@ -29,7 +29,14 @@ from features import frame, preprocessor
 from models import MODELS
 
 VARIANTS = {"main": {}, "no_missing": {"missing_signal": False}, "no_remoteness": {"remoteness": False},
-            "with_pay": {"pay": True}}
+            "with_pay": {"pay": True},
+            # Added 15 Nov (see ROADMAP amendments): is "pooling does not help" only because country is not an input?
+            # Run with --regimes A: in B the target country is never seen, in C it is constant.
+            "country": {"country": True},      # country as an input (trees/boosting can branch on it)
+            "country_x": {"country": "x"},     # country x every feature (partial pooling for logistic regression)
+            # Planned ablation 4: does Uganda (60% of rows) dominate the foreign data? Run with --regimes A B, non-Uganda targets.
+            "uganda_sub": {"uganda_rows": 21000}}
+DATA_OPTS = ("uganda_rows",)                   # change the training rows, not the pipeline
 
 
 def stratified_subsample(df, n, seed):
@@ -44,11 +51,15 @@ def run_one(df, test_mask, target, regime, model_name, variant, opts):
     spec = MODELS[model_name]
     keep = {"A": ~test_mask, "B": ~test_mask & (df.country != target), "C": ~test_mask & (df.country == target)}[regime]
     train = df[keep]
+    if opts.get("uganda_rows") and target != "Uganda":
+        u = train.country == "Uganda"  # 21,000 rows: about the size of each other country
+        train = pd.concat([train[~u], train[u].sample(min(u.sum(), opts["uganda_rows"]), random_state=SEED)])
     if spec.get("subsample"):
         train = stratified_subsample(train, spec["subsample"], SEED)
     test = df[test_mask]
     frame_opts = {k: v for k, v in opts.items() if k in ("remoteness", "pay")}
-    pipe = Pipeline([("pre", preprocessor(scale=spec["scale"], **opts)), ("clf", spec["est"]())])
+    pre_opts = {k: v for k, v in opts.items() if k not in DATA_OPTS}
+    pipe = Pipeline([("pre", preprocessor(scale=spec["scale"], **pre_opts)), ("clf", spec["est"]())])
     Xtr, ytr, gtr = frame(train, **frame_opts), train.y.to_numpy(), train.district.to_numpy()
     Xtr["country"] = train.country.to_numpy()  # read by the scorer only; ColumnTransformer drops it
     t0 = time.time()
@@ -62,7 +73,9 @@ def run_one(df, test_mask, target, regime, model_name, variant, opts):
         cvr[keep].to_csv(RESULTS / "tuning" / f"{variant}__{target}__{regime}__{model_name}.csv", index=False)
     else:
         model, best, cv_score = pipe.fit(Xtr, ytr), {}, np.nan
-    s = model.predict_proba(frame(test, **frame_opts))[:, 1]
+    Xte = frame(test, **frame_opts)
+    Xte["country"] = test.country.to_numpy()  # used only by the country variants; otherwise dropped
+    s = model.predict_proba(Xte)[:, 1]
     rec = {"variant": variant, "target": target, "regime": regime, "model": model_name, "n_train": len(train),
            "best_params": json.dumps({k.replace("clf__", ""): v for k, v in best.items()}), "cv_pr_auc": cv_score,
            "fit_seconds": round(time.time() - t0, 1), **metrics(test.y.to_numpy(), s)}

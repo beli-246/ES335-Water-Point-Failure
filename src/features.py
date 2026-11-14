@@ -1,6 +1,7 @@
 """Preprocessing pipelines. Everything is fitted inside sklearn Pipelines on training folds only (no leakage)."""
 import numpy as np
 import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
@@ -25,13 +26,41 @@ def frame(df, remoteness=True, pay=False) -> pd.DataFrame:
     return X
 
 
-def preprocessor(scale: bool, missing_signal=True, remoteness=True, pay=False) -> ColumnTransformer:
+class CountryInteractions(BaseEstimator, TransformerMixin):
+    """Partial pooling for linear models: [shared features Z, Z x 1{country = c} for each c, country intercepts].
+
+    With an L2 penalty the per-country deviations are shrunk towards the shared coefficients, so a country with little
+    data borrows strength from the others while a coefficient can still flip sign where the data say it must.
+    Needs a 'country' column in X (run_experiments adds it for every fit and test frame).
+    """
+
+    def __init__(self, pre):
+        self.pre = pre
+
+    def fit(self, X, y=None):
+        self.pre_ = clone(self.pre).fit(X, y)
+        self.levels_ = np.array(sorted(pd.unique(X["country"])))
+        return self
+
+    def transform(self, X):
+        Z = self.pre_.transform(X)
+        D = (np.asarray(X["country"])[:, None] == self.levels_[None, :]).astype(float)
+        return np.hstack([Z] + [Z * D[:, [j]] for j in range(D.shape[1])] + [D])
+
+
+def preprocessor(scale: bool, missing_signal=True, remoteness=True, pay=False, country=False):
     """scale=True for LR/SVM (distance-based / gradient-based), False for trees (split on order only).
 
     missing_signal=True : median-impute numerics + binary 'was missing' indicator; categoricals get a 'missing' level.
     missing_signal=False: impute everything (median / most frequent), no indicator -> the model cannot see missingness.
+    country=True        : country is one more categorical input (trees can then learn country-specific branches).
+    country="x"         : CountryInteractions around the usual features (country x every feature, for linear models).
     """
+    if country == "x":
+        return CountryInteractions(preprocessor(scale, missing_signal, remoteness, pay, country=False))
     cats, logs, plain = feature_lists(remoteness, pay)
+    if country:
+        cats = cats + ["country"]
     num_imp = SimpleImputer(strategy="median", add_indicator=missing_signal)
     cat_imp = (SimpleImputer(strategy="constant", fill_value="missing") if missing_signal
                else SimpleImputer(strategy="most_frequent"))

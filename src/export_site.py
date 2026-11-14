@@ -10,7 +10,7 @@ import pandas as pd
 
 from config import COUNTRIES, RESULTS, ROOT, SITE_DATA, SPLITS
 
-VARIANTS = ["main", "no_missing", "no_remoteness", "with_pay"]
+VARIANTS = ["main", "no_missing", "no_remoteness", "with_pay", "uganda_sub", "country", "country_x"]
 
 
 def records(df, digits=4):
@@ -40,6 +40,11 @@ def main():
                "importance": records(read("final_importance.csv")), "reliability": records(read("final_reliability.csv")),
                "operating": records(read("final_operating.csv")), "accuracy": records(read("final_accuracy.csv")),
                "random": records(read("final_random.csv"))}
+    results["country"] = records(read("country_vs_local.csv"))      # pooled + country vs local / pooled
+    results["uganda_sub"] = records(read("uganda_sub_vs_main.csv"))
+    results["holm"] = records(read("holm_main.csv"))
+    ex = RESULTS / "extra_checks.json"
+    results["extra"] = json.loads(ex.read_text()) if ex.exists() else {}
     prov = read("final_provider.csv")
     results["provider"] = records(prov[prov.n >= 100]) if len(prov) else []  # small providers: too few points to rank within
     ch = RESULTS / "final_choice.json"

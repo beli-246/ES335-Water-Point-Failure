@@ -11,7 +11,7 @@
   --s1: #2a78d6; /* regime A / final model */
   --s2: #eb6834; /* regime B / foreign-only */
   --s3: #1baf7a; /* regime C / local-only */
-  --s4: #eda100; /* 4th country in tuning chart only */
+  --s4: #eda100; /* 4th series: tuning chart (4th country) and the pooled + country series */
   --neutral: #898781;
   --seq-lo: #cde2fb;
   --seq-hi: #0d366b;
@@ -127,3 +127,12 @@ footer p { margin: 4px auto; }
   #map { height: 360px; }
   .tile .value { font-size: 24px; }
 }
+.refs { font-size: 14px; color: var(--ink-2); padding-left: 22px; }
+.refs li { margin: 6px 0; overflow-wrap: anywhere; }
+.summary { border-left: 3px solid var(--s1); }
+.summary ul { margin: 8px 0 0; }
+dl.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0 0; font-size: 14px; }
+dl.glossary dt { font-weight: 600; }
+dl.glossary dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 560px) { dl.glossary { grid-template-columns: 1fr; } dl.glossary dd { margin-bottom: 6px; } }
+p code, li code { overflow-wrap: anywhere; }

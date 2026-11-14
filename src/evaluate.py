@@ -68,7 +68,8 @@ def _district_index(groups):
 def paired_bootstrap(y, s_a, s_b, groups, metric=average_precision_score, n_boot=2000, seed=0):
     """Resample whole test districts with replacement; score A and B on the SAME resample.
 
-    Returns point estimates, the A-B difference, its 95% percentile CI, and the share of resamples where A <= B.
+    Returns point estimates, the A-B difference, its 95% percentile CI, its bootstrap standard error,
+    and the share of resamples where A <= B.
     """
     y, s_a, s_b = map(np.asarray, (y, s_a, s_b))
     idx = _district_index(groups)
@@ -86,4 +87,5 @@ def paired_bootstrap(y, s_a, s_b, groups, metric=average_precision_score, n_boot
             "diff_lo": np.percentile(diffs, 2.5), "diff_hi": np.percentile(diffs, 97.5),
             "a_lo": np.percentile(a_s, 2.5), "a_hi": np.percentile(a_s, 97.5),
             "b_lo": np.percentile(b_s, 2.5), "b_hi": np.percentile(b_s, 97.5),
-            "p_a_not_better": float((diffs <= 0).mean()), "n_boot": len(diffs), "n_districts": len(idx)}
+            "p_a_not_better": float((diffs <= 0).mean()), "diff_se": float(diffs.std(ddof=1)),
+            "n_boot": len(diffs), "n_districts": len(idx)}

@@ -15,7 +15,7 @@
   <nav aria-label="Sections">
     <a href="#question">Question</a><a href="#data">Data</a><a href="#preprocessing">Preprocessing</a><a href="#evaluation">Evaluation</a>
     <a href="#methods">Methods</a><a href="#results">Results</a><a href="#explore">Explore</a><a href="#errors">Errors</a>
-    <a href="#concepts">Concepts</a><a href="#ablations">Ablations</a><a href="#limitations">Limitations</a><a href="#conclusion">Conclusion</a><a href="#reproduce">Reproduce</a>
+    <a href="#concepts">Concepts</a><a href="#ablations">Ablations</a><a href="#limitations">Limitations</a><a href="#conclusion">Conclusion</a><a href="#reproduce">Reproduce</a><a href="#references">References</a>
   </nav>
   <button id="theme" type="button" aria-label="Toggle dark mode">Theme</button>
 </div></header>
@@ -27,10 +27,34 @@ survey day, using only attributes that do not depend on the point's current stat
 the model has never seen the country it is used in?</p>
 <p class="byline">ES 335 Machine Learning, IIT Gandhinagar · Beli Dedhia &amp; Poojan Soni · November 2026 ·
 <a href="https://github.com/beli-246/ES335-Water-Point-Failure">Code on GitHub</a></p>
+<div class="card summary">
+<b>In short</b>
+<ul>
+<li><b>It works, modestly.</b> In all four countries the model ranks water points better than random and better than a one-rule
+baseline. A crew that visits the riskiest 10% finds dry points 1.5–3.8 times as often as by visiting at random.</li>
+<li><b>Local labels are what matter.</b> Models trained only on other countries do much worse, and rank Ethiopia worse than random.
+Adding foreign data helps only if the model is told the country, and even then it merely matches training on local data alone.</li>
+<li><b>Read the numbers with care.</b> Ethiopia's strong result mostly separates survey programs rather than pumps. Accuracy never beats
+"every point works" except in Tanzania, so these models are for <em>ordering visits</em>, not for yes/no labels.</li>
+</ul>
+</div>
 <div class="tiles" id="hero-tiles" aria-live="polite"></div>
 <p class="note" id="hero-note">With local data, the riskiest 10% of points flagged by the final model have 1.5–3.8 times the
 overall no-water rate. A model trained only on other countries does much worse; in Ethiopia it ranks points <em>backwards</em>.
-Local data is the single biggest lever.</p>
+What makes the difference is labelled data from the country itself.</p>
+<details class="card"><summary><b>Terms used on this page</b></summary>
+<dl class="glossary">
+<dt>No-water rate</dt><dd>Share of points with no water on the survey day (9% in Kenya to 43% in Tanzania). A random ranking finds dry points at exactly this rate.</dd>
+<dt>PR-AUC</dt><dd>Average precision of the ranking: how pure the top of the list is, averaged over all list lengths. Random = the no-water rate; perfect = 1.</dd>
+<dt>Lift</dt><dd>No-water rate among the points a crew visits ÷ the overall rate. 2× means a visit is twice as likely to find a dry point as a random visit.</dd>
+<dt>Skill</dt><dd>(PR-AUC − no-water rate) ÷ (1 − no-water rate). 0 = random, 1 = perfect, whatever the base rate, so countries can be compared.</dd>
+<dt>ROC-AUC</dt><dd>Chance that a random dry point is ranked above a random working one. 0.5 = random.</dd>
+<dt>Regimes A, B, C</dt><dd>What the model was trained on: A = other countries plus the target's own training districts; B = other countries only; C = the target's own training districts only.</dd>
+<dt>Test districts</dt><dd>Whole districts, about 20% of each country, held out before any model was trained and scored once at the end.</dd>
+<dt>95% interval</dt><dd>From resampling whole test districts 2,000 times; the range a result moves over if we had drawn different districts.</dd>
+<dt>Calibration</dt><dd>Whether a predicted 30% risk really means 30% of such points are dry.</dd>
+</dl>
+</details>
 
 <!-- ============================================================ -->
 <section id="question">
@@ -39,9 +63,15 @@ Local data is the single biggest lever.</p>
 a crew with time for, say, 10% of points could go to the most likely failures first. The <b>prediction target</b> is
 WPdx's <code>status_id = "No"</code>: no water at the point on the visit day. It is recorded the same way in all four
 countries, unlike the free-text status, which is not.</p>
-<p><b>Prediction time.</b> The model sees only static attributes known before a visit: age, water source, technology, management type,
-local population, distances to roads and towns, and an urban flag. The label is what the visit found. This is a cross-sectional
-ranking problem, <em>not</em> forecasting: each point appears once, at its latest survey.</p>
+<p><b>Prediction time.</b> The model sees only attributes that describe how a point was built and where it is: age, water source,
+technology, management type, local population, distances to roads and towns, and an urban flag. Age and remoteness are among the
+predictors earlier work linked to failed pumps [<a href="#ref-foster">Foster 2013</a>]. None of them measures whether water is flowing. In WPdx these attributes are recorded on the same survey visit as the label. Our use case therefore <em>assumes</em> that a
+ministry already holds them from an earlier inventory or construction record, and wants to decide where to send the next visit. The
+label is what the visit found. This is a cross-sectional ranking problem, <em>not</em> forecasting: each point appears once, at its latest survey.</p>
+<p><b>The risk in that assumption.</b> If survey teams record attributes differently when a point is dry (for example, leaving
+management blank), part of the signal would come from recording practice rather than from the point itself. Missing values are the
+most likely route for this, so the <a href="#ablations">no-missing-signal ablation</a> removes them, and the
+<a href="#provider">provider check</a> measures how much of the ranking follows the survey.</p>
 <p><b>Why four countries.</b> Ministries often have survey data from elsewhere but not their own district. So the second question
 is about transfer: does a model trained on other countries' surveys rank points in a new country as well as one trained on local data?</p>
 </section>
@@ -50,7 +80,7 @@ is about transfer: does a model trained on other countries' surveys rank points 
 <section id="data">
 <h2>Data</h2>
 <p><a href="https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj">Water Point Data Exchange Plus (WPdx+)</a>,
-CC BY 4.0, downloaded 6 November 2026. One row per water point at its latest survey.</p>
+CC BY 4.0, downloaded 6 November 2026 [<a href="#ref-wpdx">WPdx</a>]. One row per water point at its latest survey.</p>
 <p class="note" id="cleaning-steps"></p>
 <div class="card"><div id="data-table"></div></div>
 <h3>What a full-column audit found before any modelling</h3>
@@ -68,6 +98,10 @@ the missing-value flags in the main models and remove them in an ablation.</li>
 <li><b>The country is recoverable from the features.</b> A boosted-tree classifier names the country from our input features alone with
 97.5% accuracy (majority baseline 60%). So "transfer to an unseen country" is really transfer to an unseen <em>survey</em>, and
 we word every conclusion that way.</li>
+<li><b>Dropped rows.</b> 3,397 rows (2.1%) have status "Unknown" and are dropped, because they have no label. They are not
+spread evenly: 63% come from one provider, Evidence Action, whose labelled points are almost all working (1.6% no water in Kenya,
+0% in Uganda), and Tanzania has none. Even in the extreme case where every Unknown point was working, the no-water rate would fall by at
+most 0.4 percentage points (Uganda; 0.1–0.3 in Ethiopia and Kenya), so dropping them cannot change the conclusions.</li>
 <li><b>Spatial clustering.</b> District identity alone predicts the label (AUC 0.65–0.76), so neighbouring points are not independent.
 This decides the split below.</li>
 </ul>
@@ -84,11 +118,16 @@ matters for linear models and SVMs, whose loss is dominated by extreme values; t
 <li><b>Scaling</b> (z-scores) only for logistic regression and SVMs: the regularisation penalty and the RBF kernel distance both
 assume features on comparable scales.</li>
 <li><b>Categoricals</b> are one-hot encoded. Levels with fewer than 30 training rows are merged into "infrequent", and unseen
-levels at test time are handled, not crashed on.</li>
+levels at test time are handled, not crashed on. Why 30: at Kenya's 9% no-water rate, a level with 30 points has about 3 dry ones,
+so its coefficient or split would be fitted to two or three examples, which is pure variance.</li>
+<li><b>Class imbalance</b> (9–43% no water) is not reweighted. Our metrics judge the <em>order</em> of points, and class weights
+mainly shift predicted probabilities. We checked this with 5-fold grouped CV on each country's training districts: balanced weights
+for logistic regression and <code>scale_pos_weight</code> for XGBoost changed CV PR-AUC by at most 0.014, well inside the fold-to-fold
+spread of 0.03–0.10 (<code>src/extra_checks.py</code>).</li>
 <li><b>Missing values:</b> median imputation for numbers plus a 0/1 "was missing" column; a "missing" level for categories. The
 <em>no-missing-signal</em> ablation imputes without any flag, so no model, not even XGBoost (which would otherwise learn from NaN),
 can see that a value was absent.</li>
-<li><b>Install year</b> is set to missing when before 1950 or after the survey year (368 values). WPdx's own duplicate flag removes 1.1% of rows.</li>
+<li><b>Install year</b> is set to missing when before 1950 or after the survey year (365 values). WPdx's own duplicate flag removes 1.1% of rows.</li>
 </ul>
 </section>
 
@@ -97,7 +136,7 @@ can see that a value was absent.</li>
 <h2>Evaluation design</h2>
 <h3>Test set: whole districts, frozen before any model was trained</h3>
 <p>Random row splits put a pump's neighbours in training and the pump in test, so the model is graded on places it has
-effectively seen. Our concept experiment below measures the effect: on Uganda, random 3-fold CV says PR-AUC 0.43, but
+effectively seen [<a href="#ref-roberts">Roberts et al. 2017</a>]. Our concept experiment below measures the effect: on Uganda, random 3-fold CV says PR-AUC 0.43, but
 holding out whole districts says 0.28. So, per country, we hold out whole districts (district = region + district name,
 because the same district name occurs in two regions) covering about 20% of rows. Among 5,000 seeded random
 draws, we pick the one whose no-water rate is closest to the country's, which is a stratified group split. Districts with more than 15% of a
@@ -115,7 +154,7 @@ We added it after the first run (<a href="#amendment">see the amendment</a>), wh
 <h3>Metrics</h3>
 <ul>
 <li><b>Primary: PR-AUC</b> (average precision) of the no-water class. A crew acts on the top of the ranking, and PR-AUC measures
-exactly how pure the top is. A random ranking scores the no-water rate, which runs from 9% (Kenya) to 43% (Tanzania), so raw PR-AUC cannot be compared
+exactly how pure the top is [<a href="#ref-saito">Saito &amp; Rehmsmeier 2015</a>]. A random ranking scores the no-water rate, which runs from 9% (Kenya) to 43% (Tanzania), so raw PR-AUC cannot be compared
 across countries.</li>
 <li><b>Comparing countries: skill, not lift.</b> Lift = PR-AUC ÷ no-water rate is intuitive ("2× better than random"), but its
 ceiling is 1 ÷ no-water rate: 11× in Kenya, only 2.3× in Tanzania. A perfect Tanzanian model would look worse than a mediocre Kenyan one.
@@ -130,15 +169,20 @@ so ties are broken at random in expectation); Brier score and a reliability curv
 <p>Hyperparameters are chosen by grouped 3-fold cross-validation over training districts only. The test districts are scored once,
 at the end. The tuning score is computed <em>within</em> each country and averaged. A pooled score over a fold that mixes Tanzania
 (43%) with Kenya (9%) mostly rewards telling the countries apart, which is not the task.</p>
-<p>For uncertainty we resample <b>test districts</b> (not rows) 2,000 times. Because two regimes are scored on the same districts,
+<p>For uncertainty we resample <b>test districts</b> (not rows) 2,000 times [<a href="#ref-efron">Efron &amp; Tibshirani 1993</a>]. Because two regimes are scored on the same districts,
 we bootstrap the <em>difference</em> directly (a paired bootstrap). Checking whether two separate confidence intervals overlap is a
 much weaker test.</p>
 <p id="amendment" class="note"><b>Amendment (6 Nov).</b> The first run gave pooled logistic regression an Ethiopia ROC-AUC of 0.38, worse than
 random. Its coefficients flip sign between the pooled fit and an Ethiopia-only fit. For example, a missing install year means low risk in Kenya,
 where most such points come from one well-performing provider, but high risk in Ethiopia, where they come from the Ministry. A single
-set of coefficients cannot fit both, so the pooled model buries the local signal (a Simpson's-paradox pattern). We added regime C.
+set of coefficients cannot fit both, so the pooled model buries the local signal (a Simpson's-paradox pattern; in dataset-shift terms, the relationship between inputs and label changes between countries [<a href="#ref-moreno">Moreno-Torres et al. 2012</a>]). We added regime C.
 This diagnostic scored the test districts once, but the decision can be made on training districts alone: in-sample ROC-AUC is 0.84
 for an Ethiopia-only fit against 0.67 pooled. Test districts, features, metrics and tuning did not change.</p>
+<p id="amendment2" class="note"><b>Amendment (15 Nov).</b> A review of our own design pointed out that regime A cannot see the country, so
+it is a weak test of pooling. We added pooled models that know the country (<a href="#country-models">results</a>): country as an input
+for trees and boosting, and country × every feature for logistic regression. We also ran the planned "Uganda subsampled" ablation, which
+had been dropped for time. The reason for both is visible without any test result. Test districts, features, metrics, tuning and the
+final-model choice did not change.</p>
 </section>
 
 <!-- ============================================================ -->
@@ -150,11 +194,11 @@ for an Ethiopia-only fit against 0.67 pooled. Test districts, features, metrics 
 <tr><td>Majority class</td><td>The floor: one score for every point, so PR-AUC = no-water rate.</td><td>–</td></tr>
 <tr><td>One-rule stump</td><td>The single split with the highest information gain, the kind of rule a field office would write by hand. The baseline every model must beat.</td><td>–</td></tr>
 <tr><td>Logistic regression</td><td>Linear in log-odds and interpretable. Also implemented <a href="#concepts">from scratch</a>.</td><td>C (L2 strength)</td></tr>
-<tr><td>Decision tree (entropy)</td><td>Handles mixed feature types and interactions; readable rules.</td><td>Cost-complexity α (pruning)</td></tr>
-<tr><td>Random forest</td><td>Bagging plus random feature subsets average away the variance of deep trees.</td><td>Minimum leaf size</td></tr>
-<tr><td>XGBoost</td><td>Boosting: each tree fits the previous trees' errors, reducing bias. Regularised by depth, child weight and L2 λ.</td><td>Depth, child weight, λ</td></tr>
-<tr><td>Linear and RBF SVM</td><td>Maximum-margin classifiers; the RBF kernel tests whether a curved boundary helps. Training cost grows roughly with n², so they use a 20,000-row stratified subsample. Platt scaling converts margins to probabilities.</td><td>C, γ</td></tr>
-<tr><td>Stacked ensemble</td><td>A logistic regression on the out-of-fold log-odds of the pooled and local models, so it learns how far to trust each one and recalibrates to the local no-water rate.</td><td>–</td></tr>
+<tr><td>Decision tree (entropy)</td><td>Handles mixed feature types and interactions; readable rules [<a href="#ref-cart">Breiman et al. 1984</a>].</td><td>Cost-complexity α (pruning)</td></tr>
+<tr><td>Random forest</td><td>Bagging plus random feature subsets average away the variance of deep trees [<a href="#ref-rf">Breiman 2001</a>].</td><td>Minimum leaf size</td></tr>
+<tr><td>XGBoost</td><td>Boosting: each tree fits the previous trees' errors, reducing bias. Regularised by depth, child weight and L2 λ [<a href="#ref-xgb">Chen &amp; Guestrin 2016</a>].</td><td>Depth, child weight, λ</td></tr>
+<tr><td>Linear and RBF SVM</td><td>Maximum-margin classifiers; the RBF kernel tests whether a curved boundary helps. Training cost grows roughly with n², so they use a 20,000-row stratified subsample. Platt scaling converts margins to probabilities [<a href="#ref-platt">Platt 1999</a>].</td><td>C, γ</td></tr>
+<tr><td>Stacked ensemble</td><td>A logistic regression on the out-of-fold log-odds of the pooled and local models, so it learns how far to trust each one and recalibrates to the local no-water rate [<a href="#ref-wolpert">Wolpert 1992</a>].</td><td>–</td></tr>
 </tbody></table></div>
 <p><b>Choosing the final model without the test set.</b> For each country, every candidate (5 models × regimes A and C, plus the stack) is
 scored by 5-fold grouped CV over that country's training districts. In each fold, the held-out districts are target-country districts,
@@ -232,25 +276,63 @@ That is why the ranking metrics above are the primary ones.</p>
 </div>
 <div id="regime-text">
 <p><b>Local data beats foreign data in every country.</b> Local-only training (C) beats foreign-only training (B) for every
-model in every country, with one exception (Kenya's RBF SVM). Adding foreign data to local data (A) does not help: pooled training is close
+model in every country, with one exception (Kenya's RBF SVM). Adding foreign data to local data (A) does not help <em>when the model is not
+told the country</em>: pooled training is close
 to local-only in Uganda, which is 60% of the pooled rows anyway, far below it in Ethiopia (15% of rows), and in Tanzania it is
 even worse than foreign-only for 4 of the 7 models. A model fitted to everyone fits the largest surveys
 best, and when a feature means the opposite thing in a small country (missing install year: safe in Kenya, risky in Ethiopia), the
-small country loses. Trees can in principle learn country-specific branches, but country is not an input, so they have to discover it
-through location proxies.</p>
+small country loses. Trees can in principle learn country-specific branches, but country is not an input in regimes A–C, so they have
+to discover it through location proxies. <a href="#country-models">The next section</a> gives the pooled model the country.</p>
 <p id="regime-ci"><b>How sure are we?</b> Paired district bootstrap (2,000 resamples), over the four main tuned models (logistic regression, tree,
 random forest, XGBoost) × four countries = 16 comparisons each:</p>
 <ul>
 <li><b>C − B</b> (local only vs foreign only): positive in all 16, and the 95% interval excludes zero in 14. The two exceptions are
 logistic regression and the tree in Tanzania, which has only 16 test districts.</li>
-<li><b>A − C</b> (does adding foreign data help?): never significantly positive. Its estimate is negative in all 16 and significantly negative in 8
+<li><b>A − C</b> (does adding foreign data help a model that does not know the country?): never significantly positive. Its estimate is negative in all 16 and significantly negative in 8
 (Ethiopia's logistic regression, random forest and XGBoost; Kenya's logistic regression; all four in Tanzania).</li>
 <li><b>Against the one-rule stump:</b> every local-only model beats it significantly (16/16); pooled models 9/16; foreign-only 9/16.</li>
 </ul>
+<p><b>Correcting for multiple comparisons.</b> These are 48 intervals, so a few could exclude zero by chance. We applied a Holm
+correction over all 48 [<a href="#ref-holm">Holm 1979</a>], using z-tests with each difference's bootstrap standard error. After the
+correction, C − B stays significant in 10 of 16 comparisons, including all four models in Ethiopia, and A − C is significantly negative
+in 4 of 16. No comparison is significant in the opposite direction, so every conclusion keeps its direction. The individual C − B gaps
+that lose significance are mostly in Uganda and Tanzania, and are less certain than their raw intervals suggest
+(<code>results/holm_main.csv</code>).</p>
 <p>Use the table under the chart for every interval.</p>
 <p><b>Simpler models win on less data.</b> With local data only, grouped CV chose depth-3 XGBoost in every country (depth 6 when pooled)
 and stronger regularisation for logistic regression in Ethiopia (C = 0.01). This is the bias–variance trade-off: fewer rows, so
 a simpler hypothesis class generalises better.</p>
+</div>
+
+<h3 id="country-models">Does pooling work if the model knows the country?</h3>
+<p>Regime A gives the pooled model no way to tell countries apart, so "pooling does not help" could simply mean "a model that cannot see
+the country does not help". We tested the obvious fix (<a href="#amendment2">amendment, 15 Nov</a>):</p>
+<ul>
+<li><b>Trees, random forest, XGBoost:</b> country becomes one more input, so a tree can branch on it and learn country-specific rules.</li>
+<li><b>Logistic regression:</b> a country indicator only shifts the intercept, and an intercept cannot flip a coefficient's sign. So we
+also fitted <b>country × every feature</b>: each country gets its own coefficients, and the L2 penalty shrinks them towards shared ones,
+so a small country borrows strength from the others (partial pooling).</li>
+</ul>
+<div class="card">
+  <div class="controls" id="country-controls"></div>
+  <p class="cap">Same frozen test districts as above. Whiskers and table: paired district bootstrap, 2,000 resamples; green or red = the 95% interval excludes zero.</p>
+  <div id="country-chart"></div>
+  <div id="country-table"></div>
+</div>
+<div id="country-text">
+<ul>
+<li><b>Knowing the country helps the pooled model a lot.</b> With country as an input, the pooled tree, forest and XGBoost beat plain
+pooled training in 10 of 12 comparisons (Ethiopia's random forest: 0.19 → 0.39). Country × features does the same for logistic regression in
+Ethiopia, Kenya and Tanzania (Ethiopia: 0.11 → 0.30).</li>
+<li><b>Then pooled matches local-only, but does not beat it.</b> For the tree, forest and XGBoost, pooled-with-country minus local-only
+is between −0.025 and +0.016 PR-AUC in every country, and only one interval excludes zero (Uganda's forest, +0.007). The interaction
+logistic regression is within 0.014 of local-only in every country.</li>
+<li><b>An intercept is not enough.</b> Logistic regression with only a country indicator stays close to random in Ethiopia (0.12, against
+0.31 local-only), because the coefficients themselves have to flip between countries.</li>
+</ul>
+<p>So the corrected conclusion is: <b>what matters is labelled local data, plus a model that can treat countries differently</b>. With
+both, 134,000–140,000 extra foreign rows add nothing measurable for Ethiopia, Kenya or Tanzania, and they also do no harm. These models were
+added after the main run, so they answer the pooling question only and were <em>not</em> added to the final-model candidates below.</p>
 </div>
 
 <h3>The final model per country</h3>
@@ -396,7 +478,11 @@ feature selection. Under L2 all of them grow smoothly and none is exactly zero. 
 <ul>
 <li><b>No missing signal</b>: does the model rank points by survey provider, through which values are missing?</li>
 <li><b>No remoteness / population</b>: these features locate a point, and the country is 97.5% recoverable from them. Does the local advantage survive without them?</li>
-<li><b>+ fee payment</b>: whether users pay for water matters in the literature, but it is recorded almost only in Tanzania.</li>
+<li><b>+ fee payment</b>: across 25,000 hand pumps in Liberia, Sierra Leone and Uganda, not collecting user fees was one of the
+factors linked to non-functioning pumps, alongside age and distance from the district capital [<a href="#ref-foster">Foster 2013</a>]. In WPdx,
+payment is recorded almost only in Tanzania.</li>
+<li><b>Uganda cut to 21,000 training rows</b> (about the size of each other country): Uganda is 60% of all rows. Does it swamp the
+foreign data, and is that why foreign-only training fails?</li>
 </ul>
 <div class="card"><div class="controls" id="abl-controls"></div><div id="abl-chart"></div></div>
 <div id="abl-text">
@@ -410,6 +496,9 @@ features carry real signal there. The local-beats-foreign gap survives in every 
 <li><b>+ fee payment.</b> It helps where it is recorded (Tanzania local XGBoost 0.34 → 0.37) and helps more in Uganda (0.19 → 0.28) and pooled
 Ethiopia. Payment is missing for 64% of Ugandan and 91% of Ethiopian points, so those gains may again partly be missingness. It is a
 lead for future data collection, not a clean causal finding.</li>
+<li><b>Uganda cut to 21,000 rows.</b> For Ethiopia, Kenya and Tanzania, regimes A and B change by at most 0.03 PR-AUC, mostly within noise
+(<code>results/uganda_sub_vs_main.csv</code>), and foreign-only training still ranks Ethiopia worse than random (ROC-AUC 0.33–0.41 for the tuned
+models). So foreign-only training fails because the foreign surveys differ, not because one large country swamps them.</li>
 </ul>
 </div>
 </section>
@@ -437,8 +526,10 @@ Ethiopia's largest district (29.6% of rows) is never tested.</li>
 biggest misses are.</li>
 <li><b>Cross-sectional, not a forecast.</b> Static attributes and the label come from the same visit, so nothing here says when a
 working pump will fail.</li>
-<li><b>One added regime.</b> Regime C was added after the first run. Its reason is visible in training data alone, and nothing about the test set,
-features or tuning changed, but it was not planned in advance.</li>
+<li><b>Two amendments after the first run.</b> Regime C (6 Nov) and the country-aware pooled models (15 Nov) were not planned in advance. Both
+are disclosed with reasons that do not depend on test results, and neither changed the test set, features, tuning or final-model choice.</li>
+<li><b>Many comparisons.</b> After a Holm correction over 48 regime comparisons, 10 of 16 local-vs-foreign gaps stay significant; the direction
+of every conclusion holds, but single model-by-country gaps are less certain than their raw intervals suggest.</li>
 </ul>
 </div>
 </section>
@@ -448,9 +539,9 @@ features or tuning changed, but it was not planned in advance.</li>
 <div id="conclusion-text">
 <p>Static attributes rank rural water points by no-water risk better than a one-rule baseline in all four countries, and the
 gain is statistically clear at the district level. But <b>the skill depends on having labelled data from the same country</b>.
-A model trained on the other three countries' surveys does much worse, and ranks Ethiopia backwards. Pooling foreign data
-with local data does not fix this for small countries, because a single model fits the largest surveys and some features mean opposite things
-in different places.</p>
+A model trained on the other three countries' surveys does much worse, and ranks Ethiopia backwards. Pooling foreign data with
+local data only works if the model is told the country, because some features mean opposite things in different places; even then it
+matches local-only training rather than beating it.</p>
 <p>For a ministry, the practical message is: <b>label a sample of your own water points before trusting a model</b>. In Ethiopia,
 Kenya and Tanzania, 14,000–19,000 local labels beat a model trained on 134,000–140,000 points from elsewhere. For the method, the lessons are the ones the course stresses,
 measured here: validate on held-out <em>groups</em> when data is clustered (random CV overstated PR-AUC by 50%), compare against a
@@ -465,7 +556,7 @@ That last check matters here: Ethiopia's strongest result turned out to be mostl
 except re-sorting exported test scores for the crew slider.</p>
 <pre>python -m venv .venv &amp;&amp; .venv/Scripts/activate        # bin/activate on macOS/Linux
 pip install -r requirements.txt
-python src/download_data.py          # WPdx+ public API, no login
+python src/download_data.py          # WPdx+ public API, no login (or use the committed cleaned snapshot)
 python src/audit_data.py data/raw/wpdx_plus_4countries.csv results/audit
 python src/data.py                   # cleaning
 python src/splits.py                 # frozen test districts (already committed)
@@ -475,12 +566,37 @@ python src/run_experiments.py --variant main                 # regimes A, B, C, 
 python src/run_experiments.py --variant no_missing --models stump logreg tree xgb
 python src/run_experiments.py --variant no_remoteness --models stump logreg tree xgb
 python src/run_experiments.py --variant with_pay --models stump logreg tree xgb
+python src/run_experiments.py --variant country_x --models logreg --regimes A                 # pooled + country × features
+python src/run_experiments.py --variant country --models stump logreg tree rf xgb --regimes A # pooled + country input
+python src/run_experiments.py --variant uganda_sub --models stump logreg tree xgb --targets Ethiopia Kenya Tanzania --regimes A B
 python src/analyze.py --variant main # paired district bootstrap
+python src/compare_variants.py       # pooled + country vs local; Uganda subsampled vs main
+python src/extra_checks.py           # data checksum, Unknown rows, Holm correction, class weighting
 python src/final.py                  # CV model selection + stack, scored once on test
 python src/operating.py              # crew operating points, accuracy, random null, provider check
 python src/concepts.py               # concept experiments
 python src/export_site.py            # writes docs/data/*.json</pre>
-<p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot.</p>
+<p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot. To use exactly our data, start from the committed cleaned table <code>data/processed/wpdx_clean.parquet</code> (157,502 rows; CC BY 4.0 allows redistribution with attribution), or check a download against our raw file's SHA-256, <code>03eb8f845e51cd00f6dc518f9899dc620ac1be755a8326af89c127b683571f55</code>. Tests: 18 checks, including the leakage guards, the split rule and the country-interaction model. No credentials or personal data are used.</p>
+</section>
+
+<section id="references">
+<h2>References</h2>
+<ol class="refs">
+<li id="ref-wpdx">Water Point Data Exchange. <em>Water Point Data Exchange Plus (WPdx+)</em>, dataset <code>eqje-vguj</code>, CC BY 4.0. data.waterpointdata.org, accessed 6 November 2026.</li>
+<li id="ref-foster">T. Foster. Predictors of sustainability for community-managed handpumps in sub-Saharan Africa: evidence from Liberia, Sierra Leone, and Uganda. <em>Environmental Science &amp; Technology</em> 47(21):12037–12046, 2013. doi:10.1021/es402086n</li>
+<li id="ref-roberts">D. R. Roberts et al. Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure. <em>Ecography</em> 40(8):913–929, 2017. doi:10.1111/ecog.02881</li>
+<li id="ref-saito">T. Saito and M. Rehmsmeier. The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. <em>PLOS ONE</em> 10(3):e0118432, 2015.</li>
+<li id="ref-moreno">J. G. Moreno-Torres, T. Raeder, R. Alaiz-Rodríguez, N. V. Chawla and F. Herrera. A unifying view on dataset shift in classification. <em>Pattern Recognition</em> 45(1):521–530, 2012.</li>
+<li id="ref-cart">L. Breiman, J. Friedman, R. Olshen and C. Stone. <em>Classification and Regression Trees</em>. Wadsworth, 1984. (Cost-complexity pruning.)</li>
+<li id="ref-rf">L. Breiman. Random forests. <em>Machine Learning</em> 45(1):5–32, 2001.</li>
+<li id="ref-xgb">T. Chen and C. Guestrin. XGBoost: a scalable tree boosting system. <em>Proc. KDD</em>, 785–794, 2016.</li>
+<li id="ref-platt">J. Platt. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In <em>Advances in Large Margin Classifiers</em>, MIT Press, 1999.</li>
+<li id="ref-wolpert">D. H. Wolpert. Stacked generalization. <em>Neural Networks</em> 5(2):241–259, 1992.</li>
+<li id="ref-efron">B. Efron and R. J. Tibshirani. <em>An Introduction to the Bootstrap</em>. Chapman &amp; Hall, 1993.</li>
+<li id="ref-holm">S. Holm. A simple sequentially rejective multiple test procedure. <em>Scandinavian Journal of Statistics</em> 6(2):65–70, 1979.</li>
+<li id="ref-sklearn">F. Pedregosa et al. Scikit-learn: machine learning in Python. <em>Journal of Machine Learning Research</em> 12:2825–2830, 2011.</li>
+<li id="ref-leaflet">Software: pandas, NumPy, XGBoost and scikit-learn for modelling; Leaflet 1.9.4 (BSD-2) for the map, with tiles © OpenStreetMap contributors (ODbL). All charts are hand-written SVG; no external code was copied.</li>
+</ol>
 </section>
 </main>
 

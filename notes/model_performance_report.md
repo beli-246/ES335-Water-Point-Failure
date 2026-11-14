@@ -144,13 +144,20 @@ Test skill (0 = random) by model and training regime (A = foreign + local, B = f
 | RBF SVM | 0.06 / −0.02 / 0.16 | 0.04 / 0.02 / 0.01 | 0.11 / 0.13 / 0.25 | 0.16 / 0.08 / 0.16 |
 
 Patterns:
-- **Local data (C) wins.** It beats foreign-only (B) for every model, and pooled (A) for every tuned model, in every country,
+- **Local data (C) wins.** It beats foreign-only (B) for every model, and country-blind pooled (A) for every tuned model, in every country,
   with one exception: Kenya's RBF SVM.
 - **Foreign-only (B) is worse than random in Ethiopia for every model.**
 - **Tree ensembles (random forest, XGBoost) are the best single models** in all four countries. They capture interactions
   (for example, age matters differently for hand pumps and taps) that linear models miss.
 - **Linear models need local data.** With it they trail the best ensemble by 0.02 (Uganda) to 0.11 (Ethiopia); pooled, they
   collapse in Ethiopia (skill 0.00) because coefficients flip sign between countries.
+- **Pooled loses only because it cannot see the country (added 15 Nov, `src/compare_variants.py`).** Given country as an input,
+  the pooled tree, forest and XGBoost come within −0.025 to +0.016 PR-AUC of local-only in every country (one interval excludes zero:
+  Uganda's forest, +0.007). Logistic regression needs country × every feature: then it is within 0.014 of local-only, but with a
+  country intercept alone it stays near random in Ethiopia (0.12 vs 0.31). Foreign data neither helps nor hurts once the model can
+  separate countries.
+- **Holm correction** over the 48 regime comparisons (4 models × 3 pairs × 4 countries): C − B stays significant in 10 of 16, A − C
+  significantly negative in 4; nothing is significant in the opposite direction.
 - **SVMs never lead.** They train on a 20,000-row subsample and their inputs are mostly one-hot categories, where kernels add little.
 - **A single decision tree trails the best ensemble by 0.05–0.15 skill** (local data), the variance-reduction gain from bagging and boosting.
 

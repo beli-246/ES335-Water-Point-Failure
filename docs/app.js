@@ -11,7 +11,8 @@ const FEATURE_NAME = { water_source_clean: "Water source", water_tech_clean: "Te
   local_population: "Local population", distance_to_primary: "Distance to primary road", distance_to_secondary: "Distance to secondary road",
   distance_to_tertiary: "Distance to tertiary road", distance_to_city: "Distance to city", distance_to_town: "Distance to town",
   age: "Age (years)", is_urban: "Urban flag" };
-const VARIANT_NAME = { main: "Main", no_missing: "No missing signal", no_remoteness: "No remoteness / population", with_pay: "+ fee payment" };
+const VARIANT_NAME = { main: "Main", no_missing: "No missing signal", no_remoteness: "No remoteness / population", with_pay: "+ fee payment",
+  uganda_sub: "Uganda cut to 21,000 rows" };
 
 const $ = (s, r = document) => r.querySelector(s);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -339,6 +340,36 @@ function renderGapTable() {
     { label: "Difference in PR-AUC", num: true, get: (r) => signed(r.diff), cls: (r) => (r.diff_lo > 0 ? "pos" : r.diff_hi < 0 ? "negv" : "") },
     { label: "95% CI", num: true, get: (r) => `${signed(r.diff_lo)} to ${signed(r.diff_hi)}` },
     { label: "Districts", num: true, get: (r) => r.n_districts },
+  ], rows);
+}
+
+/* pooled models that know the country (added 15 Nov): A vs A+country vs C, same test districts */
+const COUNTRY_ROWS = [["logreg", "country", "Logistic regression, country intercept only", "LogReg, intercept only"],
+  ["logreg", "country_x", "Logistic regression, country × features", "LogReg, country × features"],
+  ["tree", "country", "Decision tree", "Tree"], ["rf", "country", "Random forest", "Random forest"], ["xgb", "country", "XGBoost", "XGBoost"]];
+function renderCountryModels() {
+  const box = $("#country-chart"); if (!box || !R.country?.length) return;
+  const ctr = $("#country-controls"); ctr.replaceChildren();
+  segmented(ctr, COUNTRIES.map((c) => [c, c]), state.country, (c) => { state.country = c; renderCountryModels(); });
+  const cmp = (m, v, other) => R.country.find((r) => r.target === state.country && r.model === m && r.variant === v && r.comparison === `A+country - ${other}`);
+  const narrow = (box.clientWidth || 600) < 560;
+  const rows = COUNTRY_ROWS.map(([m, v, long, short]) => {
+    const vsC = cmp(m, v, "C"), vsA = cmp(m, v, "A"); if (!vsC || !vsA) return null;
+    return { label: narrow ? short : long, long, vsC, vsA, A: vsA.b, A_lo: vsA.b_lo, A_hi: vsA.b_hi, X: vsC.a, X_lo: vsC.a_lo, X_hi: vsC.a_hi, C: vsC.b, C_lo: vsC.b_lo, C_hi: vsC.b_hi };
+  }).filter(Boolean);
+  box.replaceChildren();
+  const prev = rows[0]?.vsC.prevalence;
+  const series = [{ key: "A", name: "A · pooled, country unknown", color: css("--s1") }, { key: "X", name: "A + country · pooled, country known", color: css("--s4") },
+    { key: "C", name: REGIME.C, color: css("--s3") }];
+  legend(box, [...series.map((s) => ({ label: s.name, color: s.color })), { label: `random = no-water rate (${pct(prev, 1)})`, color: css("--neutral"), kind: "dash" }]);
+  dotPlot(el("div", { class: "chart" }, box), { rows, series, refs: [{ x: prev, label: "random" }], xlabel: narrow ? "Test PR-AUC · 95% CI" : "Test PR-AUC · whiskers: 95% CI", ml: narrow ? 150 : 230 });
+  const tb = $("#country-table"); tb.replaceChildren();
+  const d = (r) => `${signed(r.diff)} (${signed(r.diff_lo)} to ${signed(r.diff_hi)})`;
+  const sig = (r) => (r.diff_lo > 0 ? "pos" : r.diff_hi < 0 ? "negv" : "");
+  table(tb, [
+    { label: "Model", get: (r) => r.long },
+    { label: "Knowing the country: A+country − A", num: true, get: (r) => d(r.vsA), cls: (r) => sig(r.vsA) },
+    { label: "Pooled vs local: A+country − C", num: true, get: (r) => d(r.vsC), cls: (r) => sig(r.vsC) },
   ], rows);
 }
 
@@ -681,14 +712,14 @@ function renderAblations() {
 
 /* ---------- boot ---------- */
 function renderAll() {
-  renderHero(); renderDataTable(); renderHeadline(); renderRandom(); renderOperating(); renderAccuracy(); renderRegimes(); renderFinal();
+  renderHero(); renderDataTable(); renderHeadline(); renderRandom(); renderOperating(); renderAccuracy(); renderRegimes(); renderCountryModels(); renderFinal();
   renderProvider(); renderConcepts(); renderAblations();
   if (window.L) renderMap();
 }
 async function boot() {
   [R, C, O] = await Promise.all(["results", "concepts", "overview"].map((n) => fetch(`data/${n}.json`).then((r) => r.json())));
   renderAll();
-  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderHero(); renderHeadline(); renderRegimes(); renderFinal(); renderConcepts(); renderAblations(); if (points[state.country]) renderCrewCurve(points[state.country]); }, 200); });
+  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderHero(); renderHeadline(); renderRegimes(); renderCountryModels(); renderFinal(); renderConcepts(); renderAblations(); if (points[state.country]) renderCrewCurve(points[state.country]); }, 200); });
   const btn = $("#theme");
   btn?.addEventListener("click", () => {
     const dark = document.documentElement.getAttribute("data-theme") === "dark" || (!document.documentElement.hasAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);

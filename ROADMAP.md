@@ -34,6 +34,7 @@ when the model has never seen data from the target country?**
 | Date | Change | Reason | What did not change |
 |---|---|---|---|
 | 6 Nov | Added regime **C** (target's training districts only) and comparisons C − B and A − C | The first main run gave pooled logistic regression an Ethiopia ROC-AUC of 0.38 (worse than random). A diagnostic showed coefficients flip sign between the pooled and Ethiopia-only fits (e.g. "missing install year" means low risk in Kenya but high risk in Ethiopia), so one shared linear model buries the local signal and A − B understates the value of in-country data. The diagnostic also scored the test districts once; the decision is supported by training districts alone (in-sample ROC 0.84 Ethiopia-only vs 0.67 pooled). | Test districts, features, metrics, tuning protocol (GroupKFold on training districts) |
+| 15 Nov | Added pooled models that know the country (variant `country`: country as an input; `country_x`: logistic regression with country x every feature), the planned Uganda-subsampled ablation (`uganda_sub`, previously dropped for time), a Holm correction over the 48 regime comparisons, and a class-weighting check | Regime A cannot see the country, so "pooling does not help" was a weak test: a strict review of the design, not a test result, raised it. The Uganda ablation was in the plan. | Test districts, features, metrics, tuning, final-model candidates and choice |
 
 ## Phases
 
@@ -43,7 +44,7 @@ when the model has never seen data from the target country?**
 | 1 | 6-7 Nov | Cleaning + features + frozen splits | `src/data.py`, `src/splits.py`, `splits/test_districts.json` | done |
 | 2 | 7-8 Nov | Evaluation harness + baselines + from-scratch LR | `src/evaluate.py`, `src/lr_scratch.py`, `tests/test_core.py` (16 checks) | done |
 | 3 | 8-10 Nov | Models, tuning curves, A/B/C transfer for 4 countries | `src/models.py`, `src/run_experiments.py`, `src/final.py`, `results/` | done (7 Nov) |
-| 4 | 10-11 Nov | Ablations + analysis | no-missing-signal, no-remoteness, +pay, Uganda subsample, random-split reference; calibration; permutation importance; error analysis | done, except the Uganda-subsample ablation (dropped for time; random-split reference is in `concepts.py`) |
+| 4 | 10-11 Nov | Ablations + analysis | no-missing-signal, no-remoteness, +pay, Uganda subsample, random-split reference; calibration; permutation importance; error analysis | done (Uganda-subsample ablation added 15 Nov; random-split reference is in `concepts.py`) |
 | 5 | 11-12 Nov | Freeze results, export JSON for the site | `docs/data/*.json` | done |
 | 6 | 12-15 Nov | Website | map, crew-capacity slider, transfer toggle, error explorer, concept panels | built and browser-tested; not deployed |
 | 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | README and AI-use done; clean-clone run and deploy pending |
