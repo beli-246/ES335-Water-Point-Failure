@@ -12,9 +12,9 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="top"><div class="inner">
-  <span class="brand">Water point failure</span>
+  <a class="brand" href="#overview">Water point failure</a>
   <nav aria-label="Sections">
-    <a href="#question">Question</a><a href="#explore">Try it</a><a href="#data">Data</a><a href="#preprocessing">Preprocessing</a>
+    <a href="#overview">Overview</a><a href="#question">Question</a><a href="#explore">Try it</a><a href="#data">Data</a><a href="#preprocessing">Preprocessing</a>
     <a href="#methods">Methods</a><a href="#evaluation">Evaluation</a><a href="#results">Results</a><a href="#real">Is it real?</a>
     <a href="#errors">Errors</a><a href="#limitations">Limitations</a><a href="#conclusion">Conclusion</a><a href="#concepts">Appendix</a>
     <a href="#reproduce">Reproduce</a><a href="#references">References</a>
@@ -23,6 +23,7 @@
 </div></header>
 
 <main id="main" tabindex="-1">
+<section id="overview">
 <h1>Will this water point still work?</h1>
 <p class="lede">We rank about 157,000 rural water points in Uganda, Kenya, Tanzania and Ethiopia by their risk of having no water on the
 survey day, using only attributes that do not depend on the point's current status. Then we ask: how much of that skill is lost when
@@ -44,7 +45,7 @@ Adding foreign data helps only if the model is told the country, and even then i
 <p class="note" id="hero-note">With local data, the riskiest 10% of points flagged by the final model have 1.5–3.8 times the
 overall no-water rate. A model trained only on other countries does much worse; on Ethiopia, all seven foreign-only models score below random (ROC-AUC 0.21–0.42).
 What makes the difference is labelled data from the country itself.</p>
-<details class="card"><summary><b>Terms used on this page</b></summary>
+<details class="card"><summary><b>Terms used on this site</b></summary>
 <dl class="glossary">
 <dt>No-water rate</dt><dd>Share of points with no water on the survey day (9% in Kenya to 43% in Tanzania). A random ranking finds dry points at exactly this rate.</dd>
 <dt>PR-AUC</dt><dd>Average precision of the ranking: how pure the top of the list is, averaged over all list lengths. Random = the no-water rate; perfect = 1.</dd>
@@ -57,6 +58,7 @@ What makes the difference is labelled data from the country itself.</p>
 <dt>Calibration</dt><dd>Whether a predicted 30% risk really means 30% of such points are dry.</dd>
 </dl>
 </details>
+</section>
 
 <!-- ============================================================ -->
 <section id="question">
@@ -127,7 +129,7 @@ spread evenly: 63% come from one provider, Evidence Action, whose labelled point
 0% in Uganda), and Tanzania has none. Even in the extreme case where every Unknown point was working, the no-water rate would fall by at
 most 0.4 percentage points (Uganda; 0.1–0.3 in Ethiopia and Kenya), so dropping them is very unlikely to change the conclusions.</li>
 <li><b>Spatial clustering.</b> District identity alone predicts the label (AUC 0.65–0.76), so neighbouring points are not independent.
-This decides the split below.</li>
+This decides how we split the data (<a href="#evaluation">evaluation design</a>).</li>
 </ul>
 </section>
 
@@ -173,7 +175,7 @@ can see that a value was absent.</li>
 <p><b>Choosing the final model without the test set.</b> For each country, every candidate (5 models × <a href="#evaluation">regimes</a> A and C, plus the stack) is
 scored by 5-fold grouped CV over that country's training districts. In each fold, the held-out districts are target-country districts,
 which is exactly what the test measures. The best CV score becomes the final model. All candidates are then scored on the test
-districts, and the table shows them all, but the test scores did not choose anything (<code>src/final.py</code>).</p>
+districts, and the <a href="#final-model">results table</a> shows them all, but the test scores did not choose anything (<code>src/final.py</code>).</p>
 </section>
 
 <!-- ============================================================ -->
@@ -181,7 +183,7 @@ districts, and the table shows them all, but the test scores did not choose anyt
 <h2>Evaluation design</h2>
 <h3>Test set: whole districts, frozen before any model was trained</h3>
 <p>Random row splits put a pump's neighbours in training and the pump in test, so the model is graded on places it has
-effectively seen [<a href="#ref-roberts">Roberts et al. 2017</a>]. Our concept experiment below measures the effect: on Uganda, random 3-fold CV says PR-AUC 0.43, but
+effectively seen [<a href="#ref-roberts">Roberts et al. 2017</a>]. Our concept experiment (<a href="#cvopt-chart">appendix</a>) measures the effect: on Uganda, random 3-fold CV says PR-AUC 0.43, but
 holding out whole districts says 0.28. So, per country, we hold out whole districts (district = region + district name,
 because the same district name occurs in two regions) covering about 20% of rows. Among 5,000 seeded random
 draws, we pick the one whose no-water rate is closest to the country's, which is a stratified group split. Districts with more than 15% of a
@@ -365,7 +367,7 @@ both, 134,000–140,000 extra foreign rows add nothing measurable for Ethiopia, 
 added after the main run, so they answer the pooling question only and were <em>not</em> added to the final-model candidates below.</p>
 </div>
 
-<h3>The final model per country</h3>
+<h3 id="final-model">The final model per country</h3>
 <div class="card">
   <div class="controls" id="final-controls"></div>
   <p class="cap">Sorted by cross-validation score; the highlighted row was chosen. Test columns were computed afterwards.</p>
@@ -535,7 +537,7 @@ That last check matters here: Ethiopia's strongest result turned out to be mostl
 <!-- ============================================================ -->
 <section id="concepts">
 <h2>Appendix: course concepts, shown on our data</h2>
-<p>This appendix supports the method choices above. Each panel is a course concept, measured on Uganda's <em>training</em> districts: models are fitted on some training districts and
+<p>This appendix supports the <a href="#methods">method choices</a>. Each panel is a course concept, measured on Uganda's <em>training</em> districts: models are fitted on some training districts and
 scored on other, held-out training districts. The frozen test districts are never touched.</p>
 
 <h3>Logistic regression from scratch: first-order vs second-order optimisation</h3>
@@ -578,7 +580,7 @@ feature selection. Under L2 all of them grow smoothly and none is exactly zero. 
 <!-- ============================================================ -->
 <section id="reproduce">
 <h2>Reproduce</h2>
-<p>Python 3.12. Every number on this page is written by the scripts below into <code>docs/data/</code>; the page computes nothing
+<p>Python 3.12. Every number on this site is written by the scripts below into <code>docs/data/</code>; the page computes nothing
 except re-sorting exported test scores for the crew slider. A full run from a clean clone took about 15 hours on a 16-thread laptop,
 12 of them for the main experiment. That run (15 November) matched our committed metrics; the only difference was the unseeded L1 path
 in the appendix, which is now seeded.</p>

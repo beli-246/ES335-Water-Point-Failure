@@ -597,6 +597,9 @@ const errState = { by: "water_tech_clean" };
 function renderErrors(P, order, flagged) {
   const box = $("#err-table"); if (!box) return;
   const ctr = $("#err-controls"); ctr.replaceChildren();
+  // the country, model and crew size are chosen on the Try it page; say which ones this page shows
+  const cur = el("span", { class: "note", text: `Showing ${state.country} · ${mapState.model === "score" ? "final model" : "foreign-only model"} · crew inspects the top ${Math.round(mapState.k * 100)}% (` }, ctr);
+  el("a", { href: "#explore", text: "change in Try it" }, cur); cur.appendChild(document.createTextNode(")"));
   const lab = el("label", { text: "Break errors down by " }, ctr);
   const sel = el("select", {}, lab);
   for (const [v, l] of [["water_tech_clean", "Technology"], ["water_source_clean", "Water source"], ["management_clean", "Management"], ["age", "Age band"], ["district", "District"]])
@@ -747,10 +750,64 @@ function renderAll() {
   renderProvider(); renderConcepts(); renderAblations();
   if (window.L) renderMap();
 }
+// charts whose layout depends on their container's width (tables do not)
+function renderSized() {
+  if (!R) return;
+  renderHero(); renderHeadline(); renderRegimes(); renderCountryModels(); renderFinal(); renderConcepts(); renderAblations();
+  if (points[state.country]) renderCrewCurve(points[state.country]);
+}
+
+/* ---------- one section per page ----------
+   Every section stays in the HTML (so it reads and prints fine without JavaScript); with JavaScript on, only the
+   section named in the address bar is shown. Links to anything inside a section (#provider, #ref-foster, ...) open
+   that section and scroll to the target, and the back button works because pages are just URL fragments. */
+const PAGES = [...document.querySelectorAll("main > section")];
+const NAV = [...document.querySelectorAll("header.top nav a")];
+const pageTitle = (s) => NAV.find((a) => a.getAttribute("href") === `#${s.id}`)?.textContent || s.querySelector("h1, h2")?.textContent || s.id;
+let currentPage = null;
+function buildPagers() {
+  PAGES.forEach((s, i) => {
+    const nav = el("nav", { class: "pager", "aria-label": "Previous and next section" }, s);
+    const prev = PAGES[i - 1], next = PAGES[i + 1];
+    if (prev) el("a", { href: `#${prev.id}`, class: "prev", text: `← ${pageTitle(prev)}` }, nav); else el("span", {}, nav);
+    if (next) el("a", { href: `#${next.id}`, class: "next", text: `${pageTitle(next)} →` }, nav);
+  });
+}
+function showPage(hash, { focus = true } = {}) {
+  const id = decodeURIComponent((hash || "").replace(/^#/, ""));
+  if (id === "main") { $("#main").focus(); return; }           // skip link: stay on the current page
+  const target = id ? document.getElementById(id) : null;
+  const page = (target && (target.matches("main > section") ? target : target.closest("main > section"))) || PAGES[0];
+  const changed = page !== currentPage;
+  currentPage = page;
+  PAGES.forEach((s) => s.classList.toggle("current", s === page));
+  for (const a of NAV) {
+    if (a.getAttribute("href") === `#${page.id}`) {
+      a.setAttribute("aria-current", "page");
+      const n = a.parentElement;                                 // keep the active link visible in the phone menu strip
+      if (n.scrollWidth > n.clientWidth) n.scrollTo({ left: a.offsetLeft - (n.clientWidth - a.offsetWidth) / 2 });
+    } else a.removeAttribute("aria-current");
+  }
+  document.title = page.id === "overview" ? "Will This Water Point Still Work?" : `${pageTitle(page)} · Will This Water Point Still Work?`;
+  if (changed) {
+    renderSized();                                               // hidden charts were drawn at a fallback width
+    if (page.id === "explore" && map) { map.invalidateSize(); drawMap(true); }
+  }
+  if (target && target !== page) target.scrollIntoView();
+  else window.scrollTo(0, 0);
+  if (focus && changed) { const hd = page.querySelector("h1, h2"); hd.setAttribute("tabindex", "-1"); hd.focus({ preventScroll: true }); }
+}
+document.body.classList.add("paged");
+buildPagers();
+showPage(location.hash, { focus: false });
+window.addEventListener("hashchange", () => showPage(location.hash));
+// clicking the link of the page you are on: back to its top
+NAV.forEach((a) => a.addEventListener("click", () => { if (a.getAttribute("href") === location.hash) window.scrollTo(0, 0); }));
+
 async function boot() {
   [R, C, O] = await Promise.all(["results", "concepts", "overview"].map((n) => fetch(`data/${n}.json`).then((r) => r.json())));
   renderAll();
-  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderHero(); renderHeadline(); renderRegimes(); renderCountryModels(); renderFinal(); renderConcepts(); renderAblations(); if (points[state.country]) renderCrewCurve(points[state.country]); }, 200); });
+  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(renderSized, 200); });
   const btn = $("#theme");
   btn?.addEventListener("click", () => {
     const dark = document.documentElement.getAttribute("data-theme") === "dark" || (!document.documentElement.hasAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);

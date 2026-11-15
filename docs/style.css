@@ -59,6 +59,20 @@ main:focus { outline: none; }
 html { scroll-padding-top: 56px; }   /* menu jumps land below the sticky header */
 @media (min-width: 900px) { html { scroll-padding-top: 76px; } }
 .tile .caveat { color: var(--ink-2); margin-top: 4px; }
+
+/* one section per page (JavaScript adds body.paged; without it the page is one long document) */
+body.paged main > section { display: none; padding-top: 8px; }
+body.paged main > section.current { display: block; }
+body.paged main > section > h2 { border-top: 0; padding-top: 24px; }
+header.top a.brand { color: var(--ink); text-decoration: none; }
+header.top nav a { padding: 4px 0; }
+header.top nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--s1);
+  text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); }
+.pager a { padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); text-decoration: none; }
+.pager a:hover { border-color: var(--s1); }
+.pager .next { margin-left: auto; text-align: right; }
+@media print { body.paged main > section { display: block; } .pager { display: none; } }
 header.top nav a { color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 header.top nav a:hover { color: var(--ink); }
 #theme { background: none; border: 1px solid var(--border); color: var(--ink-2); border-radius: 6px; padding: 2px 8px; cursor: pointer; font: inherit; font-size: 13px; }
