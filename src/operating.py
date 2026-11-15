@@ -8,6 +8,8 @@ model input). Writes small committed CSVs that src/export_site.py puts on the si
   results/final_provider.csv    per survey provider: rows, no-water rate, share of the flagged top 20%, within-provider ROC
   results/final_district_agreement.csv  correlation of predicted vs observed no-water rate across test districts with
                                 at least 20 points (the same filter as the site's error table)
+  results/final_headline.csv    skill of the final model, best foreign-only model and local stump, with district-bootstrap
+                                intervals computed per resample (the site's headline chart)
 Usage: python src/operating.py
 """
 import numpy as np
@@ -39,6 +41,32 @@ def lift_at(y, s, f=0.10):
 def skill(y, s):
     p = y.mean()
     return (ap(y, s) - p) / (1 - p)
+
+
+def headline(rng):
+    """Skill of the final model, the best foreign-only model and the local one-rule stump, with 95% district-bootstrap
+    intervals. Skill is computed INSIDE each resample, with that resample's own no-water rate, so the interval reflects
+    ranking skill rather than variation in the base rate across resampled districts."""
+    rows = []
+    for c in COUNTRIES:
+        d = pd.read_parquet(RESULTS / "cache" / f"final_{c}.parquet")
+        p = pd.read_parquet(RESULTS / "cache" / f"preds_main_{c}.parquet", columns=["wpdx_id", "stump__C"])
+        assert (p.wpdx_id.to_numpy() == d.wpdx_id.to_numpy()).all()
+        y, g = d.y.to_numpy().astype(int), d.district.to_numpy()
+        S = {"final": d.score.to_numpy(), "best_B": d.score_best_B.to_numpy(), "stump": p.stump__C.to_numpy()}
+        idx = [np.flatnonzero(g == k) for k in np.unique(g)]
+        boot = []
+        for _ in range(N_BOOT):
+            ii = np.concatenate([idx[j] for j in rng.integers(0, len(idx), len(idx))])
+            if y[ii].min() != y[ii].max():
+                boot.append({k: skill(y[ii], s[ii]) for k, s in S.items()})
+        b = pd.DataFrame(boot)
+        row = {"target": c, "n_boot": len(b)}
+        for k, s in S.items():
+            row[k] = skill(y, s)
+            row[f"{k}_lo"], row[f"{k}_hi"] = np.percentile(b[k], [2.5, 97.5])
+        rows.append(row)
+    return rows
 
 
 def main():
@@ -82,7 +110,8 @@ def main():
                          "within_roc": auc(g.y, g.score) if g.y.nunique() == 2 and len(g) >= 100 else np.nan,
                          "model_roc": auc(y, s), "provider_only_roc": upper})
 
-    for name, rows in [("operating", op), ("accuracy", acc), ("random", rnd), ("provider", prov), ("district_agreement", dist)]:
+    hl = headline(np.random.default_rng(1))  # own generator, so the outputs above do not depend on this step
+    for name, rows in [("operating", op), ("accuracy", acc), ("random", rnd), ("provider", prov), ("district_agreement", dist), ("headline", hl)]:
         df = pd.DataFrame(rows); df.to_csv(RESULTS / f"final_{name}.csv", index=False)
         print(f"\n== final_{name}.csv"); print(df.round(3).to_string(index=False))
 

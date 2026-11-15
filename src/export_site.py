@@ -39,7 +39,7 @@ def main():
                "final_cv": records(read("final_cv.csv")), "final_test": records(read("final_test.csv")),
                "importance": records(read("final_importance.csv")), "reliability": records(read("final_reliability.csv")),
                "operating": records(read("final_operating.csv")), "accuracy": records(read("final_accuracy.csv")),
-               "random": records(read("final_random.csv"))}
+               "random": records(read("final_random.csv")), "headline": records(read("final_headline.csv"))}
     results["country"] = records(read("country_vs_local.csv"))      # pooled + country vs local / pooled
     results["uganda_sub"] = records(read("uganda_sub_vs_main.csv"))
     results["holm"] = records(read("holm_main.csv"))

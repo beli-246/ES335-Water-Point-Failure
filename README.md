@@ -45,7 +45,7 @@ python src/analyze.py --variant main                  # paired district bootstra
 python src/compare_variants.py     # bootstrap: pooled+country vs local; Uganda-subsampled vs main
 python src/extra_checks.py         # data checksum, Unknown rows, Holm correction, class-weighting check
 python src/final.py                # final model per country: chosen by grouped CV on local districts, then one test score
-python src/operating.py            # crew operating points, accuracy, random null, survey-provider check
+python src/operating.py            # crew operating points, accuracy, random null, survey-provider check, headline intervals
 python src/concepts.py             # concept figures (pruning, CV optimism, boosting, SVM grid, L1/L2 path)
 python src/export_site.py          # writes docs/data/*.json for the website
 ```
@@ -71,7 +71,7 @@ WPdx+ is CC BY 4.0, which permits redistributing the cleaned snapshot with attri
 | `src/evaluate.py` | Metrics, tie-aware precision@N, within-country tuning scorer, paired district bootstrap |
 | `src/run_experiments.py`, `src/analyze.py` | Transfer experiment (regimes A/B/C) and statistics |
 | `src/final.py` | Final model selection by grouped CV, stacked ensemble, calibration, permutation importance |
-| `src/operating.py` | Crew operating points, accuracy, better-than-random null, survey-provider check |
+| `src/operating.py` | Crew operating points, accuracy, better-than-random null, survey-provider check, headline skill intervals |
 | `src/compare_variants.py` | Pooled + country vs local-only; Uganda-subsampled ablation |
 | `src/extra_checks.py` | Data checksum, dropped Unknown rows, Holm correction, class-weighting check |
 | `src/performance_report.py` | Text report behind `notes/model_performance_report.md` |

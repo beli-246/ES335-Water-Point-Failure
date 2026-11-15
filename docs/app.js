@@ -279,6 +279,10 @@ function renderHero() {
   for (const [label, value, sub] of tiles) {
     const d = el("div", { class: "tile" }, box);
     el("div", { class: "label", text: `${label}: no water among the top 10% flagged` }, d); el("div", { class: "value", text: value }, d); el("div", { class: "sub", text: sub }, d);
+    if (label === "Ethiopia") {  // the caveat travels with the number
+      const w = el("div", { class: "sub caveat", text: "Mostly separates survey programs, not pumps: " }, d);
+      el("a", { href: "#provider", text: "provider check" }, w);
+    }
   }
 }
 
@@ -378,10 +382,12 @@ function renderHeadline() {
   const rows = COUNTRIES.filter((c) => R.final_choice?.[c]).map((c) => {
     const ch = R.final_choice[c], t = R.final_test.find((r) => r.target === c && r.chosen), p = t.prevalence;
     const vb = ch.vs_best_B, vs = ch.vs_local_stump;
-    const k = (v) => skill(v, p);
-    return { label: c, F: k(vb.a), F_lo: k(vb.a_lo), F_hi: k(vb.a_hi), B: k(vb.b), B_lo: k(vb.b_lo), B_hi: k(vb.b_hi), S: k(vs.b), S_lo: k(vs.b_lo), S_hi: k(vs.b_hi), prev: p,
-      chosen: candName(ch.chosen), bname: MODEL_NAME[ch.best_B_model] };
-  });
+    // skill and its interval computed inside each district resample (results/final_headline.csv)
+    const h = (R.headline || []).find((r) => r.target === c);
+    if (!h) return null;
+    return { label: c, F: h.final, F_lo: h.final_lo, F_hi: h.final_hi, B: h.best_B, B_lo: h.best_B_lo, B_hi: h.best_B_hi,
+      S: h.stump, S_lo: h.stump_lo, S_hi: h.stump_hi, prev: p, chosen: candName(ch.chosen), bname: MODEL_NAME[ch.best_B_model], vb, vs };
+  }).filter(Boolean);
   if (!rows.length) { box.textContent = "Final-model results not exported yet."; return; }
   const series = [{ key: "F", name: "Final model (chosen by CV, uses local data)", color: css("--s1") }, { key: "B", name: "Best foreign-only model (B)", color: css("--s2") },
     { key: "S", name: "One-rule stump (local)", color: css("--s3") }];
@@ -390,6 +396,15 @@ function renderHeadline() {
     xlabel: "PR-AUC skill (0 = random, 1 = perfect) · 95% CI",
     tipfmt: f3, ml: 90, rowH: 40, extraTip: (r, s) => [{ value: s.key === "F" ? r.chosen : s.key === "B" ? r.bname : "One-rule stump", label: "" },
       { value: f2((s.key === "F" ? r.F : s.key === "B" ? r.B : r.S) * (1 - r.prev) / r.prev + 1) + "×", label: "lift over random" }] });
+  const tb = $("#headline-diff"); if (!tb) return; tb.replaceChildren();
+  const d = (x) => `${signed(x.diff)} (${signed(x.diff_lo)} to ${signed(x.diff_hi)})`;
+  const sig = (x) => (x.diff_lo > 0 ? "pos" : x.diff_hi < 0 ? "negv" : "");
+  table(tb, [
+    { label: "Country", get: (r) => r.label },
+    { label: "Final model", get: (r) => r.chosen },
+    { label: "Final − one-rule stump", num: true, get: (r) => d(r.vs), cls: (r) => sig(r.vs) },
+    { label: "Final − best foreign-only", num: true, get: (r) => d(r.vb), cls: (r) => sig(r.vb) },
+  ], rows);
 }
 
 function renderRandom() {
@@ -553,12 +568,12 @@ function drawMap(fit) {
   layer.addTo(map);
   if (fit) map.fitBounds(L.latLngBounds(P.lat.map((a, i) => [a, P.lon[i]])), { padding: [10, 10] });
   const lg = $("#map-legend"); lg.replaceChildren();
-  legend(lg, [{ label: "Flagged and broken (found)", color: col.found }, { label: "Broken but not flagged (missed)", color: col.missed },
+  legend(lg, [{ label: "Flagged, no water (found)", color: col.found }, { label: "No water, not flagged (missed)", color: col.missed },
     { label: "Flagged but working (wasted trip)", color: col.alarm }, { label: "Not flagged, working", color: col.ok }]);
   const ro = $("#map-readout"); ro.replaceChildren();
   const randomFound = (k * totalBroken) / n;
-  for (const [v, l] of [[fmtInt(k), `points inspected of ${fmtInt(n)}`], [fmtInt(found), `broken points found (${pct(found / totalBroken)} of all ${fmtInt(totalBroken)})`],
-    [pct(found / k, 1), "of trips find a broken point"], [`${f2(found / randomFound)}×`, `vs random inspection (${fmtInt(randomFound)} found)`]]) {
+  for (const [v, l] of [[fmtInt(k), `points inspected of ${fmtInt(n)}`], [fmtInt(found), `dry points found (${pct(found / totalBroken)} of all ${fmtInt(totalBroken)})`],
+    [pct(found / k, 1), "of trips find no water"], [`${f2(found / randomFound)}×`, `vs random inspection (${fmtInt(randomFound)} found)`]]) {
     const d = el("div", {}, ro); el("b", { text: v }, d); d.appendChild(document.createTextNode(l));
   }
   renderCrewCurve(P); renderErrors(P, order, flagged);
@@ -571,7 +586,7 @@ function renderCrewCurve(P) {
   lineChart(box, { h: 240, series: [
     { name: "Final model", color: css("--s1"), pts: fin }, { name: "Foreign-only model", color: css("--s2"), pts: curve("score_b") },
     { name: "Random inspection (expected)", color: css("--neutral"), dash: true, pts: fin.map((q) => ({ x: q.x, y: q.x })) }],
-    xmin: 0, xmax: 1, ymin: 0, ymax: 1, xlabel: "Share of points inspected, riskiest first", ylabel: "Broken points found",
+    xmin: 0, xmax: 1, ymin: 0, ymax: 1, xlabel: "Share of points inspected, riskiest first", ylabel: "Dry points found",
     xfmt: (v) => pct(v), yfmt: (v) => pct(v), tipfmt: (v) => pct(v, 1), xtipfmt: (v) => `inspect top ${pct(v)}`, refs: [] });
   const leg = $("#crew-legend"); leg.replaceChildren();
   legend(leg, [{ label: "Final model", color: css("--s1"), kind: "line" }, { label: "Foreign-only model", color: css("--s2"), kind: "line" }, { label: "Random inspection", color: css("--neutral"), kind: "dash" }]);
