@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import average_precision_score as ap, roc_auc_score as auc
 
-from config import COUNTRIES, RAW_CSV, RESULTS
+from config import COUNTRIES, RAW_CSV, RESULTS, require_raw
 from evaluate import precision_at_k
 
 FRACS = [0.05, 0.10, 0.20, 0.30, 0.50]
@@ -71,6 +71,7 @@ def headline(rng):
 
 def main():
     rng = np.random.default_rng(0)
+    require_raw()
     raw = pd.read_csv(RAW_CSV, usecols=["wpdx_id", "source"])
     op, acc, rnd, prov, dist = [], [], [], [], []
     for c in COUNTRIES:

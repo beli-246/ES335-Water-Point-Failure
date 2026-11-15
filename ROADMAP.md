@@ -42,12 +42,12 @@ when the model has never seen data from the target country?**
 |---|---|---|---|---|
 | 0 | 6 Nov | Data audit | `results/audit/data_audit.md` | done |
 | 1 | 6-7 Nov | Cleaning + features + frozen splits | `src/data.py`, `src/splits.py`, `splits/test_districts.json` | done |
-| 2 | 7-8 Nov | Evaluation harness + baselines + from-scratch LR | `src/evaluate.py`, `src/lr_scratch.py`, `tests/test_core.py` (16 checks) | done |
+| 2 | 7-8 Nov | Evaluation harness + baselines + from-scratch LR | `src/evaluate.py`, `src/lr_scratch.py`, `tests/test_core.py` (18 checks) | done |
 | 3 | 8-10 Nov | Models, tuning curves, A/B/C transfer for 4 countries | `src/models.py`, `src/run_experiments.py`, `src/final.py`, `results/` | done (7 Nov) |
 | 4 | 10-11 Nov | Ablations + analysis | no-missing-signal, no-remoteness, +pay, Uganda subsample, random-split reference; calibration; permutation importance; error analysis | done (Uganda-subsample ablation added 15 Nov; random-split reference is in `concepts.py`) |
 | 5 | 11-12 Nov | Freeze results, export JSON for the site | `docs/data/*.json` | done |
-| 6 | 12-15 Nov | Website | map, crew-capacity slider, transfer toggle, error explorer, concept panels | built and browser-tested; not deployed |
-| 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | README and AI-use done; clean-clone run and deploy pending |
+| 6 | 12-15 Nov | Website | map, crew-capacity slider, transfer toggle, error explorer, concept panels | built, browser-tested and deployed |
+| 7 | 15-16 Nov | README, clean-clone reproduction, AI-use disclosure, deploy, viva notes | | done: clean-clone run on 15 Nov (about 15 hours) matched the committed metrics; site live |
 | 8 | 17 Nov | Buffer + submit links | | |
 
 ## Algorithms and the concept each one demonstrates

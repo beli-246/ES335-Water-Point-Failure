@@ -6,3 +6,5 @@ xgboost==3.4.1
 matplotlib==3.11.2
 pyarrow==26.0.1
 requests==2.34.2
+# src/extra_checks.py imports scipy directly. It is installed with scikit-learn; its version was not recorded in our runs.
+scipy
