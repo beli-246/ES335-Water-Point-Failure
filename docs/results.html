@@ -1,0 +1,67 @@
+---
+title: Results
+nav_order: 7
+seq: 7
+has_children: true
+---
+
+<h1>Results</h1>
+<div id="results-text">
+<p>In every country, the final model ranks water points better than the one-rule baseline and better than the best
+model that never saw the country, with 95% district-bootstrap intervals that exclude zero for both comparisons. The size of the
+gain varies a lot:</p>
+<ul>
+<li>Ethiopia: test PR-AUC 0.41 vs a 10.6% no-water rate (3.8× random). The best foreign-only model scores 0.08, <em>worse than random</em>.
+Caveat: most of this skill comes from telling survey programs apart (<a href="results-provider.html#provider">see the provider check</a>).</li>
+<li>Tanzania: 0.58 vs 43.4% (skill 0.26). Of the top 10% flagged, 67% had no water.</li>
+<li>Uganda: 0.34 vs 17.3% (1.9×).</li>
+<li>Kenya: 0.19 vs 8.7% (2.2×), the weakest skill (0.11). Kenya's failures are rare and spread thin.</li>
+</ul>
+<p>The gains are moderate. With only static attributes and one survey day per point, much of what decides whether a
+pump works on a given day (rainfall, groundwater, spare parts, a committee that collects fees) is not in the data.</p>
+</div>
+<div class="card">
+  <h4>Final model vs a model that never saw the country</h4>
+  <p class="cap">Skill on the frozen test districts (0 = random ranking, 1 = perfect; comparable across countries with different no-water rates). The final model was chosen by cross-validation on local training districts, before the test districts were scored. Skill = (PR-AUC − no-water rate) ÷ (1 − no-water rate); whiskers are 95% district-bootstrap intervals. Hover a dot for the model name and its lift.</p>
+  <div id="headline-chart"></div>
+</div>
+
+<h2>How much better than random?</h2>
+<div class="card">
+  <p class="cap">Lift = no-water rate among the riskiest 10% ÷ the overall rate (1× = random). Its ceiling is 1 ÷ the rate, so compare countries by skill. Intervals: 2,000 resamples of test districts. Last column: we shuffled each test set 10,000 times; 999 in 1,000 random orderings stay below this lift.</p>
+  <div id="random-table"></div>
+</div>
+<div id="random-text">
+<p>Every interval stays above random, and every model is far beyond what chance produces: the best of 10,000 random orderings
+reached a top-10% lift of only 1.17–1.63×. Tanzania's lift looks smallest only because 43% of its points are dry, so even a perfect model
+could reach just 2.3×; on skill, Tanzania is second. But see <a href="results-provider.html#provider">the survey-provider check</a> before reading
+Ethiopia's 3.8× as knowledge about pumps.</p>
+</div>
+
+<h2>What a crew would get</h2>
+<div class="card">
+  <div class="controls" id="op-controls"></div>
+  <p class="cap">The crew inspects the riskiest share of this country's test points. "Found" counts dry points found; random inspection and the best foreign-only model are shown for comparison.</p>
+  <div id="op-table"></div>
+</div>
+<div id="op-text">
+<p>For example, in Uganda a crew visiting the riskiest 10% (1,943 points) finds 733 dry points, against 336 for random visits and
+456 with the foreign-only model. It still misses 78% of the dry points, because most of them do not look risky from static attributes.
+In Kenya, only 1 in 5 of those trips finds a dry point: better than the 1 in 11 of random visits, but most trips still find water.</p>
+</div>
+
+<h2>Why we do not report accuracy</h2>
+<div class="card">
+  <p class="cap">Accuracy of a yes/no "no water" call. "Best possible" picks the threshold with hindsight on the test set, so it is an upper bound: a deployed model would have to fix its threshold in advance.</p>
+  <div id="acc-table"></div>
+</div>
+<div id="acc-text">
+<p>Apart from Tanzania, no threshold beats the trivial rule "every point works" by more than 1 point. In Ethiopia and Kenya the calibrated
+model gives almost no point a risk above 50% (Ethiopia's highest is 48%), so the 50% rule flags almost nothing and its accuracy equals
+the majority rate. In Uganda the 50% rule gains 0.8 points (83.6% against 82.7%), and even the best threshold, chosen with hindsight, adds
+at most 0.8 points in any of these three countries. Only in Tanzania, where 43% of points are dry, does the model clearly beat it
+(63.5% at 50%, 64.9% at best, against 56.6%).</p>
+<p>This is expected. When dry points are rare and even the riskiest points are below 50% likely to be dry,
+the accuracy-maximising answer is "working" for almost everyone. A crew needs an <em>order</em> of visits, and the ranking metrics
+above measure that.</p>
+</div>

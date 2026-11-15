@@ -1,0 +1,33 @@
+---
+title: Data
+nav_order: 3
+seq: 3
+---
+
+<h1>Data</h1>
+<p><a href="https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj">Water Point Data Exchange Plus (WPdx+)</a>,
+CC BY 4.0, downloaded 6 November 2026 [<a href="references.html#ref-wpdx">WPdx</a>]. One row per water point at its latest survey.</p>
+<p class="note" id="cleaning-steps"></p>
+<div class="card"><div id="data-table"></div></div>
+<h2>What a full-column audit found before any modelling</h2>
+<p>We profiled every one of the 74 columns before training a model. Script: <code>src/audit_data.py</code>; report:
+<code>results/audit/data_audit.md</code>.</p>
+<ul>
+<li>Several columns leak the label. <code>water_point_history</code> separates working from broken
+points with AUC 0.99, the raw <code>status</code> text 0.96, and <code>status_clean</code> is the label in other words. All are excluded.
+So are the dates and survey IDs: <code>source</code> alone scores 0.85 in Ethiopia because different surveys found very
+different failure rates.</li>
+<li>Missing values are not random. In Kenya, half the rows come from one provider whose points are 95% missing an install year
+and only 1.6% broken. In Ethiopia, the Ministry's rows are 100% missing a year and 38% broken. "Year is missing" therefore predicts
+the label (AUC 0.67 in Kenya, 0.63 in Ethiopia), but what it predicts is <em>who did the survey</em>. We keep
+the missing-value flags in the main models and remove them in an ablation.</li>
+<li>The country is recoverable from the features. A boosted-tree classifier names the country from our input features alone with
+97.5% accuracy (majority baseline 60%). So "transfer to an unseen country" is really transfer to an unseen <em>survey</em>, and
+we word every conclusion that way.</li>
+<li>3,397 rows (2.1%) have status "Unknown" and are dropped, because they have no label. They are not
+spread evenly: 63% come from one provider, Evidence Action, whose labelled points are almost all working (1.6% no water in Kenya,
+0% in Uganda), and Tanzania has none. Even in the extreme case where every Unknown point was working, the no-water rate would fall by at
+most 0.4 percentage points (Uganda; 0.1–0.3 in Ethiopia and Kenya), so dropping them cannot change the conclusions.</li>
+<li>Points cluster in space. District identity alone predicts the label (AUC 0.65–0.76), so neighbouring points are not independent.
+This decides the test split described under <a href="evaluation.html">Evaluation design</a>.</li>
+</ul>

@@ -1,0 +1,59 @@
+---
+title: Explore and errors
+nav_order: 8
+seq: 11
+leaflet: true
+---
+
+<h1>Explore: plan a crew's inspections</h1>
+<p>Pick a country and how many points a crew can visit. The map shows which test points the model would send the crew to, and what
+the survey found there. Switch to the foreign-only model to see what a ministry would get from a model trained only on other countries.</p>
+<div class="card">
+  <div class="controls" id="map-controls"></div>
+  <div class="readout" id="map-readout"></div>
+  <div id="map" role="region" aria-label="Map of test water points"></div>
+  <div id="map-legend"></div>
+</div>
+<div class="card">
+  <h4>Broken points found vs effort</h4>
+  <p class="cap">Gain curve on this country's test districts. The gap above the dashed line is what the ranking buys over random inspection.</p>
+  <div id="crew-legend"></div>
+  <div class="chart" id="crew-chart"></div>
+</div>
+
+<section id="errors">
+<h2>Where the model is wrong</h2>
+<p>Error analysis for the country and crew size chosen above. A group where mean predicted risk is far from the observed rate is
+a group the model systematically misreads.</p>
+<div class="card"><div class="controls" id="err-controls"></div><div id="err-table"></div></div>
+<div class="card">
+  <h4>The most confident mistakes</h4>
+  <p class="cap">The four working points the model ranked riskiest and the four dry points it ranked safest, for the country and model chosen above.</p>
+  <div id="err-examples"></div>
+  <p class="note">The pattern is the same in every country. Confident false alarms are mostly hand pumps with no or missing management, or
+  pumps decades old: the profile that is usually risky. Confident misses are mostly points with a missing technology record, or brand-new
+  taps and rainwater systems: the profile that is usually safe. Static attributes cannot tell these cases apart. A new tap can still
+  run dry, and an old hand pump can still work.</p>
+</div>
+<div id="errors-text">
+<p>Most of the remaining error sits at the level of whole districts. Averaged per test district (districts with at least 20 test points, as in
+the table above), predicted and observed no-water rates agree well in Ethiopia (correlation 0.88) and Kenya (0.83), moderately in Tanzania (0.69,
+from only 11 districts, so it moves a lot with which districts are included) and poorly in Uganda (0.25). The biggest misses are whole districts:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Where</th><th class="num">No water, observed</th><th class="num">Predicted (mean)</th></tr></thead>
+<tbody>
+<tr><td>Siti, Somali region, Ethiopia</td><td class="num">49%</td><td class="num">23%</td></tr>
+<tr><td>Nogob, Somali region, Ethiopia</td><td class="num">56%</td><td class="num">34%</td></tr>
+<tr><td>Kajiado South, Kenya</td><td class="num">2%</td><td class="num">20%</td></tr>
+<tr><td>Kitgum, Uganda</td><td class="num">37%</td><td class="num">22%</td></tr>
+<tr><td>Maswa, Tanzania</td><td class="num">24%</td><td class="num">43%</td></tr>
+<tr><td>Points with missing management, Ethiopia (1,050)</td><td class="num">34%</td><td class="num">17%</td></tr>
+</tbody></table></div>
+<p>Siti and Nogob are arid lowlands, where seasonal drying is one plausible reason; rainfall and groundwater are not in WPdx. The model
+flags Kajiado South as risky, but its points work. Missing management tracks the data provider, and providers differ between training and
+test districts.</p>
+<p>This is the same spatial correlation that makes random CV optimistic: districts differ in ways the features cannot see. A
+district-level effect (for example, a hierarchical model) would need labelled points from the same district, and a new
+district has none.</p>
+</div>
+</section>

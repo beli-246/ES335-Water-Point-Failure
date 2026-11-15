@@ -1,0 +1,19 @@
+---
+title: Conclusion
+nav_order: 12
+seq: 15
+---
+
+<h1>Conclusion</h1>
+<div id="conclusion-text">
+<p>Static attributes rank rural water points by no-water risk better than a one-rule baseline in all four countries, and the
+gain is statistically clear at the district level. But the skill depends on having labelled data from the same country.
+A model trained on the other three countries' surveys does much worse, and ranks Ethiopia backwards. Pooling foreign data with
+local data only works if the model is told the country, because some features mean opposite things in different places; even then it
+only matches local-only training.</p>
+<p>A ministry should label a sample of its own water points before trusting a model. In Ethiopia,
+Kenya and Tanzania, 14,000–19,000 local labels beat a model trained on 134,000–140,000 points from elsewhere. For the method, the lessons are the ones the course stresses,
+measured here: validate on held-out <em>groups</em> when data is clustered (random CV overstated PR-AUC by 50%), compare against a
+baseline with a paired test, choose models without looking at the test set, and check which "signal" is really the data-collection process.
+That last check matters here: Ethiopia's strongest result turned out to be mostly a survey-program effect.</p>
+</div>

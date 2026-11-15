@@ -1,0 +1,33 @@
+---
+title: Limitations
+nav_order: 11
+seq: 14
+---
+
+<h1>Limitations</h1>
+<div id="limitations-text">
+<ul>
+<li>The label is one survey day. "No water" mixes broken pumps, seasonally dry sources and differences in survey practice. We
+predict what a survey would find, not mechanical failure.</li>
+<li>Country and survey are confounded. The country is 97.5% recoverable from the features, and each country's data comes from a few providers
+and years (73% of Uganda's rows were reported in a single year). "Transfer to a new country" here means transfer to a new survey and era;
+we cannot separate the two.</li>
+<li>Missingness is informative and provider-driven (missing not at random). It helps the models in Ethiopia and Uganda, and it would not help in a
+place surveyed differently. The ablation measures how much it contributes.</li>
+<li>Ethiopia's headline is mostly survey program. Within each high-failure program the model ranks at ROC-AUC 0.51–0.62, and
+knowing only the provider gives ROC-AUC 0.83, close to the model's 0.87 (<a href="results-provider.html#provider">provider check</a>). Its 3.8× lift should not be read as
+pump-level knowledge.</li>
+<li>Accuracy barely beats "every point works" except in Tanzania (by under 1 point elsewhere). The models can order visits, but their
+yes/no calls are no better than assuming every point works.</li>
+<li>Some countries have few test districts (Tanzania 16, Ethiopia 33), so intervals are wide and one district can move a result.
+Ethiopia's largest district (29.3% of rows) is never tested.</li>
+<li>There are no environmental features. Rainfall, groundwater depth and conflict are absent; the error analysis shows this is where the
+biggest misses are.</li>
+<li>Static attributes and the label come from the same visit, so nothing here says when a
+working pump will fail. This is a cross-sectional ranking, not a forecast.</li>
+<li>We made two amendments after the first run. Regime C (6 Nov) and the country-aware pooled models (15 Nov) were not planned in advance. Both
+are disclosed with reasons that do not depend on test results, and neither changed the test set, features, tuning or final-model choice.</li>
+<li>We made many comparisons. After a Holm correction over 48 regime comparisons, 10 of 16 local-vs-foreign gaps stay significant; the direction
+of every conclusion holds, but single model-by-country gaps are less certain than their raw intervals suggest.</li>
+</ul>
+</div>

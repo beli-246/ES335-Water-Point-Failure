@@ -1,0 +1,45 @@
+---
+title: Concepts
+nav_order: 9
+seq: 12
+---
+
+<h1>Concepts, shown on our data</h1>
+<p>Each panel below is a course concept, measured on Uganda's <em>training</em> districts: models are fitted on some training districts and
+scored on other, held-out training districts. The frozen test districts are never touched.</p>
+
+<h2>Logistic regression from scratch: first-order vs second-order optimisation</h2>
+<p>We minimise the L2-regularised cross-entropy
+<code>J(w,b) = −(1/n) Σ [y log p + (1−y) log(1−p)] + (λ/2)‖w‖²</code>, with gradient <code>(1/n) Xᵀ(p − y) + λw</code>.
+Gradient descent uses only the slope. Newton's method (IRLS) also uses the curvature, through the Hessian
+<code>(1/n) Xᵀ diag(p(1−p)) X + λI</code>, and jumps straight to the bottom of the bowl. The loss is convex, so there is one optimum, the same one scikit-learn finds by solving the
+problem with <code>C = 1/(nλ)</code>. Newton reaches it in 5 steps; gradient descent is still slightly short after 3,000 (largest coefficient gap 0.03),
+though its predictions are almost identical.</p>
+<div class="grid2">
+  <div class="card"><h4>Training loss by iteration</h4><div class="chart" id="lr-chart"></div><div class="legend"><span><i class="line" style="background:var(--s2)"></i>Gradient descent</span><span><i class="line" style="background:var(--s1)"></i>Newton / IRLS</span></div></div>
+  <div class="card"><h4>Agreement with scikit-learn</h4><div id="lr-table"></div><p class="note" id="lr-diff"></p></div>
+</div>
+
+<h2>Regularisation: L1 selects, L2 shrinks</h2>
+<p>Weakening the penalty (moving right) lets coefficients grow. Under L1 they enter one at a time from exactly zero, which is
+feature selection. Under L2 all of them grow smoothly and none is exactly zero. The three largest coefficients are coloured.</p>
+<div class="grid2">
+  <div class="card"><h4>L1 path</h4><div id="reg-l1"></div></div>
+  <div class="card"><h4>L2 path</h4><div id="reg-l2"></div></div>
+</div>
+
+<h2>Bias–variance: pruning a decision tree</h2>
+<div class="grid2">
+  <div class="card"><h4>Cost-complexity pruning</h4><p class="cap">An unpruned tree memorises training districts (training PR-AUC 1.0) but scores only 0.18 on held-out districts. Moderate pruning lifts that to 0.25 (α = 0.0003); too much pruning makes the tree too simple and it falls back to 0.18. Variance on the left, bias on the right.</p><div class="legend"><span><i class="line" style="background:var(--s2)"></i>Training districts</span><span><i class="line" style="background:var(--s1)"></i>Held-out districts</span></div><div class="chart" id="prune-chart"></div></div>
+  <div class="card"><h4>Validation that ignores geography is optimistic</h4><p class="cap">The same random forest, evaluated three ways. Out-of-bag and random K-fold both test on neighbours of training points; only district-grouped CV tests on new places.</p><div class="chart" id="cvopt-chart"></div></div>
+</div>
+
+<h2>Boosting overfits with rounds and depth; the RBF SVM trades margin against kernel width</h2>
+<div class="grid2">
+  <div class="card"><h4>XGBoost, learning rate 0.05</h4><p class="cap">Training PR-AUC keeps climbing. For deep trees, held-out PR-AUC peaks early (round 32 at depth 6, round 69 at depth 12) and then falls, while depth-2 trees keep improving slowly for over 1,000 rounds; deeper trees widen the train–held-out gap. That is why depth, child weight and λ are tuned.</p><div id="boost-chart"></div></div>
+  <div class="card"><h4>RBF SVM: C × γ on 15,000 points</h4><p class="cap">Large γ makes each point's kernel narrow (wiggly boundary, high variance); small C gives a softer margin (more bias). The best cell is bold.</p><div class="chart" id="svm-chart"></div></div>
+</div>
+
+<h2>Tuning curves from the main experiment</h2>
+<div class="card"><div class="controls" id="tune-controls"></div><div id="tune-chart"></div>
+<p class="note">Mean grouped-CV score over training districts for every grid value. Score = PR-AUC normalised by the no-water rate, averaged over the countries in the fold.</p></div>

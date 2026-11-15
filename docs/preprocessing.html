@@ -1,0 +1,26 @@
+---
+title: Preprocessing
+nav_order: 4
+seq: 4
+---
+
+<h1>Preprocessing</h1>
+<p>Every transform lives inside a scikit-learn <code>Pipeline</code> and is fitted on the training folds only, so no statistic
+from validation or test points leaks into training (<code>src/features.py</code>).</p>
+<ul>
+<li>Distances and population are heavy-tailed (a few points are 100+ km from a road), so they get <code>log1p</code>. This
+matters for linear models and SVMs, whose loss is dominated by extreme values; trees split on order and do not care.</li>
+<li>Only logistic regression and the SVMs get scaled inputs (z-scores): the regularisation penalty and the RBF kernel distance both
+assume features on comparable scales.</li>
+<li>Categoricals are one-hot encoded. Levels with fewer than 30 training rows are merged into "infrequent". A level first seen at
+test time goes into that group when it exists, and otherwise gets all-zero columns. Why 30: at Kenya's 9% no-water rate, a level with 30 points has about 3 dry ones,
+so its coefficient or split would be fitted to two or three examples, which is pure variance.</li>
+<li>Class imbalance (9–43% no water) is not reweighted. Our metrics judge the <em>order</em> of points, and class weights
+mainly shift predicted probabilities. We checked this with 5-fold grouped CV on each country's training districts: balanced weights
+for logistic regression and <code>scale_pos_weight</code> for XGBoost changed CV PR-AUC by at most 0.014, well inside the fold-to-fold
+spread of 0.03–0.11 (<code>src/extra_checks.py</code>).</li>
+<li>Missing numbers get the median plus a 0/1 "was missing" column, and missing categories get a "missing" level. The
+<em>no-missing-signal</em> ablation imputes without any flag, so no model can see that a value was absent. That includes XGBoost,
+which would otherwise learn from NaN.</li>
+<li>Install year is set to missing when before 1950 or after the survey year (365 values). WPdx's own duplicate flag removes 1.1% of rows.</li>
+</ul>

@@ -1,0 +1,33 @@
+---
+title: Final model
+parent: Results
+nav_order: 2
+seq: 9
+---
+
+<h1>The final model per country</h1>
+<div class="card">
+  <div class="controls" id="final-controls"></div>
+  <p class="cap">Sorted by cross-validation score; the highlighted row was chosen. Test columns were computed afterwards.</p>
+  <div id="final-table"></div>
+  <p class="note" id="stack-weights"></p>
+</div>
+<div class="grid2">
+  <div class="card"><h4>Calibration</h4><p class="cap">When the model says 30%, are 30% of those points broken? The dashed diagonal is perfect calibration. Platt scaling is a one-feature logistic regression fitted on the model's out-of-fold predictions (training districts only). It is monotone, so the ranking and PR-AUC do not change; only the probabilities do.</p><div id="calib-chart"></div></div>
+  <div class="card"><h4>Which inputs matter (permutation importance)</h4><p class="cap">Shuffle one column across test points, re-run the full pipeline, measure the PR-AUC lost. A categorical counts once, however many dummy columns it has.</p><div id="imp-chart"></div></div>
+</div>
+<div id="final-text">
+<p>CV chose local random forest in Ethiopia, local logistic regression in Tanzania, and the stacked ensemble in Kenya and Uganda.
+In Tanzania, CV preferred logistic regression (0.657) over local XGBoost (0.644). On the test districts XGBoost turned out better (skill 0.34 vs 0.26),
+but the CV gap was far inside its own noise (±0.09). We report the CV choice anyway: picking the test winner would turn the test set into a
+validation set and make every reported number optimistic.</p>
+<p>The stack's weights lean on the local models (local random forest +0.78 in Ethiopia, +0.80 in Uganda). Some weights are
+negative (local random forest −0.41 in Tanzania). That does not mean "this model is harmful": the base models are highly correlated, so
+the stacker uses differences between them. Stack weights are not feature importances.</p>
+<p>Platt scaling fitted on out-of-fold predictions learned slopes of 0.84–1.08. A slope of 1 means "already
+calibrated", so it changed little. It slightly helped Tanzania (Brier 0.234 → 0.232) and slightly hurt Ethiopia (0.078 → 0.080). Calibration
+learned on training districts does not fully carry over to new districts; Tanzania's bins miss by about 8 points on average.
+We kept the rule we had fixed before seeing test results.</p>
+<p>Permutation importance differs by country, which is more evidence against one model for every country. Technology, management, water source and age matter in Ethiopia. Age dominates in Tanzania, where the audit had already found it
+was the strongest single feature. Local population matters most in Uganda, partly through its 17.5% missingness (see ablations). Water source matters most in Kenya.</p>
+</div>

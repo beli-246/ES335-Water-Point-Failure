@@ -1,0 +1,73 @@
+---
+title: Local vs foreign data
+parent: Results
+nav_order: 1
+seq: 8
+---
+
+<h1>A vs B vs C: what local data is worth</h1>
+<div class="card">
+  <div class="controls" id="regime-controls"></div>
+  <div id="regime-chart"></div>
+  <details><summary>Paired bootstrap of the regime differences (table)</summary><div id="gap-table"></div></details>
+</div>
+<div id="regime-text">
+<p>Local data beats foreign data in every country. Local-only training (C) beats foreign-only training (B) for every
+model in every country, with one exception (Kenya's RBF SVM). Adding foreign data to local data (A) does not help <em>when the model is not
+told the country</em>: pooled training is close
+to local-only in Uganda, which is 55% of its pooled training rows anyway, far below it in Ethiopia (12% of its pooled rows), and in Tanzania it is
+even worse than foreign-only for 4 of the 7 models. A model fitted to everyone fits the largest surveys
+best, and when a feature means the opposite thing in a small country (missing install year: safe in Kenya, risky in Ethiopia), the
+small country loses. Trees can in principle learn country-specific branches, but country is not an input in regimes A–C, so they have
+to discover it through location proxies. <a href="#country-models">The next section</a> gives the pooled model the country.</p>
+<p id="regime-ci">To see how sure we are, we ran a paired district bootstrap (2,000 resamples) over the four main tuned models (logistic regression, tree,
+random forest, XGBoost) × four countries = 16 comparisons each:</p>
+<ul>
+<li>C − B (local only vs foreign only) is positive in all 16, and the 95% interval excludes zero in 14. The two exceptions are
+logistic regression and the tree in Tanzania, which has only 16 test districts.</li>
+<li>A − C asks whether adding foreign data helps a model that does not know the country. It is never significantly positive. Its estimate is negative in all 16 and significantly negative in 8
+(Ethiopia's logistic regression, random forest and XGBoost; Kenya's logistic regression; all four in Tanzania).</li>
+<li>Every local-only model beats the one-rule stump significantly (16/16); pooled models do in 9/16, and foreign-only models in 9/16.</li>
+</ul>
+<p>These are 48 intervals, so a few could exclude zero by chance. We applied a Holm
+correction over all 48 [<a href="references.html#ref-holm">Holm 1979</a>], using z-tests with each difference's bootstrap standard error. After the
+correction, C − B stays significant in 10 of 16 comparisons, including all four models in Ethiopia, and A − C is significantly negative
+in 4 of 16. No comparison is significant in the opposite direction, so every conclusion keeps its direction. The four C − B gaps
+that lose significance (Uganda's logistic regression, tree and random forest, and Kenya's logistic regression) are less certain than their raw intervals suggest
+(<code>results/holm_main.csv</code>).</p>
+<p>Use the table under the chart for every interval.</p>
+<p>Simpler models win on less data. With local data only, grouped CV chose depth-3 XGBoost in every country (depth 6 when pooled)
+and stronger regularisation for logistic regression in Ethiopia (C = 0.01). This is the bias–variance trade-off: fewer rows, so
+a simpler hypothesis class generalises better.</p>
+</div>
+
+<h2 id="country-models">Does pooling work if the model knows the country?</h2>
+<p>Regime A gives the pooled model no way to tell countries apart, so "pooling does not help" could just mean "a model that cannot see
+the country does not help". We tested the direct fix (<a href="evaluation.html#amendment2">amendment, 15 Nov</a>):</p>
+<ul>
+<li>For trees, random forest and XGBoost, country becomes one more input, so a tree can branch on it and learn country-specific rules.</li>
+<li>For logistic regression, a country indicator only shifts the intercept, and an intercept cannot flip a coefficient's sign. So we
+also fitted country × every feature: each country gets its own coefficients, and the L2 penalty shrinks them towards shared ones,
+so a small country borrows strength from the others (partial pooling).</li>
+</ul>
+<div class="card">
+  <div class="controls" id="country-controls"></div>
+  <p class="cap">Same frozen test districts as above. Whiskers and table: paired district bootstrap, 2,000 resamples; green or red = the 95% interval excludes zero.</p>
+  <div id="country-chart"></div>
+  <div id="country-table"></div>
+</div>
+<div id="country-text">
+<ul>
+<li>Knowing the country helps the pooled model a lot. With country as an input, the pooled tree, forest and XGBoost beat plain
+pooled training in all 12 comparisons, significantly in 10 (Ethiopia's random forest: 0.19 → 0.39). Country × features does the same for logistic regression in
+Ethiopia, Kenya and Tanzania (Ethiopia: 0.10 → 0.30).</li>
+<li>Then pooled matches local-only, but does not beat it. For the tree, forest and XGBoost, pooled-with-country minus local-only
+is between −0.025 and +0.016 PR-AUC in every country, and only one interval excludes zero (Uganda's forest, +0.007). The interaction
+logistic regression is within 0.014 of local-only in every country.</li>
+<li>An intercept is not enough. Logistic regression with only a country indicator stays close to random in Ethiopia (0.12, against
+0.31 local-only), because the coefficients themselves have to flip between countries.</li>
+</ul>
+<p>The corrected conclusion: what matters is labelled local data, plus a model that can treat countries differently. With
+both, 134,000–140,000 extra foreign rows add nothing measurable for Ethiopia, Kenya or Tanzania, and they also do no harm. These models were
+added after the main run, so they answer the pooling question only and were <em>not</em> added to the <a href="results-final.html">final-model candidates</a>.</p>
+</div>

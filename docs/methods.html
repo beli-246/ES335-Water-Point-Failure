@@ -1,0 +1,24 @@
+---
+title: Baselines and methods
+nav_order: 6
+seq: 6
+---
+
+<h1>Baselines and methods</h1>
+<div class="tablewrap"><table>
+<thead><tr><th>Model</th><th>Why it fits this problem</th><th>What we tune</th></tr></thead>
+<tbody>
+<tr><td>Majority class</td><td>The floor: one score for every point, so PR-AUC = no-water rate.</td><td>–</td></tr>
+<tr><td>One-rule stump</td><td>The single split with the highest information gain, the kind of rule a field office would write by hand. The baseline every model must beat.</td><td>–</td></tr>
+<tr><td>Logistic regression</td><td>Linear in log-odds and interpretable. Also implemented <a href="concepts.html">from scratch</a>.</td><td>C (L2 strength)</td></tr>
+<tr><td>Decision tree (entropy)</td><td>Handles mixed feature types and interactions; readable rules [<a href="references.html#ref-cart">Breiman et al. 1984</a>].</td><td>Cost-complexity α (pruning)</td></tr>
+<tr><td>Random forest</td><td>Bagging plus random feature subsets average away the variance of deep trees [<a href="references.html#ref-rf">Breiman 2001</a>].</td><td>Minimum leaf size</td></tr>
+<tr><td>XGBoost</td><td>Boosting: each tree fits the previous trees' errors, reducing bias. Regularised by depth, child weight and L2 λ [<a href="references.html#ref-xgb">Chen &amp; Guestrin 2016</a>].</td><td>Depth, child weight, λ</td></tr>
+<tr><td>Linear and RBF SVM</td><td>Maximum-margin classifiers; the RBF kernel tests whether a curved boundary helps. Training cost grows roughly with n², so they use a 20,000-row stratified subsample. Platt scaling converts margins to probabilities [<a href="references.html#ref-platt">Platt 1999</a>].</td><td>C, γ</td></tr>
+<tr><td>Stacked ensemble</td><td>A logistic regression on the out-of-fold log-odds of the pooled and local models, so it learns how far to trust each one and recalibrates to the local no-water rate [<a href="references.html#ref-wolpert">Wolpert 1992</a>].</td><td>–</td></tr>
+</tbody></table></div>
+<h2>Choosing the final model without the test set</h2>
+<p>For each country, every candidate (5 models × regimes A and C, plus the stack) is
+scored by 5-fold grouped CV over that country's training districts. In each fold, the held-out districts are target-country districts,
+which is exactly what the test measures. The best CV score becomes the final model. All candidates are then scored on the test
+districts, and the table shows them all, but the test scores did not choose anything (<code>src/final.py</code>).</p>

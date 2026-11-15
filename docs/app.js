@@ -1,6 +1,8 @@
 /* Site logic. Every number comes from data/*.json, written by src/export_site.py. Charts are hand-rolled SVG. */
 "use strict";
 
+// data/ sits next to this script, whichever page loads it.
+const DATA = new URL("data/", document.currentScript.src).href;
 const COUNTRIES = ["Ethiopia", "Kenya", "Tanzania", "Uganda"];
 const MODEL_ORDER = ["majority", "stump", "logreg", "tree", "rf", "xgb", "svm_linear", "svm_rbf"];
 const MODEL_NAME = { majority: "Majority class", stump: "One-rule stump", logreg: "Logistic regression", tree: "Decision tree",
@@ -260,7 +262,7 @@ const state = { country: "Uganda" };
 let R, C, O;
 const points = {};
 async function loadPoints(c) {
-  if (!points[c]) points[c] = await fetch(`data/points_${c}.json`).then((r) => (r.ok ? r.json() : null));
+  if (!points[c]) points[c] = await fetch(`${DATA}points_${c}.json`).then((r) => (r.ok ? r.json() : null));
   return points[c];
 }
 const metricRows = (variant) => R.metrics.filter((m) => m.variant === variant);
@@ -727,22 +729,36 @@ function renderAblations() {
 }
 
 /* ---------- boot ---------- */
+// The site has several pages; each one holds only some of the sections, so a section renders only if its container is on
+// this page. Keys are the container each render function draws into.
+const SECTIONS = [["#hero-tiles", renderHero], ["#data-table", renderDataTable], ["#headline-chart", renderHeadline],
+  ["#random-table", renderRandom], ["#op-table", renderOperating], ["#acc-table", renderAccuracy], ["#regime-chart", renderRegimes],
+  ["#country-chart", renderCountryModels], ["#final-table", renderFinal], ["#prov-table", renderProvider], ["#lr-chart", renderConcepts],
+  ["#abl-chart", renderAblations]];
+const RESIZE = [renderHero, renderHeadline, renderRegimes, renderCountryModels, renderFinal, renderConcepts, renderAblations];
 function renderAll() {
-  renderHero(); renderDataTable(); renderHeadline(); renderRandom(); renderOperating(); renderAccuracy(); renderRegimes(); renderCountryModels(); renderFinal();
-  renderProvider(); renderConcepts(); renderAblations();
-  if (window.L) renderMap();
+  for (const [sel, fn] of SECTIONS) if ($(sel)) fn();
+  if (window.L && $("#map")) renderMap();
 }
 async function boot() {
-  [R, C, O] = await Promise.all(["results", "concepts", "overview"].map((n) => fetch(`data/${n}.json`).then((r) => r.json())));
+  [R, C, O] = await Promise.all(["results", "concepts", "overview"].map((n) => fetch(`${DATA}${n}.json`).then((r) => r.json())));
   renderAll();
-  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderHero(); renderHeadline(); renderRegimes(); renderCountryModels(); renderFinal(); renderConcepts(); renderAblations(); if (points[state.country]) renderCrewCurve(points[state.country]); }, 200); });
+  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => {
+    for (const [sel, fn] of SECTIONS) if (RESIZE.includes(fn) && $(sel)) fn();
+    if ($("#crew-chart") && points[state.country]) renderCrewCurve(points[state.country]);
+  }, 200); });
   const btn = $("#theme");
   btn?.addEventListener("click", () => {
     const dark = document.documentElement.getAttribute("data-theme") === "dark" || (!document.documentElement.hasAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+    setTheme(dark ? "light" : "dark");
     try { localStorage.setItem("theme", dark ? "light" : "dark"); } catch (e) { /* storage unavailable */ }
     renderAll();
   });
+}
+// Chart colours follow data-theme; the Just the Docs stylesheet is swapped by its own jtd.setTheme.
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  if (window.jtd && jtd.setTheme) jtd.setTheme(theme === "dark" ? "dark" : "default");
 }
 try { const t = localStorage.getItem("theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) { /* storage unavailable */ }
 boot();

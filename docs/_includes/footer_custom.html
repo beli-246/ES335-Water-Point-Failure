@@ -1,0 +1,20 @@
+{%- comment -%} Previous / next links follow the reading order set by each page's `seq` front matter. {%- endcomment -%}
+{%- assign seq_pages = site.html_pages | where_exp: "p", "p.seq" | sort: "seq" -%}
+{%- assign idx = -1 -%}
+{%- for p in seq_pages -%}{%- if p.url == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+{%- if idx >= 0 %}
+<nav class="pager" aria-label="Previous and next page">
+  {%- if idx > 0 -%}{%- assign pi = idx | minus: 1 -%}{%- assign prev_page = seq_pages[pi] %}
+  <a class="prev" href="{{ prev_page.url | relative_url }}">← {{ prev_page.title }}</a>
+  {%- endif -%}
+  {%- assign ni = idx | plus: 1 -%}{%- if ni < seq_pages.size -%}{%- assign next_page = seq_pages[ni] %}
+  <a class="next" href="{{ next_page.url | relative_url }}">{{ next_page.title }} →</a>
+  {%- endif %}
+</nav>
+{%- endif %}
+<div class="site-credits text-small">
+<p>Data: Water Point Data Exchange Plus (WPdx+), CC BY 4.0. Credit to WPdx and its data providers. Map tiles © OpenStreetMap contributors.</p>
+<p>AI use: we used Claude (Anthropic) as a coding and writing assistant for scripts, the data audit, and this site, and to review the
+evaluation design. We checked its outputs ourselves (for example, the from-scratch logistic regression is verified against scikit-learn),
+and we are responsible for every result and claim.</p>
+</div>

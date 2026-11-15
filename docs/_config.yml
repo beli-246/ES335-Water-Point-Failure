@@ -1,0 +1,48 @@
+# Site settings. GitHub Pages builds docs/ with Jekyll and the Just the Docs theme (https://just-the-docs.com).
+# Preview locally: cd docs && bundle install && bundle exec jekyll serve, then open http://localhost:4000/ES335-Water-Point-Failure/
+title: Water point failure
+description: >-
+  Ranking rural water points in Uganda, Kenya, Tanzania and Ethiopia by the risk of no water, and measuring what is lost
+  when a model has never seen the country. ES 335, IIT Gandhinagar.
+url: "https://beli-246.github.io"
+baseurl: "/ES335-Water-Point-Failure"
+
+remote_theme: just-the-docs/just-the-docs@v0.12.0
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+heading_anchors: true
+enable_copy_code_button: true
+back_to_top: true
+back_to_top_text: "Back to top"
+
+aux_links:
+  "Code on GitHub":
+    - "https://github.com/beli-246/ES335-Water-Point-Failure"
+aux_links_new_tab: true
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .jekyll-cache
+  - .sass-cache

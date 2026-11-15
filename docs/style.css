@@ -1,13 +1,16 @@
+/* Site components on top of the Just the Docs theme (layout, sidebar, typography and search come from the theme).
+   Colours follow the data-theme attribute that _includes/head_custom.html sets before the page paints, and match
+   Just the Docs' light and dark palettes. The four series colours encode data (regimes A, B, C) and stay fixed. */
 :root {
   color-scheme: light;
-  --page: #f9f9f7;
-  --surface: #fcfcfb;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #898781;
-  --grid: #e1e0d9;
-  --axis: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.10);
+  --page: #ffffff;
+  --surface: #ffffff;
+  --ink: #27262b;
+  --ink-2: #5c5962;
+  --muted: #959396;
+  --grid: #eeebee;
+  --axis: #d5d4d8;
+  --border: #eeebee;
   --s1: #2a78d6; /* regime A / final model */
   --s2: #eb6834; /* regime B / foreign-only */
   --s3: #1baf7a; /* regime C / local-only */
@@ -15,74 +18,45 @@
   --neutral: #898781;
   --seq-lo: #cde2fb;
   --seq-hi: #0d366b;
-  --accent-wash: rgba(42, 120, 214, 0.10);
+  --accent-wash: rgba(114, 83, 237, 0.10);
   --good: #006300;
   --bad: #d03b3b;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
-    --grid: #2c2c2a; --axis: #383835; --border: rgba(255, 255, 255, 0.10);
-    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --seq-lo: #184f95; --seq-hi: #cde2fb;
-    --accent-wash: rgba(57, 135, 229, 0.14); --good: #0ca30c; --bad: #e66767;
-  }
-}
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
-  --grid: #2c2c2a; --axis: #383835; --border: rgba(255, 255, 255, 0.10);
+  --page: #27262b; --surface: #302d36; --ink: #f5f6fa; --ink-2: #e6e1e8; --muted: #959396;
+  --grid: #44434d; --axis: #5c5962; --border: #44434d;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --seq-lo: #184f95; --seq-hi: #cde2fb;
-  --accent-wash: rgba(57, 135, 229, 0.14); --good: #0ca30c; --bad: #e66767;
+  --accent-wash: rgba(44, 132, 250, 0.16); --good: #0ca30c; --bad: #e66767;
 }
 
-* { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0; background: var(--page); color: var(--ink);
-  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
-}
-a { color: var(--s1); }
-code { font-size: 0.9em; background: var(--accent-wash); padding: 0 4px; border-radius: 4px; }
-pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: 13px; }
+.lede { font-size: 1.15rem; color: var(--ink-2); }
+.byline { color: var(--muted); font-size: 0.875rem; }
+.note { color: var(--ink-2); font-size: 0.875rem; }
 
-header.top { position: sticky; top: 0; z-index: 1000; background: var(--page); border-bottom: 1px solid var(--border); }
-header.top .inner { max-width: 1080px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 16px; align-items: center; }
-header.top .brand { font-weight: 600; white-space: nowrap; }
-header.top nav { display: flex; gap: 14px; overflow-x: auto; font-size: 14px; flex: 1; scrollbar-width: none; }
-header.top nav a { color: var(--ink-2); text-decoration: none; white-space: nowrap; }
-header.top nav a:hover { color: var(--ink); }
-#theme { background: none; border: 1px solid var(--border); color: var(--ink-2); border-radius: 6px; padding: 2px 8px; cursor: pointer; font: inherit; font-size: 13px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 24px 0; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+/* Just the Docs also has a .label (badge) class; reset it inside tiles */
+.tile .label { display: block; margin: 0; padding: 0; background: none; border-radius: 0; text-transform: none; letter-spacing: 0;
+  font-size: 0.8rem; font-weight: 400; color: var(--ink-2); vertical-align: baseline; }
+.tile .value { font-size: 1.8rem; font-weight: 600; line-height: 1.2; color: var(--ink); }
+.tile .sub { font-size: 0.8rem; color: var(--muted); }
 
-main { max-width: 1080px; margin: 0 auto; padding: 0 16px 64px; }
-section { padding-top: 40px; }
-h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 40px 0 8px; }
-h2 { font-size: 24px; margin: 0 0 8px; border-top: 1px solid var(--border); padding-top: 32px; }
-h3 { font-size: 18px; margin: 28px 0 6px; }
-.lede { font-size: 19px; color: var(--ink-2); max-width: 760px; }
-.byline { color: var(--muted); font-size: 14px; }
-p, li { max-width: 760px; }
-.note { color: var(--ink-2); font-size: 14px; }
-
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0; }
-.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-.tile .label { font-size: 13px; color: var(--ink-2); }
-.tile .value { font-size: 30px; font-weight: 600; line-height: 1.2; }
-.tile .sub { font-size: 13px; color: var(--muted); }
-
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0; }
-.card h4 { margin: 0 0 2px; font-size: 15px; }
-.card .cap { font-size: 13px; color: var(--ink-2); margin: 0 0 8px; }
-.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; }
+.card h4 { margin: 0 0 2px; font-size: 0.95rem; text-transform: none; letter-spacing: 0; color: var(--ink); }
+.card .cap { font-size: 0.8rem; color: var(--ink-2); margin: 0 0 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
 .grid2 .card { margin: 0; }
+.summary { border-left: 3px solid var(--s1); }
+.summary ul { margin: 8px 0 0; }
 
-.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 8px 0 12px; font-size: 14px; }
-.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 8px 0 12px; font-size: 0.875rem; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
 .seg button { background: none; border: 0; padding: 4px 12px; font: inherit; color: var(--ink-2); cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--border); }
 .seg button[aria-pressed="true"] { background: var(--accent-wash); color: var(--ink); font-weight: 600; }
-select, input[type="range"] { font: inherit; accent-color: var(--s1); }
-select { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; }
+.controls select, .controls input[type="range"] { font: inherit; accent-color: var(--s1); }
+.controls select { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; }
 
 .chart { width: 100%; position: relative; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -90,7 +64,7 @@ select { background: var(--surface); color: var(--ink); border: 1px solid var(--
 .chart .axis-title { fill: var(--ink-2); font-size: 12px; }
 .chart .grid line { stroke: var(--grid); stroke-width: 1; }
 .chart .baseline { stroke: var(--axis); stroke-width: 1; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--ink-2); margin: 4px 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--ink-2); margin: 4px 0; }
 .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 .legend i.line { height: 2px; border-radius: 1px; vertical-align: 3px; width: 14px; }
 .legend i.dash { height: 0; border-top: 2px dashed; background: none !important; vertical-align: 3px; width: 14px; }
@@ -101,38 +75,43 @@ select { background: var(--surface); color: var(--ink); border: 1px solid var(--
 .tip .row { display: flex; align-items: center; gap: 6px; }
 .tip .row b { font-variant-numeric: tabular-nums; }
 .tip .k { display: inline-block; width: 12px; height: 2px; }
-.tip .t { color: var(--ink-2); font-size: 12px; margin-bottom: 2px; }
 
-table { border-collapse: collapse; width: 100%; font-size: 14px; }
-th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-th { color: var(--ink-2); font-weight: 600; font-size: 13px; }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+/* tables: the theme styles them; these add numeric alignment and the highlight states used by the charts' tables */
 .tablewrap { overflow-x: auto; }
-tr.chosen td { background: var(--accent-wash); font-weight: 600; }
+.main-content td.num, .main-content th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.main-content tr.chosen td { background: var(--accent-wash); font-weight: 600; }
+.main-content td, .main-content th { min-width: 0; }
 .pos { color: var(--good); }
 .negv { color: var(--bad); }
 
 #map { height: 460px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
 .readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 10px 0; }
-.readout div { background: var(--page); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px; color: var(--ink-2); }
-.readout b { display: block; font-size: 20px; color: var(--ink); }
+.readout div { background: var(--page); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; color: var(--ink-2); }
+.readout b { display: block; font-size: 1.25rem; color: var(--ink); }
 
 details { margin: 8px 0; }
-details summary { cursor: pointer; color: var(--ink-2); font-size: 14px; }
-footer { border-top: 1px solid var(--border); margin-top: 48px; padding: 24px 16px; color: var(--muted); font-size: 13px; text-align: center; }
-footer p { margin: 4px auto; }
-
-@media (max-width: 640px) {
-  header.top .brand { display: none; }
-  #map { height: 360px; }
-  .tile .value { font-size: 24px; }
-}
-.refs { font-size: 14px; color: var(--ink-2); padding-left: 22px; }
-.refs li { margin: 6px 0; overflow-wrap: anywhere; }
-.summary { border-left: 3px solid var(--s1); }
-.summary ul { margin: 8px 0 0; }
-dl.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0 0; font-size: 14px; }
-dl.glossary dt { font-weight: 600; }
+details summary { cursor: pointer; color: var(--ink-2); font-size: 0.875rem; }
+dl.glossary { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0 0; font-size: 0.875rem; }
+dl.glossary dt { font-weight: 600; color: var(--ink); }
 dl.glossary dd { margin: 0; color: var(--ink-2); }
-@media (max-width: 560px) { dl.glossary { grid-template-columns: 1fr; } dl.glossary dd { margin-bottom: 6px; } }
+.refs { font-size: 0.875rem; padding-left: 22px; }
+.refs li { margin: 6px 0; overflow-wrap: anywhere; }
 p code, li code { overflow-wrap: anywhere; }
+
+/* previous / next page links at the foot of each page */
+.pager { display: flex; justify-content: space-between; gap: 12px; margin: 8px 0 16px; }
+.pager a { border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; text-decoration: none; }
+.pager .next { margin-left: auto; text-align: right; }
+.site-credits { color: var(--muted); }
+/* on narrow screens the theme repeats the sidebar footer at the bottom of the page; keep it in the flow there */
+.main-content footer .site-footer { position: static; padding: 0; }
+
+/* theme toggle in the top bar */
+.theme-toggle { margin: 0 8px; align-self: center; white-space: nowrap; }
+
+@media (max-width: 560px) {
+  #map { height: 360px; }
+  .tile .value { font-size: 1.5rem; }
+  dl.glossary { grid-template-columns: 1fr; }
+  dl.glossary dd { margin-bottom: 6px; }
+}

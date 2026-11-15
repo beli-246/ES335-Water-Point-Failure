@@ -1,0 +1,33 @@
+---
+title: Ablations
+nav_order: 10
+seq: 13
+---
+
+<h1>Ablations: is the signal real?</h1>
+<ul>
+<li>Removing the missing-value signal asks whether the model ranks points by survey provider, through which values are missing.</li>
+<li>Removing remoteness and population asks whether the local advantage survives without them. These features locate a point, and the country is 97.5% recoverable from the full feature set.</li>
+<li>Adding fee payment tests a predictor from earlier work: across 25,000 hand pumps in Liberia, Sierra Leone and Uganda, not collecting user fees was one of the
+factors linked to non-functioning pumps, alongside age and distance from the district capital [<a href="references.html#ref-foster">Foster 2013</a>]. In WPdx,
+payment is recorded almost only in Tanzania.</li>
+<li>Cutting Uganda to 21,000 training rows (about the size of each other country) asks whether Uganda, which is 60% of all rows, swamps the
+foreign data, and whether that is why foreign-only training fails.</li>
+</ul>
+<div class="card"><div class="controls" id="abl-controls"></div><div id="abl-chart"></div></div>
+<div id="abl-text">
+<p>Measured as test skill (0 = random) for XGBoost and logistic regression in all three regimes:</p>
+<ul>
+<li>Without the missing-value signal, Ethiopia's local XGBoost falls from 0.30 to 0.19 and Uganda's local logistic regression from 0.17 to 0.09. Part of
+the signal in those countries is <em>which provider surveyed the point</em>. Kenya and Tanzania barely move. Local models still beat
+foreign-only ones everywhere, so the local advantage survives without fingerprinting.</li>
+<li>Without remoteness and population, Uganda and Tanzania lose the most (local XGBoost 0.19 → 0.13 and 0.34 → 0.28): location
+features carry real signal there. The local-beats-foreign gap survives in every country.</li>
+<li>Fee payment helps where it is recorded (Tanzania local XGBoost 0.34 → 0.37) and helps more in Uganda (0.19 → 0.28) and pooled
+Ethiopia. Payment is missing for 64% of Ugandan and 91% of Ethiopian points, so those gains may again partly be missingness. It is a
+lead for future data collection; it does not show that collecting fees keeps pumps working.</li>
+<li>With Uganda cut to 21,000 rows, regimes A and B change by at most 0.03 PR-AUC for Ethiopia, Kenya and Tanzania, mostly within noise
+(<code>results/uganda_sub_vs_main.csv</code>), and foreign-only training still ranks Ethiopia worse than random (ROC-AUC 0.33–0.41 for the tuned
+models). So foreign-only training fails because the foreign surveys differ, not because one large country swamps them.</li>
+</ul>
+</div>

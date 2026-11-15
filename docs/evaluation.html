@@ -1,0 +1,56 @@
+---
+title: Evaluation design
+nav_order: 5
+seq: 5
+---
+
+<h1>Evaluation design</h1>
+<h2>Test set: whole districts, frozen before any model was trained</h2>
+<p>Random row splits put a pump's neighbours in training and the pump in test, so the model is graded on places it has
+effectively seen [<a href="references.html#ref-roberts">Roberts et al. 2017</a>]. Our <a href="concepts.html">concept experiment</a> measures the effect: on Uganda, random 3-fold CV says PR-AUC 0.43, but
+holding out whole districts says 0.28. So, per country, we hold out whole districts (district = region + district name,
+because the same district name occurs in two regions) covering about 20% of rows. Among 5,000 seeded random
+draws, we pick the one whose no-water rate is closest to the country's, which is a stratified group split. Districts with more than 15% of a
+country's rows are never test districts; Ethiopia's largest has 29.3%. The list was committed to the repository
+(<code>splits/test_districts.json</code>) before any model was fitted.</p>
+<h2>Three training regimes, one test set</h2>
+<ul>
+<li><b style="color:var(--s1)">A · pooled</b>: the other three countries plus the target's training districts.</li>
+<li><b style="color:var(--s2)">B · foreign only</b>: the other three countries. The model has never seen the target country.</li>
+<li><b style="color:var(--s3)">C · local only</b>: the target's training districts.</li>
+</ul>
+<p>All three are scored on the same test districts, so differences between them are paired. Regime C was not in the original plan.
+We added it after the first run (<a href="#amendment">see the amendment</a>), when pooled logistic regression ranked Ethiopia
+<em>backwards</em>.</p>
+<h2>Metrics</h2>
+<ul>
+<li>The primary metric is PR-AUC (average precision) of the no-water class. A crew acts on the top of the ranking, and PR-AUC measures
+how pure the top is [<a href="references.html#ref-saito">Saito &amp; Rehmsmeier 2015</a>]. A random ranking scores the no-water rate, which runs from 9% (Kenya) to 43% (Tanzania), so raw PR-AUC cannot be compared
+across countries.</li>
+<li>To compare countries we use skill. Lift = PR-AUC ÷ no-water rate is intuitive ("2× better than random"), but its
+ceiling is 1 ÷ no-water rate: 11× in Kenya, only 2.3× in Tanzania. A perfect Tanzanian model would look worse than a mediocre Kenyan one.
+<b>Skill = (PR-AUC − rate) ÷ (1 − rate)</b> is 0 for random and 1 for perfect, whatever the base rate. It is the same
+normalisation our tuning score uses.</li>
+<li>We do not use accuracy. In Kenya, "every point works" is 91% accurate and finds zero broken points. Accuracy rewards the majority
+class, so it is useless for ranking.</li>
+<li>We also report ROC-AUC; precision and recall when a crew inspects the top 5/10/20% (tie-aware: the one-rule stump gives only two scores,
+so ties are broken at random in expectation); and the Brier score and a reliability curve for calibration.</li>
+</ul>
+<h2>Tuning and uncertainty</h2>
+<p>Hyperparameters are chosen by grouped 3-fold cross-validation over training districts only. The test districts are scored once,
+at the end. The tuning score is computed <em>within</em> each country and averaged. A pooled score over a fold that mixes Tanzania
+(43%) with Kenya (9%) mostly rewards telling the countries apart, which is not the task.</p>
+<p>For uncertainty we resample test districts (not rows) 2,000 times [<a href="references.html#ref-efron">Efron &amp; Tibshirani 1993</a>]. Because two regimes are scored on the same districts,
+we bootstrap the <em>difference</em> directly (a paired bootstrap). Checking whether two separate confidence intervals overlap is a
+much weaker test.</p>
+<p id="amendment" class="note">On 6 Nov we amended the plan and added regime C. The first run gave pooled logistic regression an Ethiopia ROC-AUC of 0.38, worse than
+random. Its coefficients flip sign between the pooled fit and an Ethiopia-only fit. For example, a missing install year means low risk in Kenya,
+where most such points come from one well-performing provider, but high risk in Ethiopia, where they come from the Ministry. A single
+set of coefficients cannot fit both, so the pooled model buries the local signal (a Simpson's-paradox pattern; in dataset-shift terms, the relationship between inputs and label changes between countries [<a href="references.html#ref-moreno">Moreno-Torres et al. 2012</a>]).
+This diagnostic scored the test districts once, but the decision can be made on training districts alone: in-sample ROC-AUC on Ethiopia's training points is 0.83
+for an Ethiopia-only fit against 0.67 pooled. Test districts, features, metrics and tuning did not change.</p>
+<p id="amendment2" class="note">On 15 Nov we amended the plan again. A review of our own design pointed out that regime A cannot see the country, so
+it is a weak test of pooling. We added pooled models that know the country (<a href="results-transfer.html#country-models">results</a>): country as an input
+for trees and boosting, and country × every feature for logistic regression. We also ran the planned "Uganda subsampled" ablation, which
+had been dropped for time. The reason for both is visible without any test result. Test districts, features, metrics, tuning and the
+final-model choice did not change.</p>

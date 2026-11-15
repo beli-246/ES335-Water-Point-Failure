@@ -1,0 +1,22 @@
+---
+title: The question
+nav_order: 2
+seq: 2
+---
+
+<h1>The question</h1>
+<p>A district water office cannot visit every hand pump, borehole and tap each year. If it could rank points by risk,
+a crew with time for, say, 10% of points could go to the most likely failures first. The prediction target is
+WPdx's <code>status_id = "No"</code>: no water at the point on the visit day. All four countries record it the same way, which
+is not true of the free-text status.</p>
+<p>At prediction time the model sees only attributes that describe how a point was built and where it is: age, water source,
+technology, management type, local population, distances to roads and towns, and an urban flag. Age and remoteness are among the
+predictors earlier work linked to failed pumps [<a href="references.html#ref-foster">Foster 2013</a>]. None of them measures whether water is flowing. In WPdx these attributes are recorded on the same survey visit as the label. Our use case therefore <em>assumes</em> that a
+ministry already holds them from an earlier inventory or construction record, and wants to decide where to send the next visit. The
+label is what the visit found. This is a cross-sectional ranking problem, <em>not</em> forecasting: each point appears once, at its latest survey.</p>
+<p>That assumption has a risk. If survey teams record attributes differently when a point is dry (for example, leaving
+management blank), part of the signal would come from recording practice. Missing values are the
+most likely route for this, so the <a href="ablations.html">no-missing-signal ablation</a> removes them, and the
+<a href="results-provider.html#provider">provider check</a> measures how much of the ranking follows the survey.</p>
+<p>We use four countries because ministries often have survey data from elsewhere but not from their own district. So the second question
+is about transfer: does a model trained on other countries' surveys rank points in a new country as well as one trained on local data?</p>

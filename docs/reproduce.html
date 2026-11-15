@@ -1,0 +1,32 @@
+---
+title: Reproduce
+nav_order: 13
+seq: 16
+---
+
+<h1>Reproduce</h1>
+<p>Python 3.12. Every number on this site is written by the scripts below into <code>docs/data/</code>; the site computes nothing
+except re-sorting exported test scores for the crew slider.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python -m venv .venv &amp;&amp; .venv/Scripts/activate        # bin/activate on macOS/Linux
+pip install -r requirements.txt
+python src/download_data.py          # WPdx+ public API, no login (or use the committed cleaned snapshot)
+python src/audit_data.py data/raw/wpdx_plus_4countries.csv results/audit
+python src/data.py                   # cleaning
+python src/splits.py                 # frozen test districts (already committed)
+python src/lr_scratch.py             # from-scratch logistic regression vs scikit-learn
+python tests/test_core.py            # correctness checks (metrics, bootstrap, leakage, splits)
+python src/run_experiments.py --variant main                 # regimes A, B, C, all models
+python src/run_experiments.py --variant no_missing --models stump logreg tree xgb
+python src/run_experiments.py --variant no_remoteness --models stump logreg tree xgb
+python src/run_experiments.py --variant with_pay --models stump logreg tree xgb
+python src/run_experiments.py --variant country_x --models logreg --regimes A                 # pooled + country × features
+python src/run_experiments.py --variant country --models stump logreg tree rf xgb --regimes A # pooled + country input
+python src/run_experiments.py --variant uganda_sub --models stump logreg tree xgb --targets Ethiopia Kenya Tanzania --regimes A B
+python src/analyze.py --variant main # paired district bootstrap
+python src/compare_variants.py       # pooled + country vs local; Uganda subsampled vs main
+python src/extra_checks.py           # data checksum, Unknown rows, Holm correction, class weighting
+python src/final.py                  # CV model selection + stack, scored once on test
+python src/operating.py              # crew operating points, accuracy, random null, provider check
+python src/concepts.py               # concept experiments
+python src/export_site.py            # writes docs/data/*.json</code></pre></div></div>
+<p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot. To use exactly our data, start from the committed cleaned table <code>data/processed/wpdx_clean.parquet</code> (157,502 rows; CC BY 4.0 allows redistribution with attribution), or check a download against our raw file's SHA-256, <code>03eb8f845e51cd00f6dc518f9899dc620ac1be755a8326af89c127b683571f55</code>. Tests: 18 checks, including the leakage guards, the split rule and the country-interaction model. No credentials or personal data are used.</p>

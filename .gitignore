@@ -10,3 +10,10 @@ results/cache/
 
 # private viva prep, never commit
 notes/viva_notes.md
+
+# Jekyll build output for the docs/ site (GitHub Pages builds it on its own)
+docs/_site/
+docs/.jekyll-cache/
+.sass-cache/
+docs/Gemfile.lock
+docs/vendor/
