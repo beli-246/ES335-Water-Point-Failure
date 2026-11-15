@@ -94,7 +94,7 @@ l1,0.00046415888336127773,cat__management_clean_Private Operator/Delegated Manag
 l1,0.00046415888336127773,cat__management_clean_School Management,0.0
 l1,0.00046415888336127773,cat__management_clean_missing,0.0
 l1,0.00046415888336127773,cat__management_clean_infrequent_sklearn,0.0
-l1,0.00046415888336127773,plain__age,0.08877203149458258
+l1,0.00046415888336127773,plain__age,0.08879886539631109
 l1,0.00046415888336127773,plain__is_urban,0.0
 l1,0.00046415888336127773,plain__missingindicator_age,0.0
 l1,0.00046415888336127773,log__local_population,0.0
@@ -119,7 +119,7 @@ l1,0.001,cat__water_tech_clean_Hand Pump - India Mark,0.0
 l1,0.001,cat__water_tech_clean_Kiosk,0.0
 l1,0.001,cat__water_tech_clean_Motorized Pump,0.0
 l1,0.001,cat__water_tech_clean_Public Tapstand,0.0
-l1,0.001,cat__water_tech_clean_missing,-0.05186670523773026
+l1,0.001,cat__water_tech_clean_missing,-0.05185715224831724
 l1,0.001,cat__water_tech_clean_infrequent_sklearn,0.0
 l1,0.001,cat__management_clean_Community Management,0.0
 l1,0.001,cat__management_clean_Direct Government Operation,0.0
@@ -129,14 +129,14 @@ l1,0.001,cat__management_clean_Private Operator/Delegated Management,0.0
 l1,0.001,cat__management_clean_School Management,0.0
 l1,0.001,cat__management_clean_missing,0.0
 l1,0.001,cat__management_clean_infrequent_sklearn,0.0
-l1,0.001,plain__age,0.1758365473699629
+l1,0.001,plain__age,0.1758294136772557
 l1,0.001,plain__is_urban,0.0
 l1,0.001,plain__missingindicator_age,0.0
 l1,0.001,log__local_population,0.0
 l1,0.001,log__distance_to_primary,0.0
 l1,0.001,log__distance_to_secondary,0.0
 l1,0.001,log__distance_to_tertiary,0.0
-l1,0.001,log__distance_to_city,0.03794273744738274
+l1,0.001,log__distance_to_city,0.037963410718320836
 l1,0.001,log__distance_to_town,0.0
 l1,0.001,log__missingindicator_local_population,0.0
 l1,0.002154434690031882,cat__water_source_clean_Borehole/Tubewell,0.0
@@ -154,27 +154,27 @@ l1,0.002154434690031882,cat__water_tech_clean_Hand Pump - India Mark,0.0
 l1,0.002154434690031882,cat__water_tech_clean_Kiosk,0.0
 l1,0.002154434690031882,cat__water_tech_clean_Motorized Pump,0.0
 l1,0.002154434690031882,cat__water_tech_clean_Public Tapstand,0.0
-l1,0.002154434690031882,cat__water_tech_clean_missing,-0.14726666958365392
+l1,0.002154434690031882,cat__water_tech_clean_missing,-0.1472519815700625
 l1,0.002154434690031882,cat__water_tech_clean_infrequent_sklearn,0.0
-l1,0.002154434690031882,cat__management_clean_Community Management,-0.005203650628894927
+l1,0.002154434690031882,cat__management_clean_Community Management,-0.005051331360048687
 l1,0.002154434690031882,cat__management_clean_Direct Government Operation,0.0
 l1,0.002154434690031882,cat__management_clean_Other,0.0
-l1,0.002154434690031882,cat__management_clean_Other Institutional Management,0.1986083166140197
-l1,0.002154434690031882,cat__management_clean_Private Operator/Delegated Management,-0.25621280022496157
+l1,0.002154434690031882,cat__management_clean_Other Institutional Management,0.198672239310021
+l1,0.002154434690031882,cat__management_clean_Private Operator/Delegated Management,-0.25606785414414085
 l1,0.002154434690031882,cat__management_clean_School Management,0.0
 l1,0.002154434690031882,cat__management_clean_missing,0.0
 l1,0.002154434690031882,cat__management_clean_infrequent_sklearn,0.0
-l1,0.002154434690031882,plain__age,0.20860533957924093
-l1,0.002154434690031882,plain__is_urban,-0.005621488985250175
+l1,0.002154434690031882,plain__age,0.20861796736934873
+l1,0.002154434690031882,plain__is_urban,-0.005623527783150002
 l1,0.002154434690031882,plain__missingindicator_age,0.0
 l1,0.002154434690031882,log__local_population,0.0
-l1,0.002154434690031882,log__distance_to_primary,-0.035567781720838756
+l1,0.002154434690031882,log__distance_to_primary,-0.03556988462466298
 l1,0.002154434690031882,log__distance_to_secondary,0.0
 l1,0.002154434690031882,log__distance_to_tertiary,0.0
-l1,0.002154434690031882,log__distance_to_city,0.08648244552810708
-l1,0.002154434690031882,log__distance_to_town,0.010563188394178547
+l1,0.002154434690031882,log__distance_to_city,0.08649025100780565
+l1,0.002154434690031882,log__distance_to_town,0.010564682860270019
 l1,0.002154434690031882,log__missingindicator_local_population,0.0
-l1,0.004641588833612777,cat__water_source_clean_Borehole/Tubewell,-0.13554287065848072
+l1,0.004641588833612777,cat__water_source_clean_Borehole/Tubewell,-0.13537013304169748
 l1,0.004641588833612777,cat__water_source_clean_Delivered Water,0.0
 l1,0.004641588833612777,cat__water_source_clean_Piped Water,0.0
 l1,0.004641588833612777,cat__water_source_clean_Protected Spring,0.0
@@ -182,383 +182,383 @@ l1,0.004641588833612777,cat__water_source_clean_Protected Well,0.0
 l1,0.004641588833612777,cat__water_source_clean_Rainwater Harvesting,0.0
 l1,0.004641588833612777,cat__water_source_clean_Sand or Sub-surface Dam,0.0
 l1,0.004641588833612777,cat__water_source_clean_missing,0.0
-l1,0.004641588833612777,cat__water_tech_clean_Hand Pump,0.045087925281638325
+l1,0.004641588833612777,cat__water_tech_clean_Hand Pump,0.04520899754444475
 l1,0.004641588833612777,cat__water_tech_clean_Hand Pump - Afridev,0.0
 l1,0.004641588833612777,cat__water_tech_clean_Hand Pump - Consallen,0.0
 l1,0.004641588833612777,cat__water_tech_clean_Hand Pump - India Mark,0.0
 l1,0.004641588833612777,cat__water_tech_clean_Kiosk,0.0
 l1,0.004641588833612777,cat__water_tech_clean_Motorized Pump,0.0
 l1,0.004641588833612777,cat__water_tech_clean_Public Tapstand,0.0
-l1,0.004641588833612777,cat__water_tech_clean_missing,-0.2778761746382746
+l1,0.004641588833612777,cat__water_tech_clean_missing,-0.27779895454215925
 l1,0.004641588833612777,cat__water_tech_clean_infrequent_sklearn,0.0
-l1,0.004641588833612777,cat__management_clean_Community Management,-0.07126468106355179
+l1,0.004641588833612777,cat__management_clean_Community Management,-0.0711506692054559
 l1,0.004641588833612777,cat__management_clean_Direct Government Operation,0.0
 l1,0.004641588833612777,cat__management_clean_Other,0.0
-l1,0.004641588833612777,cat__management_clean_Other Institutional Management,0.350841565259142
-l1,0.004641588833612777,cat__management_clean_Private Operator/Delegated Management,-0.5863219132550961
+l1,0.004641588833612777,cat__management_clean_Other Institutional Management,0.3510386747095005
+l1,0.004641588833612777,cat__management_clean_Private Operator/Delegated Management,-0.5861585226822091
 l1,0.004641588833612777,cat__management_clean_School Management,0.0
 l1,0.004641588833612777,cat__management_clean_missing,0.0
 l1,0.004641588833612777,cat__management_clean_infrequent_sklearn,0.0
-l1,0.004641588833612777,plain__age,0.22964026080956215
-l1,0.004641588833612777,plain__is_urban,-0.029448539098675786
+l1,0.004641588833612777,plain__age,0.2296425326481711
+l1,0.004641588833612777,plain__is_urban,-0.02944804499265422
 l1,0.004641588833612777,plain__missingindicator_age,0.0
-l1,0.004641588833612777,log__local_population,-0.0033640386211967158
-l1,0.004641588833612777,log__distance_to_primary,-0.06372804358786426
-l1,0.004641588833612777,log__distance_to_secondary,-0.007493421420843655
-l1,0.004641588833612777,log__distance_to_tertiary,-0.018511066397137517
-l1,0.004641588833612777,log__distance_to_city,0.11574759230896284
-l1,0.004641588833612777,log__distance_to_town,0.0393715967898324
+l1,0.004641588833612777,log__local_population,-0.003363263264768838
+l1,0.004641588833612777,log__distance_to_primary,-0.0637353454084392
+l1,0.004641588833612777,log__distance_to_secondary,-0.0074904753325247065
+l1,0.004641588833612777,log__distance_to_tertiary,-0.018516095737551367
+l1,0.004641588833612777,log__distance_to_city,0.11574319211048648
+l1,0.004641588833612777,log__distance_to_town,0.03937044873049306
 l1,0.004641588833612777,log__missingindicator_local_population,0.0
-l1,0.01,cat__water_source_clean_Borehole/Tubewell,-0.2012681130439655
+l1,0.01,cat__water_source_clean_Borehole/Tubewell,-0.2008621795096805
 l1,0.01,cat__water_source_clean_Delivered Water,0.0
-l1,0.01,cat__water_source_clean_Piped Water,-0.009147152528200203
+l1,0.01,cat__water_source_clean_Piped Water,-0.009157705333755418
 l1,0.01,cat__water_source_clean_Protected Spring,0.0
 l1,0.01,cat__water_source_clean_Protected Well,0.0
-l1,0.01,cat__water_source_clean_Rainwater Harvesting,0.1403374763640381
-l1,0.01,cat__water_source_clean_Sand or Sub-surface Dam,0.4459066642574478
+l1,0.01,cat__water_source_clean_Rainwater Harvesting,0.14033221279437275
+l1,0.01,cat__water_source_clean_Sand or Sub-surface Dam,0.44617444699643943
 l1,0.01,cat__water_source_clean_missing,0.0
-l1,0.01,cat__water_tech_clean_Hand Pump,0.18822272940145696
+l1,0.01,cat__water_tech_clean_Hand Pump,0.18839456685278058
 l1,0.01,cat__water_tech_clean_Hand Pump - Afridev,0.0
 l1,0.01,cat__water_tech_clean_Hand Pump - Consallen,0.0
 l1,0.01,cat__water_tech_clean_Hand Pump - India Mark,0.0
 l1,0.01,cat__water_tech_clean_Kiosk,0.0
 l1,0.01,cat__water_tech_clean_Motorized Pump,0.0
-l1,0.01,cat__water_tech_clean_Public Tapstand,-0.5095627565228945
-l1,0.01,cat__water_tech_clean_missing,-0.36224990421530096
+l1,0.01,cat__water_tech_clean_Public Tapstand,-0.5093382441152892
+l1,0.01,cat__water_tech_clean_missing,-0.3619095363067393
 l1,0.01,cat__water_tech_clean_infrequent_sklearn,0.0
 l1,0.01,cat__management_clean_Community Management,0.0
 l1,0.01,cat__management_clean_Direct Government Operation,0.0
 l1,0.01,cat__management_clean_Other,0.0
-l1,0.01,cat__management_clean_Other Institutional Management,0.4430030761842862
-l1,0.01,cat__management_clean_Private Operator/Delegated Management,-0.7197096645313702
+l1,0.01,cat__management_clean_Other Institutional Management,0.4430696639311224
+l1,0.01,cat__management_clean_Private Operator/Delegated Management,-0.7197040759733258
 l1,0.01,cat__management_clean_School Management,0.0
 l1,0.01,cat__management_clean_missing,0.0
 l1,0.01,cat__management_clean_infrequent_sklearn,0.0
-l1,0.01,plain__age,0.24631297283768555
-l1,0.01,plain__is_urban,-0.039107452408790655
-l1,0.01,plain__missingindicator_age,0.016213817533323415
-l1,0.01,log__local_population,-0.02048625539421285
-l1,0.01,log__distance_to_primary,-0.0755764753385946
-l1,0.01,log__distance_to_secondary,-0.027058590105005585
-l1,0.01,log__distance_to_tertiary,-0.029518145142491167
-l1,0.01,log__distance_to_city,0.1313094505922718
-l1,0.01,log__distance_to_town,0.05062712943159503
-l1,0.01,log__missingindicator_local_population,0.18379281931675026
-l1,0.021544346900318822,cat__water_source_clean_Borehole/Tubewell,-0.2776402666701929
+l1,0.01,plain__age,0.24631626146334357
+l1,0.01,plain__is_urban,-0.03910407115795113
+l1,0.01,plain__missingindicator_age,0.016198319921977358
+l1,0.01,log__local_population,-0.020490728110168752
+l1,0.01,log__distance_to_primary,-0.07558016763877394
+l1,0.01,log__distance_to_secondary,-0.027057811338932914
+l1,0.01,log__distance_to_tertiary,-0.02952161582130277
+l1,0.01,log__distance_to_city,0.13130523977078642
+l1,0.01,log__distance_to_town,0.050630273592565486
+l1,0.01,log__missingindicator_local_population,0.18386182085817185
+l1,0.021544346900318822,cat__water_source_clean_Borehole/Tubewell,-0.27226027183631824
 l1,0.021544346900318822,cat__water_source_clean_Delivered Water,0.0
-l1,0.021544346900318822,cat__water_source_clean_Piped Water,-2.0523008658974407
+l1,0.021544346900318822,cat__water_source_clean_Piped Water,-2.034185156048621
 l1,0.021544346900318822,cat__water_source_clean_Protected Spring,0.0
-l1,0.021544346900318822,cat__water_source_clean_Protected Well,0.04297044226048911
-l1,0.021544346900318822,cat__water_source_clean_Rainwater Harvesting,0.22143484673212846
-l1,0.021544346900318822,cat__water_source_clean_Sand or Sub-surface Dam,0.6650165996545162
-l1,0.021544346900318822,cat__water_source_clean_missing,-1.2552286819748804
-l1,0.021544346900318822,cat__water_tech_clean_Hand Pump,0.2695586662305668
-l1,0.021544346900318822,cat__water_tech_clean_Hand Pump - Afridev,0.07392170358084102
+l1,0.021544346900318822,cat__water_source_clean_Protected Well,0.04797000074623415
+l1,0.021544346900318822,cat__water_source_clean_Rainwater Harvesting,0.2264980550664592
+l1,0.021544346900318822,cat__water_source_clean_Sand or Sub-surface Dam,0.6701051225684624
+l1,0.021544346900318822,cat__water_source_clean_missing,-1.2369494465963744
+l1,0.021544346900318822,cat__water_tech_clean_Hand Pump,0.26996899762598503
+l1,0.021544346900318822,cat__water_tech_clean_Hand Pump - Afridev,0.07424185815416896
 l1,0.021544346900318822,cat__water_tech_clean_Hand Pump - Consallen,0.0
 l1,0.021544346900318822,cat__water_tech_clean_Hand Pump - India Mark,0.0
-l1,0.021544346900318822,cat__water_tech_clean_Kiosk,-0.19939675659080297
+l1,0.021544346900318822,cat__water_tech_clean_Kiosk,-0.21186512358470225
 l1,0.021544346900318822,cat__water_tech_clean_Motorized Pump,0.0
-l1,0.021544346900318822,cat__water_tech_clean_Public Tapstand,-0.4589532700654267
-l1,0.021544346900318822,cat__water_tech_clean_missing,-0.41689858416457487
+l1,0.021544346900318822,cat__water_tech_clean_Public Tapstand,-0.4714306646911937
+l1,0.021544346900318822,cat__water_tech_clean_missing,-0.4161834230869714
 l1,0.021544346900318822,cat__water_tech_clean_infrequent_sklearn,0.0
-l1,0.021544346900318822,cat__management_clean_Community Management,-0.3185206410612218
+l1,0.021544346900318822,cat__management_clean_Community Management,-0.31679174431408663
 l1,0.021544346900318822,cat__management_clean_Direct Government Operation,0.0
 l1,0.021544346900318822,cat__management_clean_Other,0.0
-l1,0.021544346900318822,cat__management_clean_Other Institutional Management,0.14383177242785591
-l1,0.021544346900318822,cat__management_clean_Private Operator/Delegated Management,-1.0406902980652786
+l1,0.021544346900318822,cat__management_clean_Other Institutional Management,0.14549298912565312
+l1,0.021544346900318822,cat__management_clean_Private Operator/Delegated Management,-1.0389926411229455
 l1,0.021544346900318822,cat__management_clean_School Management,0.0
-l1,0.021544346900318822,cat__management_clean_missing,-0.43999379368015124
+l1,0.021544346900318822,cat__management_clean_missing,-0.4379935898754065
 l1,0.021544346900318822,cat__management_clean_infrequent_sklearn,0.0
-l1,0.021544346900318822,plain__age,0.24783262443181667
-l1,0.021544346900318822,plain__is_urban,-0.04189930554328371
-l1,0.021544346900318822,plain__missingindicator_age,0.03080369745578334
-l1,0.021544346900318822,log__local_population,-0.025289273458909994
-l1,0.021544346900318822,log__distance_to_primary,-0.07491012376171681
-l1,0.021544346900318822,log__distance_to_secondary,-0.034066972694780255
-l1,0.021544346900318822,log__distance_to_tertiary,-0.035551565877485106
-l1,0.021544346900318822,log__distance_to_city,0.14026834010375555
-l1,0.021544346900318822,log__distance_to_town,0.05855431949487286
-l1,0.021544346900318822,log__missingindicator_local_population,0.6482576260819922
+l1,0.021544346900318822,plain__age,0.24783825251979655
+l1,0.021544346900318822,plain__is_urban,-0.041895805708924184
+l1,0.021544346900318822,plain__missingindicator_age,0.030800223402267048
+l1,0.021544346900318822,log__local_population,-0.025284558238598216
+l1,0.021544346900318822,log__distance_to_primary,-0.07494206504249387
+l1,0.021544346900318822,log__distance_to_secondary,-0.03406985658821118
+l1,0.021544346900318822,log__distance_to_tertiary,-0.035566508393174226
+l1,0.021544346900318822,log__distance_to_city,0.1402496727142114
+l1,0.021544346900318822,log__distance_to_town,0.058597529110759536
+l1,0.021544346900318822,log__missingindicator_local_population,0.6482479024034872
 l1,0.046415888336127774,cat__water_source_clean_Borehole/Tubewell,0.0
-l1,0.046415888336127774,cat__water_source_clean_Delivered Water,-0.22495774947145172
-l1,0.046415888336127774,cat__water_source_clean_Piped Water,-3.2815048820840684
+l1,0.046415888336127774,cat__water_source_clean_Delivered Water,-0.22636192608162442
+l1,0.046415888336127774,cat__water_source_clean_Piped Water,-3.2798671281724103
 l1,0.046415888336127774,cat__water_source_clean_Protected Spring,0.0
-l1,0.046415888336127774,cat__water_source_clean_Protected Well,0.48720643920442014
-l1,0.046415888336127774,cat__water_source_clean_Rainwater Harvesting,0.6626434560684977
-l1,0.046415888336127774,cat__water_source_clean_Sand or Sub-surface Dam,1.1113165279372048
-l1,0.046415888336127774,cat__water_source_clean_missing,-1.7353748069284352
-l1,0.046415888336127774,cat__water_tech_clean_Hand Pump,0.35025030569071014
-l1,0.046415888336127774,cat__water_tech_clean_Hand Pump - Afridev,0.19863292220405776
+l1,0.046415888336127774,cat__water_source_clean_Protected Well,0.48721813196895614
+l1,0.046415888336127774,cat__water_source_clean_Rainwater Harvesting,0.6627234734752138
+l1,0.046415888336127774,cat__water_source_clean_Sand or Sub-surface Dam,1.1113551918648343
+l1,0.046415888336127774,cat__water_source_clean_missing,-1.7339116306205333
+l1,0.046415888336127774,cat__water_tech_clean_Hand Pump,0.3504699130469284
+l1,0.046415888336127774,cat__water_tech_clean_Hand Pump - Afridev,0.19887362538616263
 l1,0.046415888336127774,cat__water_tech_clean_Hand Pump - Consallen,0.0
 l1,0.046415888336127774,cat__water_tech_clean_Hand Pump - India Mark,0.0
-l1,0.046415888336127774,cat__water_tech_clean_Kiosk,-0.5798609381148426
+l1,0.046415888336127774,cat__water_tech_clean_Kiosk,-0.5826182566014764
 l1,0.046415888336127774,cat__water_tech_clean_Motorized Pump,0.0
-l1,0.046415888336127774,cat__water_tech_clean_Public Tapstand,-0.5281587873284067
-l1,0.046415888336127774,cat__water_tech_clean_missing,-0.458252271916481
+l1,0.046415888336127774,cat__water_tech_clean_Public Tapstand,-0.5311864556119534
+l1,0.046415888336127774,cat__water_tech_clean_missing,-0.45804334372786965
 l1,0.046415888336127774,cat__water_tech_clean_infrequent_sklearn,0.0
-l1,0.046415888336127774,cat__management_clean_Community Management,-0.484829349259541
+l1,0.046415888336127774,cat__management_clean_Community Management,-0.48472447446915634
 l1,0.046415888336127774,cat__management_clean_Direct Government Operation,0.0
 l1,0.046415888336127774,cat__management_clean_Other,0.0
 l1,0.046415888336127774,cat__management_clean_Other Institutional Management,0.0
-l1,0.046415888336127774,cat__management_clean_Private Operator/Delegated Management,-1.1944322564524534
+l1,0.046415888336127774,cat__management_clean_Private Operator/Delegated Management,-1.194304315553272
 l1,0.046415888336127774,cat__management_clean_School Management,0.0
-l1,0.046415888336127774,cat__management_clean_missing,-0.6504699381864645
+l1,0.046415888336127774,cat__management_clean_missing,-0.6503969357295819
 l1,0.046415888336127774,cat__management_clean_infrequent_sklearn,0.0
-l1,0.046415888336127774,plain__age,0.24720580644349147
-l1,0.046415888336127774,plain__is_urban,-0.04238469107420512
-l1,0.046415888336127774,plain__missingindicator_age,0.041209275942853535
-l1,0.046415888336127774,log__local_population,-0.027477935121831727
-l1,0.046415888336127774,log__distance_to_primary,-0.07601728116622697
-l1,0.046415888336127774,log__distance_to_secondary,-0.03761937067699957
-l1,0.046415888336127774,log__distance_to_tertiary,-0.037740353249545264
-l1,0.046415888336127774,log__distance_to_city,0.145632910068109
-l1,0.046415888336127774,log__distance_to_town,0.06408178405721285
-l1,0.046415888336127774,log__missingindicator_local_population,1.0115762181192025
+l1,0.046415888336127774,plain__age,0.24720140827443254
+l1,0.046415888336127774,plain__is_urban,-0.042380721678067536
+l1,0.046415888336127774,plain__missingindicator_age,0.04121365436845538
+l1,0.046415888336127774,log__local_population,-0.027478650729804814
+l1,0.046415888336127774,log__distance_to_primary,-0.07602605041163313
+l1,0.046415888336127774,log__distance_to_secondary,-0.03761848964723759
+l1,0.046415888336127774,log__distance_to_tertiary,-0.03774111392553145
+l1,0.046415888336127774,log__distance_to_city,0.1456286999320696
+l1,0.046415888336127774,log__distance_to_town,0.06407190446234272
+l1,0.046415888336127774,log__missingindicator_local_population,1.0121812695617163
 l1,0.1,cat__water_source_clean_Borehole/Tubewell,0.0
-l1,0.1,cat__water_source_clean_Delivered Water,-2.3816474432340518
-l1,0.1,cat__water_source_clean_Piped Water,-4.900371599874752
+l1,0.1,cat__water_source_clean_Delivered Water,-2.369469624377407
+l1,0.1,cat__water_source_clean_Piped Water,-4.876875188031782
 l1,0.1,cat__water_source_clean_Protected Spring,0.0
-l1,0.1,cat__water_source_clean_Protected Well,0.5862393908842433
-l1,0.1,cat__water_source_clean_Rainwater Harvesting,0.7513223636265333
-l1,0.1,cat__water_source_clean_Sand or Sub-surface Dam,1.1967606324950621
-l1,0.1,cat__water_source_clean_missing,-2.6621470173441857
-l1,0.1,cat__water_tech_clean_Hand Pump,0.3830128851746719
-l1,0.1,cat__water_tech_clean_Hand Pump - Afridev,0.24656622315391913
-l1,0.1,cat__water_tech_clean_Hand Pump - Consallen,-0.24014378055403435
+l1,0.1,cat__water_source_clean_Protected Well,0.5869642252485265
+l1,0.1,cat__water_source_clean_Rainwater Harvesting,0.7522923722010109
+l1,0.1,cat__water_source_clean_Sand or Sub-surface Dam,1.1970172320230845
+l1,0.1,cat__water_source_clean_missing,-2.6384553540671
+l1,0.1,cat__water_tech_clean_Hand Pump,0.38323114572173944
+l1,0.1,cat__water_tech_clean_Hand Pump - Afridev,0.247287451490307
+l1,0.1,cat__water_tech_clean_Hand Pump - Consallen,-0.23902135269693542
 l1,0.1,cat__water_tech_clean_Hand Pump - India Mark,0.0
-l1,0.1,cat__water_tech_clean_Kiosk,-0.7852000872082874
+l1,0.1,cat__water_tech_clean_Kiosk,-0.79670669324736
 l1,0.1,cat__water_tech_clean_Motorized Pump,0.0
-l1,0.1,cat__water_tech_clean_Public Tapstand,-0.5614108903612466
-l1,0.1,cat__water_tech_clean_missing,-0.5067741446505333
+l1,0.1,cat__water_tech_clean_Public Tapstand,-0.5729182795059959
+l1,0.1,cat__water_tech_clean_missing,-0.5068541329481752
 l1,0.1,cat__water_tech_clean_infrequent_sklearn,0.0
-l1,0.1,cat__management_clean_Community Management,-0.5053212724747379
+l1,0.1,cat__management_clean_Community Management,-0.5049230191014332
 l1,0.1,cat__management_clean_Direct Government Operation,0.0
-l1,0.1,cat__management_clean_Other,0.09271625443527287
+l1,0.1,cat__management_clean_Other,0.09301898375589826
 l1,0.1,cat__management_clean_Other Institutional Management,0.0
-l1,0.1,cat__management_clean_Private Operator/Delegated Management,-1.2012309376180326
+l1,0.1,cat__management_clean_Private Operator/Delegated Management,-1.2009556272041384
 l1,0.1,cat__management_clean_School Management,0.0
-l1,0.1,cat__management_clean_missing,-0.7218942580322446
+l1,0.1,cat__management_clean_missing,-0.7209420209546995
 l1,0.1,cat__management_clean_infrequent_sklearn,0.0
-l1,0.1,plain__age,0.2461022776567455
-l1,0.1,plain__is_urban,-0.04354474476579029
-l1,0.1,plain__missingindicator_age,0.04964779008816915
-l1,0.1,log__local_population,-0.028598267041075192
-l1,0.1,log__distance_to_primary,-0.07656302913619659
-l1,0.1,log__distance_to_secondary,-0.039556982483184136
-l1,0.1,log__distance_to_tertiary,-0.0392948525280984
-l1,0.1,log__distance_to_city,0.14586241454923118
-l1,0.1,log__distance_to_town,0.06711452034800867
-l1,0.1,log__missingindicator_local_population,1.3968841176295697
+l1,0.1,plain__age,0.24610607058287523
+l1,0.1,plain__is_urban,-0.04354294789266517
+l1,0.1,plain__missingindicator_age,0.04966227895018906
+l1,0.1,log__local_population,-0.028578943931758093
+l1,0.1,log__distance_to_primary,-0.07657793331682375
+l1,0.1,log__distance_to_secondary,-0.039538711374411784
+l1,0.1,log__distance_to_tertiary,-0.039300307624425865
+l1,0.1,log__distance_to_city,0.14587820412452995
+l1,0.1,log__distance_to_town,0.06713696386776627
+l1,0.1,log__missingindicator_local_population,1.3925979544145295
 l1,0.21544346900318823,cat__water_source_clean_Borehole/Tubewell,0.0
-l1,0.21544346900318823,cat__water_source_clean_Delivered Water,-3.8695492106348555
-l1,0.21544346900318823,cat__water_source_clean_Piped Water,-6.2925914297490975
-l1,0.21544346900318823,cat__water_source_clean_Protected Spring,-0.17206024603087716
-l1,0.21544346900318823,cat__water_source_clean_Protected Well,0.6345273014636691
-l1,0.21544346900318823,cat__water_source_clean_Rainwater Harvesting,0.7954525234767428
-l1,0.21544346900318823,cat__water_source_clean_Sand or Sub-surface Dam,1.2342993602202728
-l1,0.21544346900318823,cat__water_source_clean_missing,-3.4550320598225572
-l1,0.21544346900318823,cat__water_tech_clean_Hand Pump,0.39539634554598635
-l1,0.21544346900318823,cat__water_tech_clean_Hand Pump - Afridev,0.2659781286567705
-l1,0.21544346900318823,cat__water_tech_clean_Hand Pump - Consallen,-0.5488845971844861
+l1,0.21544346900318823,cat__water_source_clean_Delivered Water,-3.882995306119665
+l1,0.21544346900318823,cat__water_source_clean_Piped Water,-6.365616115324796
+l1,0.21544346900318823,cat__water_source_clean_Protected Spring,-0.17527094640788812
+l1,0.21544346900318823,cat__water_source_clean_Protected Well,0.6324629117043135
+l1,0.21544346900318823,cat__water_source_clean_Rainwater Harvesting,0.7931625036667992
+l1,0.21544346900318823,cat__water_source_clean_Sand or Sub-surface Dam,1.2338270678371899
+l1,0.21544346900318823,cat__water_source_clean_missing,-3.528232895807147
+l1,0.21544346900318823,cat__water_tech_clean_Hand Pump,0.3967627289455926
+l1,0.21544346900318823,cat__water_tech_clean_Hand Pump - Afridev,0.266684760982553
+l1,0.21544346900318823,cat__water_tech_clean_Hand Pump - Consallen,-0.5473311514022818
 l1,0.21544346900318823,cat__water_tech_clean_Hand Pump - India Mark,0.0
-l1,0.21544346900318823,cat__water_tech_clean_Kiosk,-0.907581485233356
+l1,0.21544346900318823,cat__water_tech_clean_Kiosk,-0.846937404032759
 l1,0.21544346900318823,cat__water_tech_clean_Motorized Pump,0.0
-l1,0.21544346900318823,cat__water_tech_clean_Public Tapstand,-0.5972911523889812
-l1,0.21544346900318823,cat__water_tech_clean_missing,-0.5337647563168036
+l1,0.21544346900318823,cat__water_tech_clean_Public Tapstand,-0.5366605829521298
+l1,0.21544346900318823,cat__water_tech_clean_missing,-0.5309472901695713
 l1,0.21544346900318823,cat__water_tech_clean_infrequent_sklearn,0.0
-l1,0.21544346900318823,cat__management_clean_Community Management,-0.510924643417157
-l1,0.21544346900318823,cat__management_clean_Direct Government Operation,0.25997543314524485
-l1,0.21544346900318823,cat__management_clean_Other,0.14427512315127125
+l1,0.21544346900318823,cat__management_clean_Community Management,-0.5108413895345812
+l1,0.21544346900318823,cat__management_clean_Direct Government Operation,0.2603661252164963
+l1,0.21544346900318823,cat__management_clean_Other,0.14433058084285638
 l1,0.21544346900318823,cat__management_clean_Other Institutional Management,0.0
-l1,0.21544346900318823,cat__management_clean_Private Operator/Delegated Management,-1.2022569629338056
-l1,0.21544346900318823,cat__management_clean_School Management,0.014716339653200999
-l1,0.21544346900318823,cat__management_clean_missing,-0.7476980677743729
-l1,0.21544346900318823,cat__management_clean_infrequent_sklearn,-0.28645327104657775
-l1,0.21544346900318823,plain__age,0.24583242742145853
-l1,0.21544346900318823,plain__is_urban,-0.04443849139448157
-l1,0.21544346900318823,plain__missingindicator_age,0.05327196178499255
-l1,0.21544346900318823,log__local_population,-0.02895375493435636
-l1,0.21544346900318823,log__distance_to_primary,-0.07726763110138013
-l1,0.21544346900318823,log__distance_to_secondary,-0.04012660836006215
-l1,0.21544346900318823,log__distance_to_tertiary,-0.04035113524776766
-l1,0.21544346900318823,log__distance_to_city,0.14542247317944898
-l1,0.21544346900318823,log__distance_to_town,0.06885504550089676
-l1,0.21544346900318823,log__missingindicator_local_population,1.7220042958321262
+l1,0.21544346900318823,cat__management_clean_Private Operator/Delegated Management,-1.2021375611779561
+l1,0.21544346900318823,cat__management_clean_School Management,0.014697194498726857
+l1,0.21544346900318823,cat__management_clean_missing,-0.7478760770840411
+l1,0.21544346900318823,cat__management_clean_infrequent_sklearn,-0.28612589789424475
+l1,0.21544346900318823,plain__age,0.24582987196986356
+l1,0.21544346900318823,plain__is_urban,-0.044518329448995905
+l1,0.21544346900318823,plain__missingindicator_age,0.05326060491911817
+l1,0.21544346900318823,log__local_population,-0.028983318883904853
+l1,0.21544346900318823,log__distance_to_primary,-0.07729647206707868
+l1,0.21544346900318823,log__distance_to_secondary,-0.04013612105902379
+l1,0.21544346900318823,log__distance_to_tertiary,-0.04034063883981557
+l1,0.21544346900318823,log__distance_to_city,0.1454520513520214
+l1,0.21544346900318823,log__distance_to_town,0.06887112175017192
+l1,0.21544346900318823,log__missingindicator_local_population,1.727057224039082
 l1,0.46415888336127775,cat__water_source_clean_Borehole/Tubewell,0.0
-l1,0.46415888336127775,cat__water_source_clean_Delivered Water,-5.082547215725512
-l1,0.46415888336127775,cat__water_source_clean_Piped Water,-7.603432278988898
-l1,0.46415888336127775,cat__water_source_clean_Protected Spring,-0.2884913532750778
-l1,0.46415888336127775,cat__water_source_clean_Protected Well,0.65413260772135
-l1,0.46415888336127775,cat__water_source_clean_Rainwater Harvesting,0.812704421717577
-l1,0.46415888336127775,cat__water_source_clean_Sand or Sub-surface Dam,1.250237268659205
-l1,0.46415888336127775,cat__water_source_clean_missing,-4.294290769014062
-l1,0.46415888336127775,cat__water_tech_clean_Hand Pump,0.3643250041202258
-l1,0.46415888336127775,cat__water_tech_clean_Hand Pump - Afridev,0.23484926656071697
-l1,0.46415888336127775,cat__water_tech_clean_Hand Pump - Consallen,-0.7678283840557809
-l1,0.46415888336127775,cat__water_tech_clean_Hand Pump - India Mark,-0.04450927354881579
-l1,0.46415888336127775,cat__water_tech_clean_Kiosk,-0.9481949178956269
+l1,0.46415888336127775,cat__water_source_clean_Delivered Water,-4.978193915314851
+l1,0.46415888336127775,cat__water_source_clean_Piped Water,-7.446616362496443
+l1,0.46415888336127775,cat__water_source_clean_Protected Spring,-0.28000676890531134
+l1,0.46415888336127775,cat__water_source_clean_Protected Well,0.6570901369353391
+l1,0.46415888336127775,cat__water_source_clean_Rainwater Harvesting,0.8163201975985837
+l1,0.46415888336127775,cat__water_source_clean_Sand or Sub-surface Dam,1.2530327316499865
+l1,0.46415888336127775,cat__water_source_clean_missing,-4.137213016472554
+l1,0.46415888336127775,cat__water_tech_clean_Hand Pump,0.3777273231805212
+l1,0.46415888336127775,cat__water_tech_clean_Hand Pump - Afridev,0.2513861057056059
+l1,0.46415888336127775,cat__water_tech_clean_Hand Pump - Consallen,-0.7487936576565517
+l1,0.46415888336127775,cat__water_tech_clean_Hand Pump - India Mark,-0.02821980450473923
+l1,0.46415888336127775,cat__water_tech_clean_Kiosk,-0.9954761166543945
 l1,0.46415888336127775,cat__water_tech_clean_Motorized Pump,0.0
-l1,0.46415888336127775,cat__water_tech_clean_Public Tapstand,-0.5962678683739149
-l1,0.46415888336127775,cat__water_tech_clean_missing,-0.5832164758430309
-l1,0.46415888336127775,cat__water_tech_clean_infrequent_sklearn,0.26976476516051034
-l1,0.46415888336127775,cat__management_clean_Community Management,-0.5130107750385777
-l1,0.46415888336127775,cat__management_clean_Direct Government Operation,0.40219282555663677
-l1,0.46415888336127775,cat__management_clean_Other,0.16827058372074152
+l1,0.46415888336127775,cat__water_tech_clean_Public Tapstand,-0.6435429040878751
+l1,0.46415888336127775,cat__water_tech_clean_missing,-0.5698313313695009
+l1,0.46415888336127775,cat__water_tech_clean_infrequent_sklearn,0.28366583419142033
+l1,0.46415888336127775,cat__management_clean_Community Management,-0.5124294223746969
+l1,0.46415888336127775,cat__management_clean_Direct Government Operation,0.4031169243802156
+l1,0.46415888336127775,cat__management_clean_Other,0.16878463952845119
 l1,0.46415888336127775,cat__management_clean_Other Institutional Management,0.0
-l1,0.46415888336127775,cat__management_clean_Private Operator/Delegated Management,-1.2029797194808154
-l1,0.46415888336127775,cat__management_clean_School Management,0.16051491889412206
-l1,0.46415888336127775,cat__management_clean_missing,-0.766390129097286
-l1,0.46415888336127775,cat__management_clean_infrequent_sklearn,-0.8063600420215142
-l1,0.46415888336127775,plain__age,0.2458089986644509
-l1,0.46415888336127775,plain__is_urban,-0.04495963946899065
-l1,0.46415888336127775,plain__missingindicator_age,0.0552270912295476
-l1,0.46415888336127775,log__local_population,-0.029161906866103093
-l1,0.46415888336127775,log__distance_to_primary,-0.07764925326861384
-l1,0.46415888336127775,log__distance_to_secondary,-0.04038615652115144
-l1,0.46415888336127775,log__distance_to_tertiary,-0.040890522425988216
-l1,0.46415888336127775,log__distance_to_city,0.14515691209689296
-l1,0.46415888336127775,log__distance_to_town,0.06940218566766379
-l1,0.46415888336127775,log__missingindicator_local_population,2.0315930954940553
-l1,1.0,cat__water_source_clean_Borehole/Tubewell,-0.057268891732223264
-l1,1.0,cat__water_source_clean_Delivered Water,-5.977666944762031
-l1,1.0,cat__water_source_clean_Piped Water,-8.58231497426002
-l1,1.0,cat__water_source_clean_Protected Spring,-0.4070442457340193
-l1,1.0,cat__water_source_clean_Protected Well,0.6060052098508224
-l1,1.0,cat__water_source_clean_Rainwater Harvesting,0.7637219382123328
-l1,1.0,cat__water_source_clean_Sand or Sub-surface Dam,1.1977531590444903
-l1,1.0,cat__water_source_clean_missing,-4.946949686368111
-l1,1.0,cat__water_tech_clean_Hand Pump,0.332876629530331
-l1,1.0,cat__water_tech_clean_Hand Pump - Afridev,0.20154836913754337
-l1,1.0,cat__water_tech_clean_Hand Pump - Consallen,-0.8973227870665026
-l1,1.0,cat__water_tech_clean_Hand Pump - India Mark,-0.08757196374340509
-l1,1.0,cat__water_tech_clean_Kiosk,-1.0071697577021728
-l1,1.0,cat__water_tech_clean_Motorized Pump,0.0
-l1,1.0,cat__water_tech_clean_Public Tapstand,-0.6355360547677056
-l1,1.0,cat__water_tech_clean_missing,-0.625151658542637
-l1,1.0,cat__water_tech_clean_infrequent_sklearn,0.3848142460453172
-l1,1.0,cat__management_clean_Community Management,-0.5135760403866625
-l1,1.0,cat__management_clean_Direct Government Operation,0.4686200521924235
-l1,1.0,cat__management_clean_Other,0.1796287713303231
+l1,0.46415888336127775,cat__management_clean_Private Operator/Delegated Management,-1.20262761373628
+l1,0.46415888336127775,cat__management_clean_School Management,0.1618130305249088
+l1,0.46415888336127775,cat__management_clean_missing,-0.7637103967303975
+l1,0.46415888336127775,cat__management_clean_infrequent_sklearn,-0.8052435638486538
+l1,0.46415888336127775,plain__age,0.24579400346227392
+l1,0.46415888336127775,plain__is_urban,-0.04488573839524267
+l1,0.46415888336127775,plain__missingindicator_age,0.05520149698933491
+l1,0.46415888336127775,log__local_population,-0.02911017622655247
+l1,0.46415888336127775,log__distance_to_primary,-0.07769436061981488
+l1,0.46415888336127775,log__distance_to_secondary,-0.040370283242144145
+l1,0.46415888336127775,log__distance_to_tertiary,-0.04091351358629949
+l1,0.46415888336127775,log__distance_to_city,0.1451885529030563
+l1,0.46415888336127775,log__distance_to_town,0.06949628524687315
+l1,0.46415888336127775,log__missingindicator_local_population,1.9959207073618241
+l1,1.0,cat__water_source_clean_Borehole/Tubewell,0.0
+l1,1.0,cat__water_source_clean_Delivered Water,-5.841696021297331
+l1,1.0,cat__water_source_clean_Piped Water,-8.433327811397078
+l1,1.0,cat__water_source_clean_Protected Spring,-0.3436048475373222
+l1,1.0,cat__water_source_clean_Protected Well,0.6670528148389852
+l1,1.0,cat__water_source_clean_Rainwater Harvesting,0.8255833135516502
+l1,1.0,cat__water_source_clean_Sand or Sub-surface Dam,1.2577917954798217
+l1,1.0,cat__water_source_clean_missing,-4.798014720755972
+l1,1.0,cat__water_tech_clean_Hand Pump,0.41959331611690254
+l1,1.0,cat__water_tech_clean_Hand Pump - Afridev,0.29126130289490276
+l1,1.0,cat__water_tech_clean_Hand Pump - Consallen,-0.8087014619734941
+l1,1.0,cat__water_tech_clean_Hand Pump - India Mark,0.0
+l1,1.0,cat__water_tech_clean_Kiosk,-0.9396429123867382
+l1,1.0,cat__water_tech_clean_Motorized Pump,0.07807549207101802
+l1,1.0,cat__water_tech_clean_Public Tapstand,-0.5681339953975886
+l1,1.0,cat__water_tech_clean_missing,-0.5392967272731287
+l1,1.0,cat__water_tech_clean_infrequent_sklearn,0.47191029067658286
+l1,1.0,cat__management_clean_Community Management,-0.512474396017206
+l1,1.0,cat__management_clean_Direct Government Operation,0.47115610057113827
+l1,1.0,cat__management_clean_Other,0.18055349070104254
 l1,1.0,cat__management_clean_Other Institutional Management,0.0
-l1,1.0,cat__management_clean_Private Operator/Delegated Management,-1.2034397588199444
-l1,1.0,cat__management_clean_School Management,0.22576835929836098
-l1,1.0,cat__management_clean_missing,-0.7754437381512471
-l1,1.0,cat__management_clean_infrequent_sklearn,-1.1176974871177916
-l1,1.0,plain__age,0.24583403088746938
-l1,1.0,plain__is_urban,-0.04518407163182742
-l1,1.0,plain__missingindicator_age,0.05622798546017214
-l1,1.0,log__local_population,-0.029237535387474724
-l1,1.0,log__distance_to_primary,-0.07785141138485084
-l1,1.0,log__distance_to_secondary,-0.04046164311071061
-l1,1.0,log__distance_to_tertiary,-0.041149505609406035
-l1,1.0,log__distance_to_city,0.14506192536744383
-l1,1.0,log__distance_to_town,0.069594400820039
-l1,1.0,log__missingindicator_local_population,2.2624609709746215
-l1,2.154434690031882,cat__water_source_clean_Borehole/Tubewell,0.3651772633497806
-l1,2.154434690031882,cat__water_source_clean_Delivered Water,-5.928269726357793
-l1,2.154434690031882,cat__water_source_clean_Piped Water,-8.567373989072621
-l1,2.154434690031882,cat__water_source_clean_Protected Spring,0.0
-l1,2.154434690031882,cat__water_source_clean_Protected Well,1.0378070220245885
-l1,2.154434690031882,cat__water_source_clean_Rainwater Harvesting,1.1955792079740561
-l1,2.154434690031882,cat__water_source_clean_Sand or Sub-surface Dam,1.6253926276095199
-l1,2.154434690031882,cat__water_source_clean_missing,-4.734798266937101
-l1,2.154434690031882,cat__water_tech_clean_Hand Pump,0.38531764554989595
-l1,2.154434690031882,cat__water_tech_clean_Hand Pump - Afridev,0.25624836260389966
-l1,2.154434690031882,cat__water_tech_clean_Hand Pump - Consallen,-0.8903471744451072
-l1,2.154434690031882,cat__water_tech_clean_Hand Pump - India Mark,-0.03826931369750735
-l1,2.154434690031882,cat__water_tech_clean_Kiosk,-1.0103014551840217
-l1,2.154434690031882,cat__water_tech_clean_Motorized Pump,0.0611066936127637
-l1,2.154434690031882,cat__water_tech_clean_Public Tapstand,-0.6294557892280485
-l1,2.154434690031882,cat__water_tech_clean_missing,-0.5795350963095706
-l1,2.154434690031882,cat__water_tech_clean_infrequent_sklearn,0.502834697572288
-l1,2.154434690031882,cat__management_clean_Community Management,-0.6827688816768457
-l1,2.154434690031882,cat__management_clean_Direct Government Operation,0.3309568873745918
-l1,2.154434690031882,cat__management_clean_Other,0.01587680022414036
-l1,2.154434690031882,cat__management_clean_Other Institutional Management,-0.16917424970722506
-l1,2.154434690031882,cat__management_clean_Private Operator/Delegated Management,-1.3726217131159055
-l1,2.154434690031882,cat__management_clean_School Management,0.08749089249470227
-l1,2.154434690031882,cat__management_clean_missing,-0.9469981066447833
-l1,2.154434690031882,cat__management_clean_infrequent_sklearn,-1.4563782235835014
-l1,2.154434690031882,plain__age,0.2458428036873793
-l1,2.154434690031882,plain__is_urban,-0.04522336966622866
-l1,2.154434690031882,plain__missingindicator_age,0.05673969652221744
-l1,2.154434690031882,log__local_population,-0.0292398862850031
-l1,2.154434690031882,log__distance_to_primary,-0.07794370230777366
-l1,2.154434690031882,log__distance_to_secondary,-0.04047308689388853
-l1,2.154434690031882,log__distance_to_tertiary,-0.04126595797839842
-l1,2.154434690031882,log__distance_to_city,0.1450819872273223
-l1,2.154434690031882,log__distance_to_town,0.06970883287652122
-l1,2.154434690031882,log__missingindicator_local_population,2.3619833217733075
-l1,4.641588833612772,cat__water_source_clean_Borehole/Tubewell,-0.13129439378806432
-l1,4.641588833612772,cat__water_source_clean_Delivered Water,-6.822236063244313
-l1,4.641588833612772,cat__water_source_clean_Piped Water,-9.53130068824509
-l1,4.641588833612772,cat__water_source_clean_Protected Spring,-0.5215684696450668
-l1,4.641588833612772,cat__water_source_clean_Protected Well,0.5412544732391759
-l1,4.641588833612772,cat__water_source_clean_Rainwater Harvesting,0.6990945951888622
-l1,4.641588833612772,cat__water_source_clean_Sand or Sub-surface Dam,1.1290970319338713
-l1,4.641588833612772,cat__water_source_clean_missing,-5.592274704250057
-l1,4.641588833612772,cat__water_tech_clean_Hand Pump,0.42676920864115814
-l1,4.641588833612772,cat__water_tech_clean_Hand Pump - Afridev,0.29615847315772514
-l1,4.641588833612772,cat__water_tech_clean_Hand Pump - Consallen,-0.873490460646243
-l1,4.641588833612772,cat__water_tech_clean_Hand Pump - India Mark,-9.662652782237974e-05
-l1,4.641588833612772,cat__water_tech_clean_Kiosk,-0.9500191372040717
-l1,4.641588833612772,cat__water_tech_clean_Motorized Pump,0.11008024470333624
-l1,4.641588833612772,cat__water_tech_clean_Public Tapstand,-0.5649035521996095
-l1,4.641588833612772,cat__water_tech_clean_missing,-0.5394016640132999
-l1,4.641588833612772,cat__water_tech_clean_infrequent_sklearn,0.574092843966518
-l1,4.641588833612772,cat__management_clean_Community Management,-0.3865778270271935
-l1,4.641588833612772,cat__management_clean_Direct Government Operation,0.640923104108546
-l1,4.641588833612772,cat__management_clean_Other,0.3145716894566037
-l1,4.641588833612772,cat__management_clean_Other Institutional Management,0.12652528994825468
-l1,4.641588833612772,cat__management_clean_Private Operator/Delegated Management,-1.0766056114445368
-l1,4.641588833612772,cat__management_clean_School Management,0.3971535285372973
-l1,4.641588833612772,cat__management_clean_missing,-0.6531780864599998
-l1,4.641588833612772,cat__management_clean_infrequent_sklearn,-1.2474579179684793
-l1,4.641588833612772,plain__age,0.24585195259125295
-l1,4.641588833612772,plain__is_urban,-0.045319552824630883
-l1,4.641588833612772,plain__missingindicator_age,0.05694212405491639
-l1,4.641588833612772,log__local_population,-0.029263599387117138
-l1,4.641588833612772,log__distance_to_primary,-0.07801021805040254
-l1,4.641588833612772,log__distance_to_secondary,-0.040511461783684005
-l1,4.641588833612772,log__distance_to_tertiary,-0.04133265209190672
-l1,4.641588833612772,log__distance_to_city,0.1450458232029558
-l1,4.641588833612772,log__distance_to_town,0.06975506020933907
-l1,4.641588833612772,log__missingindicator_local_population,2.491164798211796
-l1,10.0,cat__water_source_clean_Borehole/Tubewell,0.3278876443911288
-l1,10.0,cat__water_source_clean_Delivered Water,-6.4938988944782565
-l1,10.0,cat__water_source_clean_Piped Water,-9.20410533855084
-l1,10.0,cat__water_source_clean_Protected Spring,-0.06622763625747696
-l1,10.0,cat__water_source_clean_Protected Well,1.0037066257024354
-l1,10.0,cat__water_source_clean_Rainwater Harvesting,1.161558942902316
-l1,10.0,cat__water_source_clean_Sand or Sub-surface Dam,1.5890008110458818
-l1,10.0,cat__water_source_clean_missing,-5.2115542639525865
-l1,10.0,cat__water_tech_clean_Hand Pump,0.04790355492546303
-l1,10.0,cat__water_tech_clean_Hand Pump - Afridev,-0.08229343113761675
-l1,10.0,cat__water_tech_clean_Hand Pump - Consallen,-1.264201145569596
-l1,10.0,cat__water_tech_clean_Hand Pump - India Mark,-0.3800188357274248
-l1,10.0,cat__water_tech_clean_Kiosk,-1.3526049068695791
-l1,10.0,cat__water_tech_clean_Motorized Pump,-0.26093740059630766
-l1,10.0,cat__water_tech_clean_Public Tapstand,-0.9655259756339138
-l1,10.0,cat__water_tech_clean_missing,-0.9211323438121605
-l1,10.0,cat__water_tech_clean_infrequent_sklearn,0.20863924881173015
-l1,10.0,cat__management_clean_Community Management,-0.044800408686215175
-l1,10.0,cat__management_clean_Direct Government Operation,0.9896303333360995
-l1,10.0,cat__management_clean_Other,0.6575198962494859
-l1,10.0,cat__management_clean_Other Institutional Management,0.46836125227933495
-l1,10.0,cat__management_clean_Private Operator/Delegated Management,-0.7349102182642182
-l1,10.0,cat__management_clean_School Management,0.7454664763386522
-l1,10.0,cat__management_clean_missing,-0.3121477547965888
-l1,10.0,cat__management_clean_infrequent_sklearn,-0.9476672971417086
-l1,10.0,plain__age,0.24586592193719928
-l1,10.0,plain__is_urban,-0.045303037803716674
-l1,10.0,plain__missingindicator_age,0.05709468589689857
-l1,10.0,log__local_population,-0.0292587307975446
-l1,10.0,log__distance_to_primary,-0.07801306848222182
-l1,10.0,log__distance_to_secondary,-0.04051054303658676
-l1,10.0,log__distance_to_tertiary,-0.04135664006183146
-l1,10.0,log__distance_to_city,0.14504724124551766
-l1,10.0,log__distance_to_town,0.06974809520884556
-l1,10.0,log__missingindicator_local_population,2.529835771218823
+l1,1.0,cat__management_clean_Private Operator/Delegated Management,-1.2026950279622661
+l1,1.0,cat__management_clean_School Management,0.22765276900899445
+l1,1.0,cat__management_clean_missing,-0.7725552574846933
+l1,1.0,cat__management_clean_infrequent_sklearn,-1.11542613814421
+l1,1.0,plain__age,0.24581993444524441
+l1,1.0,plain__is_urban,-0.04516215056378661
+l1,1.0,plain__missingindicator_age,0.05626796275175145
+l1,1.0,log__local_population,-0.0292028965955063
+l1,1.0,log__distance_to_primary,-0.07791833664858819
+l1,1.0,log__distance_to_secondary,-0.04045530126522514
+l1,1.0,log__distance_to_tertiary,-0.041151876956771465
+l1,1.0,log__distance_to_city,0.14515981059025818
+l1,1.0,log__distance_to_town,0.06965960911586433
+l1,1.0,log__missingindicator_local_population,2.2358829831393248
+l1,2.154434690031882,cat__water_source_clean_Borehole/Tubewell,0.312851034775266
+l1,2.154434690031882,cat__water_source_clean_Delivered Water,-6.0626640660374616
+l1,2.154434690031882,cat__water_source_clean_Piped Water,-8.716766227164147
+l1,2.154434690031882,cat__water_source_clean_Protected Spring,-0.06087420415602184
+l1,2.154434690031882,cat__water_source_clean_Protected Well,0.9850631983379671
+l1,2.154434690031882,cat__water_source_clean_Rainwater Harvesting,1.142774194060582
+l1,2.154434690031882,cat__water_source_clean_Sand or Sub-surface Dam,1.572898004678675
+l1,2.154434690031882,cat__water_source_clean_missing,-4.884172955294573
+l1,2.154434690031882,cat__water_tech_clean_Hand Pump,0.38255322128587804
+l1,2.154434690031882,cat__water_tech_clean_Hand Pump - Afridev,0.25321291962312303
+l1,2.154434690031882,cat__water_tech_clean_Hand Pump - Consallen,-0.8951511899669715
+l1,2.154434690031882,cat__water_tech_clean_Hand Pump - India Mark,-0.04145518880763883
+l1,2.154434690031882,cat__water_tech_clean_Kiosk,-0.9980915399726715
+l1,2.154434690031882,cat__water_tech_clean_Motorized Pump,0.058243294458863205
+l1,2.154434690031882,cat__water_tech_clean_Public Tapstand,-0.6172690121926854
+l1,2.154434690031882,cat__water_tech_clean_missing,-0.5821029152523369
+l1,2.154434690031882,cat__water_tech_clean_infrequent_sklearn,0.5000975305300596
+l1,2.154434690031882,cat__management_clean_Community Management,-0.6326137020070007
+l1,2.154434690031882,cat__management_clean_Direct Government Operation,0.3812117011989632
+l1,2.154434690031882,cat__management_clean_Other,0.06607793563388573
+l1,2.154434690031882,cat__management_clean_Other Institutional Management,-0.11894698574408537
+l1,2.154434690031882,cat__management_clean_Private Operator/Delegated Management,-1.3224775254779846
+l1,2.154434690031882,cat__management_clean_School Management,0.1376019519285247
+l1,2.154434690031882,cat__management_clean_missing,-0.896972459325544
+l1,2.154434690031882,cat__management_clean_infrequent_sklearn,-1.4062359908248832
+l1,2.154434690031882,plain__age,0.2458423823764098
+l1,2.154434690031882,plain__is_urban,-0.045244595769853554
+l1,2.154434690031882,plain__missingindicator_age,0.056742462578699436
+l1,2.154434690031882,log__local_population,-0.02925097529525917
+l1,2.154434690031882,log__distance_to_primary,-0.07795570669710528
+l1,2.154434690031882,log__distance_to_secondary,-0.04048489144655801
+l1,2.154434690031882,log__distance_to_tertiary,-0.04126121846217947
+l1,2.154434690031882,log__distance_to_city,0.14508420123092403
+l1,2.154434690031882,log__distance_to_town,0.06971614703382718
+l1,2.154434690031882,log__missingindicator_local_population,2.3934002635946485
+l1,4.641588833612772,cat__water_source_clean_Borehole/Tubewell,0.3901743632302139
+l1,4.641588833612772,cat__water_source_clean_Delivered Water,-6.264940189005352
+l1,4.641588833612772,cat__water_source_clean_Piped Water,-8.963747585480649
+l1,4.641588833612772,cat__water_source_clean_Protected Spring,0.0
+l1,4.641588833612772,cat__water_source_clean_Protected Well,1.0639884924390919
+l1,4.641588833612772,cat__water_source_clean_Rainwater Harvesting,1.2216579212736842
+l1,4.641588833612772,cat__water_source_clean_Sand or Sub-surface Dam,1.6505654133604881
+l1,4.641588833612772,cat__water_source_clean_missing,-5.024771895196986
+l1,4.641588833612772,cat__water_tech_clean_Hand Pump,0.42697039042479096
+l1,4.641588833612772,cat__water_tech_clean_Hand Pump - Afridev,0.2963873832421987
+l1,4.641588833612772,cat__water_tech_clean_Hand Pump - Consallen,-0.8735888036654577
+l1,4.641588833612772,cat__water_tech_clean_Hand Pump - India Mark,-1.7400912138902054e-05
+l1,4.641588833612772,cat__water_tech_clean_Kiosk,-0.961017735763062
+l1,4.641588833612772,cat__water_tech_clean_Motorized Pump,0.11010495983922756
+l1,4.641588833612772,cat__water_tech_clean_Public Tapstand,-0.57540008092922
+l1,4.641588833612772,cat__water_tech_clean_missing,-0.540417704198565
+l1,4.641588833612772,cat__water_tech_clean_infrequent_sklearn,0.5737181591733702
+l1,4.641588833612772,cat__management_clean_Community Management,-0.7662969554406145
+l1,4.641588833612772,cat__management_clean_Direct Government Operation,0.2612993924608905
+l1,4.641588833612772,cat__management_clean_Other,-0.060950685545136524
+l1,4.641588833612772,cat__management_clean_Other Institutional Management,-0.25283458631996597
+l1,4.641588833612772,cat__management_clean_Private Operator/Delegated Management,-1.4562270549141263
+l1,4.641588833612772,cat__management_clean_School Management,0.0
+l1,4.641588833612772,cat__management_clean_missing,-1.0326914567565966
+l1,4.641588833612772,cat__management_clean_infrequent_sklearn,-1.6271370714725772
+l1,4.641588833612772,plain__age,0.24586120571156858
+l1,4.641588833612772,plain__is_urban,-0.045284093484605346
+l1,4.641588833612772,plain__missingindicator_age,0.05698096311342892
+l1,4.641588833612772,log__local_population,-0.0292188665554179
+l1,4.641588833612772,log__distance_to_primary,-0.07799649375945515
+l1,4.641588833612772,log__distance_to_secondary,-0.040486438607396064
+l1,4.641588833612772,log__distance_to_tertiary,-0.0412894490430118
+l1,4.641588833612772,log__distance_to_city,0.14509234839516427
+l1,4.641588833612772,log__distance_to_town,0.06977946755796037
+l1,4.641588833612772,log__missingindicator_local_population,2.4775654879917597
+l1,10.0,cat__water_source_clean_Borehole/Tubewell,0.49426939026855055
+l1,10.0,cat__water_source_clean_Delivered Water,-6.354536724601426
+l1,10.0,cat__water_source_clean_Piped Water,-9.080033630319466
+l1,10.0,cat__water_source_clean_Protected Spring,0.09011401207171517
+l1,10.0,cat__water_source_clean_Protected Well,1.168485972854757
+l1,10.0,cat__water_source_clean_Rainwater Harvesting,1.3260120963830742
+l1,10.0,cat__water_source_clean_Sand or Sub-surface Dam,1.755598136780575
+l1,10.0,cat__water_source_clean_missing,-5.087417162378216
+l1,10.0,cat__water_tech_clean_Hand Pump,0.5198849751905226
+l1,10.0,cat__water_tech_clean_Hand Pump - Afridev,0.38976899165270634
+l1,10.0,cat__water_tech_clean_Hand Pump - Consallen,-0.7911247241108024
+l1,10.0,cat__water_tech_clean_Hand Pump - India Mark,0.09173622012354248
+l1,10.0,cat__water_tech_clean_Kiosk,-0.8673368396918285
+l1,10.0,cat__water_tech_clean_Motorized Pump,0.20713622938634413
+l1,10.0,cat__water_tech_clean_Public Tapstand,-0.47997255987858367
+l1,10.0,cat__water_tech_clean_missing,-0.44732470905527266
+l1,10.0,cat__water_tech_clean_infrequent_sklearn,0.6810427687666414
+l1,10.0,cat__management_clean_Community Management,-0.9424593012735344
+l1,10.0,cat__management_clean_Direct Government Operation,0.09230791329300779
+l1,10.0,cat__management_clean_Other,-0.23816935568904424
+l1,10.0,cat__management_clean_Other Institutional Management,-0.4290080911025836
+l1,10.0,cat__management_clean_Private Operator/Delegated Management,-1.63242418399492
+l1,10.0,cat__management_clean_School Management,-0.1408871456972796
+l1,10.0,cat__management_clean_missing,-1.2094126353093428
+l1,10.0,cat__management_clean_infrequent_sklearn,-1.8451634364907599
+l1,10.0,plain__age,0.24586539827474027
+l1,10.0,plain__is_urban,-0.045327881767256294
+l1,10.0,plain__missingindicator_age,0.05703841514366809
+l1,10.0,log__local_population,-0.02928299776892295
+l1,10.0,log__distance_to_primary,-0.0780469840608712
+l1,10.0,log__distance_to_secondary,-0.04049875648941333
+l1,10.0,log__distance_to_tertiary,-0.04137174646182546
+l1,10.0,log__distance_to_city,0.14502822491609563
+l1,10.0,log__distance_to_town,0.06979362336348963
+l1,10.0,log__missingindicator_local_population,2.5408315471206526
 l2,0.0001,cat__water_source_clean_Borehole/Tubewell,-0.18519864656766058
 l2,0.0001,cat__water_source_clean_Delivered Water,-0.00076164795920012
 l2,0.0001,cat__water_source_clean_Piped Water,-0.030837707746694167

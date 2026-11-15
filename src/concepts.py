@@ -124,11 +124,11 @@ def reg_path():
     rows = []
     for pen in ["l1", "l2"]:
         for C in np.logspace(-4, 1, 16):
-            m = LogisticRegression(C=C, solver="liblinear", l1_ratio=1.0 if pen == "l1" else 0.0, max_iter=2000)
+            m = LogisticRegression(C=C, solver="liblinear", l1_ratio=1.0 if pen == "l1" else 0.0, max_iter=2000, random_state=0)
             try:
                 m.fit(Xt, y)
             except TypeError:
-                m = LogisticRegression(C=C, solver="liblinear", penalty=pen, max_iter=2000).fit(Xt, y)
+                m = LogisticRegression(C=C, solver="liblinear", penalty=pen, max_iter=2000, random_state=0).fit(Xt, y)
             rows += [{"penalty": pen, "C": C, "feature": n, "coef": w} for n, w in zip(names, m.coef_[0])]
     r = pd.DataFrame(rows); r.to_csv(OUT / "reg_path.csv", index=False)
     fig, axs = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
