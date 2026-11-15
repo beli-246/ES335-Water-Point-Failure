@@ -744,17 +744,178 @@ function renderAblations() {
     xlabel: "Test PR-AUC skill (0 = random, 1 = perfect)", tipfmt: f3, ml: 190 });
 }
 
+/* ---------- landing page: dot map of real water points ---------- */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let HERO = null, heroP = null, heroAnim = 0;
+async function renderHeroMap(animate) {
+  const cv = $("#hero-canvas"); if (!cv) return;
+  if (!HERO) HERO = await (heroP ||= fetch("data/hero.json").then((r) => (r.ok ? r.json() : null)).catch(() => null));
+  if (!HERO || !cv.parentElement.clientWidth) return;
+  const W = cv.parentElement.clientWidth, H = Math.round(W * 1.0), dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.width = `${W}px`; cv.style.height = `${H}px`;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const { lat, lon, y, c } = HERO, n = y.length, pad = 14;
+  const minLon = Math.min(...lon), maxLon = Math.max(...lon), minLat = Math.min(...lat), maxLat = Math.max(...lat);
+  const k = Math.cos(((minLat + maxLat) / 2) * Math.PI / 180);           // equirectangular, corrected at mid-latitude
+  const s = Math.min((W - 2 * pad) / ((maxLon - minLon) * k), (H - 2 * pad) / (maxLat - minLat));
+  const ox = (W - (maxLon - minLon) * k * s) / 2, oy = (H - (maxLat - minLat) * s) / 2;
+  const px = (i) => ox + (lon[i] - minLon) * k * s, py = (i) => oy + (maxLat - lat[i]) * s;
+  const wet = css("--s1"), dry = css("--s2");
+  // both classes drawn the same size and opacity, in random order, so the colour mix shows the real no-water share
+  const order = [...Array(n).keys()];
+  const dot = (i) => { ctx.globalAlpha = 0.75; ctx.fillStyle = y[i] ? dry : wet; ctx.beginPath(); ctx.arc(px(i), py(i), 1.5, 0, 6.283); ctx.fill(); };
+  const labels = () => {
+    ctx.globalAlpha = 1; ctx.font = "600 13px system-ui, sans-serif"; ctx.textAlign = "center";
+    HERO.countries.forEach((name, j) => {
+      const idx = [...Array(n).keys()].filter((i) => c[i] === j);
+      const mx = idx.map(px).sort((a, b) => a - b)[idx.length >> 1], my = idx.map(py).sort((a, b) => a - b)[idx.length >> 1];
+      ctx.lineWidth = 4; ctx.strokeStyle = css("--page"); ctx.strokeText(name, mx, my); ctx.fillStyle = css("--ink"); ctx.fillText(name, mx, my);
+    });
+  };
+  const my = ++heroAnim;
+  if (!animate || reduceMotion) { order.forEach(dot); labels(); return; }
+  // reveal in random order over ~1.6 s, then the labels
+  const shuffled = order, t0 = performance.now(), dur = 1600;
+  let done = 0;
+  const step = (now) => {
+    if (my !== heroAnim) return;
+    const target = Math.min(n, Math.round(((now - t0) / dur) * n));
+    for (; done < target; done++) dot(shuffled[done]);
+    if (done < n) requestAnimationFrame(step); else labels();
+  };
+  requestAnimationFrame(step);
+}
+function animateCounters() {
+  for (const b of document.querySelectorAll("[data-count]")) {
+    const end = +b.dataset.count;
+    if (reduceMotion) { b.textContent = fmtInt(end); continue; }
+    const t0 = performance.now(), dur = 1200;
+    const tick = (now) => { const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3); b.textContent = fmtInt(Math.round(end * e)); if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
+}
+
+/* ---------- game: can you beat the model? ---------- */
+const game = { country: "Uganda", cards: [], picks: new Set(), revealed: false, you: 0, model: 0, rounds: 0 };
+function sampleK(arr, k) { const a = arr.slice(); for (let i = 0; i < k; i++) { const j = i + Math.floor(Math.random() * (a.length - i)); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, k); }
+async function renderGame() {
+  const ctr = $("#game-controls"); if (!ctr) return; ctr.replaceChildren();
+  segmented(ctr, COUNTRIES.map((c) => [c, c]), game.country, (c) => { game.country = c; game.you = game.model = game.rounds = 0; newRound(); });
+  $("#game-new").onclick = () => newRound();
+  $("#game-go").onclick = () => reveal();
+  if (!game.cards.length) await newRound(); else drawGame();
+}
+async function newRound() {
+  const P = await loadPoints(game.country); if (!P) return;
+  const dry = [], wet = []; P.y.forEach((v, i) => (v ? dry : wet).push(i));
+  game.cards = sampleK([...sampleK(dry, 3), ...sampleK(wet, 9)], 12);
+  game.picks = new Set(); game.revealed = false; drawGame();
+}
+function reveal() {
+  const P = points[game.country]; if (!P || game.picks.size !== 3) return;
+  game.revealed = true; game.rounds++;
+  const modelPicks = [...game.cards].sort((a, b) => P.score[b] - P.score[a]).slice(0, 3);
+  game.modelPicks = new Set(modelPicks);
+  game.lastYou = [...game.picks].filter((i) => P.y[i]).length; game.lastModel = modelPicks.filter((i) => P.y[i]).length;
+  game.you += game.lastYou; game.model += game.lastModel;
+  drawGame();
+}
+function drawGame() {
+  const P = points[game.country], grid = $("#game-grid"); if (!P || !grid) return;
+  grid.replaceChildren();
+  const lev = (col, i) => { const v = P.cats[col].levels[P.cats[col].codes[i]]; return v === "missing" ? "not recorded" : v; };
+  for (const i of game.cards) {
+    const picked = game.picks.has(i);
+    const b = el("button", { type: "button", class: "gcard" + (game.revealed ? (P.y[i] ? " is-dry" : " is-wet") : ""), "aria-pressed": picked ? "true" : "false" }, grid);
+    if (game.revealed) b.disabled = true;
+    el("span", { class: "g-tech", text: lev("water_tech_clean", i) === "not recorded" ? "Technology not recorded" : lev("water_tech_clean", i) }, b);
+    el("span", { class: "g-row", text: `Source: ${lev("water_source_clean", i)}` }, b);
+    el("span", { class: "g-row", text: `Managed by: ${lev("management_clean", i)}` }, b);
+    el("span", { class: "g-row", text: `Age: ${P.age[i] == null ? "not recorded" : P.age[i] === 1 ? "1 year" : P.age[i] + " years"}` }, b);
+    el("span", { class: "g-dist", text: P.districts[P.district[i]] }, b);
+    if (game.revealed) {
+      const r = el("span", { class: "g-result" }, b);
+      el("b", { text: P.y[i] ? "No water" : "Water" }, r);
+      r.appendChild(document.createTextNode(` · model risk ${pct(P.score[i])}`));
+      const tags = el("span", { class: "g-tags" }, b);
+      if (picked) el("span", { class: "tag you", text: "your pick" }, tags);
+      if (game.modelPicks.has(i)) el("span", { class: "tag model", text: "model's pick" }, tags);
+    } else if (picked) el("span", { class: "g-tags" }, b).appendChild(el("span", { class: "tag you", text: "crew goes here" }));
+    b.addEventListener("click", () => {
+      if (game.revealed) return;
+      if (game.picks.has(i)) game.picks.delete(i); else if (game.picks.size < 3) game.picks.add(i);
+      drawGame();
+    });
+  }
+  const go = $("#game-go");
+  go.disabled = game.revealed || game.picks.size !== 3;
+  go.textContent = game.revealed ? "Revealed" : `Send the crew (${game.picks.size} of 3 picked)`;
+  const res = $("#game-result"); res.replaceChildren();
+  if (game.revealed) {
+    const v = game.lastYou > game.lastModel ? "You beat the model this round." : game.lastYou < game.lastModel ? "The model wins this round." : "A draw.";
+    el("b", { text: v + " " }, res);
+    res.appendChild(document.createTextNode(`You found ${game.lastYou} of 3 dry points, the model ${game.lastModel} of 3; three random picks find 0.75 on average.`));
+    const t = R?.final_test?.find((r) => r.target === game.country && r.chosen);
+    if (t) { res.appendChild(el("br")); res.appendChild(document.createTextNode(
+      `One round is mostly luck. Over all ${fmtInt(t.n)} ${game.country} test points, the model's riskiest 10% had no water ${pct(t["prec@10%"])} of the time, against ${pct(t.prevalence)} overall.`)); }
+  }
+  $("#game-score").textContent = game.rounds ? `After ${game.rounds} round${game.rounds > 1 ? "s" : ""}: you ${game.you}, model ${game.model}` : "";
+}
+
+/* ---------- threshold explorer: why accuracy misleads ---------- */
+const thr = { country: "Uganda", t: 0.5, line: null, api: null };
+async function renderThreshold() {
+  const ctr = $("#thr-controls"); if (!ctr) return; ctr.replaceChildren();
+  segmented(ctr, COUNTRIES.map((c) => [c, c]), thr.country, async (c) => { thr.country = c; await loadPoints(c); drawThreshold(); });
+  const lab = el("label", {}, ctr); lab.appendChild(document.createTextNode("Call it \"no water\" when predicted risk ≥ "));
+  const sl = el("input", { type: "range", min: 0, max: 100, value: Math.round(thr.t * 100), "aria-label": "Decision threshold in percent" }, lab);
+  const out = el("b", { text: ` ${Math.round(thr.t * 100)}%` }, lab);
+  sl.addEventListener("input", () => { thr.t = sl.value / 100; out.textContent = ` ${sl.value}%`; updateThreshold(); });
+  await loadPoints(thr.country); drawThreshold();
+}
+function thrStats(P, t) {
+  let fl = 0, tp = 0, tn = 0; const n = P.y.length, pos = P.y.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < n; i++) { const f = P.score[i] >= t; if (f) { fl++; if (P.y[i]) tp++; } else if (!P.y[i]) tn++; }
+  return { n, pos, fl, tp, acc: (tp + tn) / n, recall: tp / pos, prec: fl ? tp / fl : null, majority: 1 - pos / n };
+}
+function drawThreshold() {
+  const box = $("#thr-chart"), P = points[thr.country]; if (!box || !P) return;
+  const pts = []; for (let t = 0; t <= 1.0001; t += 0.01) pts.push({ x: t, ...thrStats(P, t) });
+  const series = [{ name: "Accuracy", color: css("--s1"), pts: pts.map((p) => ({ x: p.x, y: p.acc })) },
+    { name: "Dry points found (recall)", color: css("--s2"), pts: pts.map((p) => ({ x: p.x, y: p.recall })) },
+    { name: "Accuracy of \"every point works\"", color: css("--neutral"), dash: true, pts: pts.map((p) => ({ x: p.x, y: p.majority })) }];
+  box.replaceChildren();
+  legend(box, [{ label: "Accuracy", color: css("--s1"), kind: "line" }, { label: "Dry points found (recall)", color: css("--s2"), kind: "line" }, { label: "Accuracy of \"every point works\"", color: css("--neutral"), kind: "dash" }]);
+  thr.api = lineChart(el("div", { class: "chart" }, box), { h: 240, series, xmin: 0, xmax: 1, ymin: 0, ymax: 1, xlabel: "Threshold on predicted risk", ylabel: "Share",
+    xfmt: (v) => pct(v), yfmt: (v) => pct(v), tipfmt: (v) => pct(v, 1), xtipfmt: (v) => `threshold ${pct(v)}` });
+  thr.line = el("line", { y1: thr.api.f.y1, y2: thr.api.f.y0, stroke: css("--ink"), "stroke-width": 1.5 }, thr.api.f.svg);
+  updateThreshold();
+}
+function updateThreshold() {
+  const P = points[thr.country]; if (!P || !thr.line) return;
+  const x = thr.api.xs(thr.t); thr.line.setAttribute("x1", x); thr.line.setAttribute("x2", x);
+  const s = thrStats(P, thr.t), ro = $("#thr-readout"); ro.replaceChildren();
+  for (const [v, l] of [[pct(s.fl / s.n, 1), `of ${thr.country}'s ${fmtInt(s.n)} test points called "no water"`],
+    [pct(s.acc, 1), `accuracy, against ${pct(s.majority, 1)} for "every point works"`],
+    [pct(s.recall, 1), `of the ${fmtInt(s.pos)} dry points found`], [s.prec == null ? "–" : pct(s.prec, 1), "of the points called \"no water\" really were"]]) {
+    const d = el("div", {}, ro); el("b", { text: v }, d); d.appendChild(document.createTextNode(l));
+  }
+}
+
 /* ---------- boot ---------- */
 function renderAll() {
   renderHero(); renderDataTable(); renderHeadline(); renderRandom(); renderOperating(); renderAccuracy(); renderRegimes(); renderCountryModels(); renderFinal();
   renderProvider(); renderConcepts(); renderAblations();
   if (window.L) renderMap();
+  renderGame(); renderThreshold();
 }
 // charts whose layout depends on their container's width (tables do not)
 function renderSized() {
   if (!R) return;
   renderHero(); renderHeadline(); renderRegimes(); renderCountryModels(); renderFinal(); renderConcepts(); renderAblations();
   if (points[state.country]) renderCrewCurve(points[state.country]);
+  drawThreshold();
+  if (currentPage?.id === "overview") renderHeroMap(false);
 }
 
 /* ---------- one section per page ----------
@@ -765,13 +926,37 @@ const PAGES = [...document.querySelectorAll("main > section")];
 const NAV = [...document.querySelectorAll("header.top nav a")];
 const pageTitle = (s) => NAV.find((a) => a.getAttribute("href") === `#${s.id}`)?.textContent || s.querySelector("h1, h2")?.textContent || s.id;
 let currentPage = null;
+const TEASER = {
+  overview: "The project in one page", question: "What we predict, for whom, and with what information",
+  explore: "Beat the model, then plan a crew's visits on a map", data: "Where the data comes from and what the audit found",
+  preprocessing: "How raw columns become model inputs, without leakage", methods: "The baselines and the models we compared",
+  evaluation: "Whole-district test set, three training regimes, metrics", results: "How well it ranks, and what local data is worth",
+  real: "Is it the pumps, or who did the survey?", errors: "Where and why the model is wrong", limitations: "What this does not show",
+  conclusion: "What a ministry should take away", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
+  references: "Papers, data and software",
+};
+const chapNo = (s) => String(PAGES.indexOf(s)).padStart(2, "0");
 function buildPagers() {
   PAGES.forEach((s, i) => {
+    // chapter number badge on each section heading (not on the overview)
+    const h2 = s.querySelector(":scope > h2");
+    if (i > 0 && h2) h2.prepend(el("span", { class: "chap", text: chapNo(s), "aria-hidden": "true" }));
     const nav = el("nav", { class: "pager", "aria-label": "Previous and next section" }, s);
-    const prev = PAGES[i - 1], next = PAGES[i + 1];
-    if (prev) el("a", { href: `#${prev.id}`, class: "prev", text: `← ${pageTitle(prev)}` }, nav); else el("span", {}, nav);
-    if (next) el("a", { href: `#${next.id}`, class: "next", text: `${pageTitle(next)} →` }, nav);
+    const card = (p, cls, label) => {
+      const a = el("a", { href: `#${p.id}`, class: cls }, nav);
+      el("span", { class: "p-label", text: label }, a);
+      el("span", { class: "p-title", text: `${PAGES.indexOf(p) ? chapNo(p) + " · " : ""}${pageTitle(p)}` }, a);
+      el("span", { class: "p-teaser", text: TEASER[p.id] || "" }, a);
+    };
+    if (PAGES[i - 1]) card(PAGES[i - 1], "prev", "← Previous"); else el("span", {}, nav);
+    if (PAGES[i + 1]) card(PAGES[i + 1], "next", "Next →");
   });
+  const strip = $("#chapters");
+  if (strip) PAGES.slice(1).forEach((p) => {
+    const a = el("a", { href: `#${p.id}`, class: "chapter" + (p.id === "explore" ? " hot" : "") }, strip);
+    el("span", { class: "c-no", text: chapNo(p) }, a); el("b", { text: pageTitle(p) }, a); el("span", { text: TEASER[p.id] || "" }, a);
+  });
+  const bar = el("div", { class: "progress", "aria-hidden": "true" }, $("header.top")); el("i", {}, bar);
 }
 function showPage(hash, { focus = true } = {}) {
   const id = decodeURIComponent((hash || "").replace(/^#/, ""));
@@ -789,9 +974,11 @@ function showPage(hash, { focus = true } = {}) {
     } else a.removeAttribute("aria-current");
   }
   document.title = page.id === "overview" ? "Will This Water Point Still Work?" : `${pageTitle(page)} · Will This Water Point Still Work?`;
+  const bar = $("header.top .progress i"); if (bar) bar.style.width = `${(PAGES.indexOf(page) / (PAGES.length - 1)) * 100}%`;
   if (changed) {
     renderSized();                                               // hidden charts were drawn at a fallback width
     if (page.id === "explore" && map) { map.invalidateSize(); drawMap(true); }
+    if (page.id === "overview") { renderHeroMap(true); animateCounters(); }
   }
   if (target && target !== page) target.scrollIntoView();
   else window.scrollTo(0, 0);
@@ -813,7 +1000,7 @@ async function boot() {
     const dark = document.documentElement.getAttribute("data-theme") === "dark" || (!document.documentElement.hasAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
     document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
     try { localStorage.setItem("theme", dark ? "light" : "dark"); } catch (e) { /* storage unavailable */ }
-    renderAll();
+    renderAll(); renderHeroMap(false);
   });
 }
 try { const t = localStorage.getItem("theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) { /* storage unavailable */ }

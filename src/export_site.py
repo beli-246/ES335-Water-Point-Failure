@@ -94,6 +94,16 @@ def main():
                "score": d.score.round(4).tolist(), "score_b": d.score_best_B.round(4).tolist(),
                "district": [dix[x] for x in d.district], "age": [None if pd.isna(a) else int(a) for a in d.age], "cats": cats}
         (SITE_DATA / f"points_{c}.json").write_text(json.dumps(pts, separators=(",", ":")))
+
+    # landing-page map: a seeded random sample of real water points (training and test), 4,000 per country, with the
+    # survey label only. No model output, so it shows the data, not a result.
+    from config import CLEAN
+    df = pd.read_parquet(CLEAN, columns=["country", "lat_deg", "lon_deg", "y"])
+    s = pd.concat([g.sample(min(4000, len(g)), random_state=335) for _, g in df.groupby("country")]).sample(frac=1, random_state=335)
+    hero = {"countries": COUNTRIES, "total_points": int(len(df)), "per_country": {c: int((df.country == c).sum()) for c in COUNTRIES},
+            "lat": s.lat_deg.round(2).tolist(), "lon": s.lon_deg.round(2).tolist(), "y": s.y.astype(int).tolist(),
+            "c": [COUNTRIES.index(x) for x in s.country]}
+    (SITE_DATA / "hero.json").write_text(json.dumps(hero, separators=(",", ":")))
     for f in sorted(SITE_DATA.glob("*.json")):
         print(f"{f.relative_to(ROOT)}  {f.stat().st_size / 1024:.0f} KB")
 

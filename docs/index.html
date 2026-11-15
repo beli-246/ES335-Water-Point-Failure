@@ -24,27 +24,64 @@
 
 <main id="main" tabindex="-1">
 <section id="overview">
-<h1>Will this water point still work?</h1>
-<p class="lede">We rank about 157,000 rural water points in Uganda, Kenya, Tanzania and Ethiopia by their risk of having no water on the
-survey day, using only attributes that do not depend on the point's current status. Then we ask: how much of that skill is lost when
-the model has never seen the country it is used in?</p>
-<p class="byline">ES 335 Machine Learning, IIT Gandhinagar · Beli Dedhia &amp; Poojan Soni · November 2026 ·
-<a href="https://github.com/beli-246/ES335-Water-Point-Failure">Code on GitHub</a></p>
-<div class="card summary">
-<b>In short</b>
-<ul>
-<li><b>It works, modestly.</b> In all four countries the model ranks water points better than random and better than a one-rule
-baseline. A crew that visits the riskiest 10% finds dry points 1.5–3.8 times as often as by visiting at random.</li>
-<li><b>Local labels are what matter.</b> Models trained only on other countries do much worse; on Ethiopia, every one of them scores below random.
-Adding foreign data helps only if the model is told the country, and even then it merely matches training on local data alone.</li>
-<li><b>Read the numbers with care.</b> Ethiopia's strong result mostly separates survey programs rather than pumps. Accuracy beats
-"every point works" clearly only in Tanzania (elsewhere by under 1 point), so these models are for <em>ordering visits</em>, not for yes/no labels.</li>
-</ul>
+<div class="hero">
+  <div class="hero-text">
+    <p class="kicker">ES 335 machine-learning project · IIT Gandhinagar</p>
+    <h1>Will this water point still work?</h1>
+    <p class="lede">We rank about 157,000 rural water points in Uganda, Kenya, Tanzania and Ethiopia by their risk of having no water on the
+    survey day, using only attributes that do not depend on the point's current status. Then we ask: how much of that skill is lost when
+    the model has never seen the country it is used in?</p>
+    <div class="counters" aria-label="Data at a glance">
+      <div><b data-count="157502">157,502</b><span>water points</span></div>
+      <div><b data-count="4">4</b><span>countries</span></div>
+      <div><b data-count="455">455</b><span>districts</span></div>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="#explore">Play: can you beat the model?</a>
+      <a class="btn" href="#question">Read the project</a>
+    </div>
+    <p class="byline">Beli Dedhia &amp; Poojan Soni · November 2026 · <a href="https://github.com/beli-246/ES335-Water-Point-Failure">Code on GitHub</a></p>
+  </div>
+  <figure class="hero-map">
+    <canvas id="hero-canvas" role="img" aria-label="Dot map of sampled water points in the four countries, coloured by survey result"></canvas>
+    <figcaption><span class="dot ok"></span>water on the survey day <span class="dot dry"></span>no water ·
+    each dot is a real water point (a random 4,000 per country)</figcaption>
+  </figure>
 </div>
+
+<h2 class="section-kicker">In short</h2>
+<div class="findings">
+  <a class="finding" href="#results">
+    <span class="big">1.5–3.8×</span>
+    <b>It works, modestly.</b>
+    <span>In all four countries the model ranks water points better than random and better than a one-rule
+    baseline. A crew that visits the riskiest 10% finds dry points 1.5–3.8 times as often as by visiting at random.</span>
+    <span class="go">See the results →</span>
+  </a>
+  <a class="finding" href="#country-models">
+    <span class="big">Below random</span>
+    <b>Local labels are what matter.</b>
+    <span>Models trained only on other countries do much worse; on Ethiopia, every one of them scores below random.
+    Adding foreign data helps only if the model is told the country, and even then it merely matches training on local data alone.</span>
+    <span class="go">Local vs foreign →</span>
+  </a>
+  <a class="finding warn" href="#provider">
+    <span class="big">0.83 vs 0.87</span>
+    <b>Read the numbers with care.</b>
+    <span>Ethiopia's strong result mostly separates survey programs rather than pumps: the survey provider alone reaches ROC-AUC 0.83, the model 0.87.
+    Accuracy beats "every point works" clearly only in Tanzania (elsewhere by under 1 point), so these models are for <em>ordering visits</em>, not for yes/no labels.</span>
+    <span class="go">The provider check →</span>
+  </a>
+</div>
+
+<h2 class="section-kicker">The riskiest 10%, per country</h2>
 <div class="tiles" id="hero-tiles" aria-live="polite"></div>
 <p class="note" id="hero-note">With local data, the riskiest 10% of points flagged by the final model have 1.5–3.8 times the
 overall no-water rate. A model trained only on other countries does much worse; on Ethiopia, all seven foreign-only models score below random (ROC-AUC 0.21–0.42).
 What makes the difference is labelled data from the country itself.</p>
+
+<h2 class="section-kicker">The project, chapter by chapter</h2>
+<div class="chapters" id="chapters"></div>
 <details class="card"><summary><b>Terms used on this site</b></summary>
 <dl class="glossary">
 <dt>No-water rate</dt><dd>Share of points with no water on the survey day (9% in Kenya to 43% in Tanzania). A random ranking finds dry points at exactly this rate.</dd>
@@ -63,6 +100,7 @@ What makes the difference is labelled data from the country itself.</p>
 <!-- ============================================================ -->
 <section id="question">
 <h2>The question</h2>
+<p class="takeaway"><b>10%</b><span>A district office can visit only some of its water points each year. Can a model tell a crew with time for 10% of them where to go first?</span></p>
 <p>A district water office cannot visit every hand pump, borehole and tap each year. If it could rank points by risk,
 a crew with time for, say, 10% of points could go to the most likely failures first. The <b>prediction target</b> is
 WPdx's <code>status_id = "No"</code>: no water at the point on the visit day. It is recorded the same way in all four
@@ -83,6 +121,19 @@ is about transfer: does a model trained on other countries' surveys rank points 
 <!-- ============================================================ -->
 <section id="explore">
 <h2>Try it: plan a crew's inspections</h2>
+<p class="takeaway"><b>Your turn</b><span>First, play a few rounds against the model on real water points. Then plan a whole crew's visits on the map.</span></p>
+<div class="card game" id="game">
+  <div class="game-head"><h3>Can you beat the model?</h3><div id="game-score" class="game-score" aria-live="polite"></div></div>
+  <p class="cap">Twelve real water points from this country's test districts, which no model saw in training. Exactly three had no water on the
+  survey day. Pick the three you would send a crew to, then reveal what the survey found and which three the model chose. Every round hides
+  3 dry points in 12 (25%), so it is easier than Kenya's real 9% and harder than Tanzania's 43%.</p>
+  <div class="controls" id="game-controls"></div>
+  <div class="game-grid" id="game-grid"></div>
+  <div class="game-actions"><button type="button" id="game-go" class="btn primary" disabled>Send the crew (0 of 3 picked)</button>
+  <button type="button" id="game-new" class="btn">New round</button></div>
+  <p class="game-result" id="game-result" aria-live="polite"></p>
+</div>
+<h3>Plan a whole crew's visits</h3>
 <p>Pick a country and how many points a crew can visit. The map shows which test points the model would send the crew to, and what
 the survey found there. These are the frozen test districts, which no model saw during training (<a href="#evaluation">evaluation design</a>).
 Switch to the foreign-only model to see what a ministry would get from a model trained only on other countries.</p>
@@ -105,6 +156,7 @@ back to the final model and compare.</p>
 <!-- ============================================================ -->
 <section id="data">
 <h2>Data</h2>
+<p class="takeaway"><b>74 columns</b><span>Every column was profiled before any model: leakage removed, missing values traced back to who did the survey, 3,397 unlabelled rows dropped.</span></p>
 <p><a href="https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj">Water Point Data Exchange Plus (WPdx+)</a>,
 CC BY 4.0, downloaded 6 November 2026 [<a href="#ref-wpdx">WPdx</a>]. One row per water point at its latest survey.</p>
 <p class="note" id="cleaning-steps"></p>
@@ -112,7 +164,7 @@ CC BY 4.0, downloaded 6 November 2026 [<a href="#ref-wpdx">WPdx</a>]. One row pe
 <h3>What a full-column audit found before any modelling</h3>
 <p>We profiled every one of the 74 columns before training a model. Script: <code>src/audit_data.py</code>; report:
 <code>results/audit/data_audit.md</code>.</p>
-<ul>
+<ul class="cardlist">
 <li><b>Leakage.</b> Several columns nearly give the answer away. <code>water_point_history</code> separates working from non-working
 points with AUC 0.99, the raw <code>status</code> text 0.96, and <code>status_clean</code> is the label in other words. All are excluded.
 So are the dates and survey IDs: <code>source</code> alone scores 0.85 in Ethiopia because different surveys found very
@@ -136,9 +188,10 @@ This decides how we split the data (<a href="#evaluation">evaluation design</a>)
 <!-- ============================================================ -->
 <section id="preprocessing">
 <h2>Preprocessing</h2>
+<p class="takeaway"><b>0 test rows</b><span>Every transform sits inside one scikit-learn pipeline and is fitted on training folds only.</span></p>
 <p>Every transform lives inside a scikit-learn <code>Pipeline</code> and is fitted on the training folds only, so no statistic
 from validation or test points leaks into training (<code>src/features.py</code>).</p>
-<ul>
+<ul class="cardlist">
 <li><b>Distances and population</b> are heavy-tailed (a few points are 100+ km from a road), so they get <code>log1p</code>. This
 matters for linear models and SVMs, whose loss is dominated by extreme values; trees split on order and do not care.</li>
 <li><b>Scaling</b> (z-scores) only for logistic regression and SVMs: the regularisation penalty and the RBF kernel distance both
@@ -160,6 +213,7 @@ can see that a value was absent.</li>
 <!-- ============================================================ -->
 <section id="methods">
 <h2>Baselines and methods</h2>
+<p class="takeaway"><b>2 + 6 + 1</b><span>Two baselines, six models and one stacked ensemble. The final model per country is picked by cross-validation, never by the test set.</span></p>
 <div class="tablewrap"><table>
 <thead><tr><th>Model</th><th>Why it fits this problem</th><th>What we tune</th></tr></thead>
 <tbody>
@@ -181,6 +235,7 @@ districts, and the <a href="#final-model">results table</a> shows them all, but 
 <!-- ============================================================ -->
 <section id="evaluation">
 <h2>Evaluation design</h2>
+<p class="takeaway"><b>≈20%</b><span>of each country's points, held out as whole districts and frozen before any model was trained, then scored once.</span></p>
 <h3>Test set: whole districts, frozen before any model was trained</h3>
 <p>Random row splits put a pump's neighbours in training and the pump in test, so the model is graded on places it has
 effectively seen [<a href="#ref-roberts">Roberts et al. 2017</a>]. Our concept experiment (<a href="#cvopt-chart">appendix</a>) measures the effect: on Uganda, random 3-fold CV says PR-AUC 0.43, but
@@ -190,10 +245,10 @@ draws, we pick the one whose no-water rate is closest to the country's, which is
 country's rows are never test districts; Ethiopia's largest has 29.3%. The list was committed to the repository
 (<code>splits/test_districts.json</code>) before any model was fitted.</p>
 <h3>Three training regimes, one test set</h3>
-<ul>
-<li><b style="color:var(--s1)">A · pooled</b>: the other three countries plus the target's training districts.</li>
-<li><b style="color:var(--s2)">B · foreign only</b>: the other three countries. The model has never seen the target country.</li>
-<li><b style="color:var(--s3)">C · local only</b>: the target's training districts.</li>
+<ul class="cardlist regimes">
+<li><b>A · pooled</b>The other three countries plus the target's training districts.</li>
+<li><b>B · foreign only</b>The other three countries. The model has never seen the target country.</li>
+<li><b>C · local only</b>The target's training districts.</li>
 </ul>
 <p>All three are scored on the same test districts, so differences between them are paired. Regime C was not in the original plan.
 We added it after the first run (<a href="#amendment">see the amendment</a>), when pooled logistic regression ranked Ethiopia
@@ -235,6 +290,7 @@ final-model choice did not change.</p>
 <!-- ============================================================ -->
 <section id="results">
 <h2>Results</h2>
+<p class="takeaway"><b>1.5–3.8×</b><span>The riskiest 10% hold 1.5 to 3.8 times the overall no-water rate, in every country. A model that never saw the country does much worse.</span></p>
 <div id="results-text">
 <p><b>Headline.</b> In every country, the final model ranks water points better than the one-rule baseline and better than the best
 model that never saw the country: the 95% interval of the <em>paired</em> difference excludes zero in both comparisons
@@ -284,6 +340,14 @@ In Kenya, only 1 in 5 of those trips finds a dry point: better than the 1 in 11 
 </div>
 
 <h3>Why we do not report accuracy</h3>
+<div class="card">
+  <h4>Try it: move the yes/no threshold</h4>
+  <p class="cap">Every test point whose predicted risk is at or above the threshold is called "no water". Drag the slider: outside Tanzania, no threshold lifts
+  accuracy more than about 1 point above the trivial "every point works" line, while the share of dry points found swings from all to none. That is why we judge the <em>ranking</em>.</p>
+  <div class="controls" id="thr-controls"></div>
+  <div class="readout" id="thr-readout"></div>
+  <div id="thr-chart"></div>
+</div>
 <div class="card">
   <p class="cap">Accuracy of a yes/no "no water" call. "Best possible" picks the threshold with hindsight on the test set, so it is an upper bound, not something a model could achieve.</p>
   <div id="acc-table"></div>
@@ -339,7 +403,7 @@ a simpler hypothesis class generalises better.</p>
 <h3 id="country-models">Does pooling work if the model knows the country?</h3>
 <p>Regime A gives the pooled model no way to tell countries apart, so "pooling does not help" could simply mean "a model that cannot see
 the country does not help". We tested the obvious fix (<a href="#amendment2">amendment, 15 Nov</a>):</p>
-<ul>
+<ul class="cardlist">
 <li><b>Trees, random forest, XGBoost:</b> country becomes one more input, so a tree can branch on it and learn country-specific rules.</li>
 <li><b>Logistic regression:</b> a country indicator only shifts the intercept, and an intercept cannot flip a coefficient's sign. So we
 also fitted <b>country × every feature</b>: each country gets its own coefficients, and the L2 penalty shrinks them towards shared ones,
@@ -399,6 +463,7 @@ was the strongest single feature. Local population matters most in Uganda, partl
 <!-- ============================================================ -->
 <section id="real">
 <h2>Is the signal real?</h2>
+<p class="takeaway"><b>0.83 vs 0.87</b><span>In Ethiopia, knowing only who did the survey nearly matches the model. Elsewhere the provider explains much less.</span></p>
 <p>A model can score well for the wrong reason. Two checks: does the ranking simply follow <em>who did the survey</em>, and what is left when we remove one source of signal at a time?</p>
 <h3 id="provider">Check 1: how much of the ranking is the survey provider?</h3>
 <p>WPdx records which organisation surveyed each point (<code>source</code>). It is <b>never</b> a model input, because it
@@ -425,7 +490,7 @@ Ministry's survey alone (73% of test points), it scores 0.66, almost its overall
 some smaller Ugandan surveys (Water For People, C &amp; D) the model is no better than chance.</p>
 </div>
 <h3 id="ablations">Check 2: ablations, removing one source of signal at a time</h3>
-<ul>
+<ul class="cardlist">
 <li><b>No missing signal</b>: does the model rank points by survey provider, through which values are missing?</li>
 <li><b>No remoteness / population</b>: these features locate a point, and the country is 97.5% recoverable from the full feature set. Does the local advantage survive without them?</li>
 <li><b>+ fee payment</b>: across 25,000 hand pumps in Liberia, Sierra Leone and Uganda, not collecting user fees was one of the
@@ -456,6 +521,7 @@ models). So Uganda's size does not explain why foreign-only training fails; diff
 <!-- ============================================================ -->
 <section id="errors">
 <h2>Where the model is wrong</h2>
+<p class="takeaway"><b>0.25–0.88</b><span>How well predicted and observed no-water rates agree across test districts (those with at least 20 points): 0.88 in Ethiopia, only 0.25 in Uganda. The biggest misses are whole districts.</span></p>
 <p>Error analysis for the country, model and crew size chosen in <a href="#explore">Try it</a>. A group where mean predicted risk is far from the observed rate is
 a group the model systematically misreads.</p>
 <div class="card"><div class="controls" id="err-controls"></div><div id="err-table"></div></div>
@@ -489,8 +555,9 @@ district does not have.</p>
 <!-- ============================================================ -->
 <section id="limitations">
 <h2>Limitations</h2>
+<p class="takeaway"><b>1 day</b><span>The label is what one survey visit found. It is not mechanical failure, and it is not a forecast.</span></p>
 <div id="limitations-text">
-<ul>
+<ul class="cardlist">
 <li><b>The label is one survey day.</b> "No water" mixes broken pumps, seasonally dry sources and differences in survey practice. We
 predict what a survey would find, not mechanical failure.</li>
 <li><b>Country = survey.</b> The country is 97.5% recoverable from the features, and each country's data comes from a few providers
@@ -520,6 +587,7 @@ of every conclusion holds, but single model-by-country gaps are less certain tha
 <!-- ============================================================ -->
 <section id="conclusion">
 <h2>Conclusion</h2>
+<p class="takeaway"><b>Label locally</b><span>In Ethiopia, Kenya and Tanzania, 14,000–19,000 local labels beat a model trained on 134,000–140,000 points from elsewhere.</span></p>
 <div id="conclusion-text">
 <p>Static attributes rank rural water points by no-water risk better than a one-rule baseline in all four countries, and the
 gain is statistically clear at the district level. But <b>the skill depends on having labelled data from the same country</b>.
@@ -537,6 +605,7 @@ That last check matters here: Ethiopia's strongest result turned out to be mostl
 <!-- ============================================================ -->
 <section id="concepts">
 <h2>Appendix: course concepts, shown on our data</h2>
+<p class="takeaway"><b>7 concepts</b><span>Course ideas measured on our own data, on training districts only: optimisation, regularisation, bias–variance, validation, boosting, kernels, tuning.</span></p>
 <p>This appendix supports the <a href="#methods">method choices</a>. Each panel is a course concept, measured on Uganda's <em>training</em> districts: models are fitted on some training districts and
 scored on other, held-out training districts. The frozen test districts are never touched.</p>
 
@@ -580,6 +649,7 @@ feature selection. Under L2 all of them grow smoothly and none is exactly zero. 
 <!-- ============================================================ -->
 <section id="reproduce">
 <h2>Reproduce</h2>
+<p class="takeaway"><b>≈15 h</b><span>One list of commands rebuilds every number on this site from the public data, which you can check against our SHA-256.</span></p>
 <p>Python 3.12. Every number on this site is written by the scripts below into <code>docs/data/</code>; the page computes nothing
 except re-sorting exported test scores for the crew slider. A full run from a clean clone took about 15 hours on a 16-thread laptop,
 12 of them for the main experiment. That run (15 November) matched our committed metrics; the only difference was the unseeded L1 path
