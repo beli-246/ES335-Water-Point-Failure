@@ -14,7 +14,7 @@
 <header class="top"><div class="inner">
   <a class="brand" href="#overview">Water point failure</a>
   <nav aria-label="Sections">
-    <a href="#overview">Overview</a><a href="#question">Question</a><a href="#explore">Try it</a><a href="#data">Data</a><a href="#preprocessing">Preprocessing</a>
+    <a href="#overview">Overview</a><a href="#story">The story</a><a href="#question">Question</a><a href="#explore">Try it</a><a href="#data">Data</a><a href="#preprocessing">Preprocessing</a>
     <a href="#methods">Methods</a><a href="#evaluation">Evaluation</a><a href="#results">Results</a><a href="#real">Is it real?</a>
     <a href="#errors">Errors</a><a href="#limitations">Limitations</a><a href="#conclusion">Conclusion</a><a href="#concepts">Appendix</a>
     <a href="#reproduce">Reproduce</a><a href="#references">References</a>
@@ -37,8 +37,8 @@
       <div><b data-count="455">455</b><span>districts</span></div>
     </div>
     <div class="cta">
-      <a class="btn primary" href="#explore">Play: can you beat the model?</a>
-      <a class="btn" href="#question">Read the project</a>
+      <a class="btn primary" href="#story">See how it works →</a>
+      <a class="btn" href="#explore">Play: can you beat the model?</a>
     </div>
     <p class="byline">Beli Dedhia &amp; Poojan Soni · November 2026 · <a href="https://github.com/beli-246/ES335-Water-Point-Failure">Code on GitHub</a></p>
   </div>
@@ -95,6 +95,32 @@ What makes the difference is labelled data from the country itself.</p>
 <dt>Calibration</dt><dd>Whether a predicted 30% risk really means 30% of such points are dry.</dd>
 </dl>
 </details>
+</section>
+
+<!-- ============================================================ -->
+<section id="story">
+<h2>How it is used: one district, one season</h2>
+<p class="takeaway"><b>8 steps</b><span>Follow a district water office as it plans a season of inspections with the model, on real test points, and see what the crew really found.</span></p>
+<div class="card story">
+  <div class="controls" id="story-controls"></div>
+  <div class="story-body">
+    <div class="story-text">
+      <p class="story-step" id="story-step"></p>
+      <h3 id="story-title"></h3>
+      <div id="story-copy" aria-live="polite"></div>
+      <div class="story-stats" id="story-stats"></div>
+    </div>
+    <div class="story-viz"><div id="story-viz"></div><div id="story-legend"></div></div>
+  </div>
+  <div class="story-nav">
+    <button type="button" class="btn" id="story-back">← Back</button>
+    <div class="story-dots" id="story-dots" role="group" aria-label="Story steps"></div>
+    <button type="button" class="btn primary" id="story-next">Next →</button>
+  </div>
+</div>
+<p class="note">Each dot is one water point in a frozen test district: no model saw any of its points during training. The colours come from
+the real survey records and the final model's real scores. We start with a <em>typical</em> district, the one whose result is the median
+among that country's test districts with at least 100 points and 5 dry ones, not the best one. Pick any other district above.</p>
 </section>
 
 <!-- ============================================================ -->

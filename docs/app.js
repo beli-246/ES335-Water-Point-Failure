@@ -902,12 +902,190 @@ function updateThreshold() {
   }
 }
 
+/* ---------- the story: one district water office, one season ----------
+   Real test districts (never seen in training), the final model's real scores and the real survey labels. The default
+   district is the one with the MEDIAN result in its country (not the best), and the last step shows every district. */
+const story = { country: "Uganda", d: null, step: 0, list: null, els: null, layout: null, prevOrder: null };
+const STORY_N = 8;
+const prettyDistrict = (s) => { const [r, d] = s.split(" | "); return d ? `${d} (${r})` : s; };
+function storyDistricts(P) {
+  const by = new Map();
+  P.district.forEach((d, i) => { if (!by.has(d)) by.set(d, []); by.get(d).push(i); });
+  const out = [];
+  for (const [d, idx] of by) {
+    const n = idx.length, dry = idx.reduce((a, i) => a + P.y[i], 0);
+    if (n < 100 || dry < 5) continue;
+    const k = Math.max(1, Math.round(0.1 * n));
+    const byRisk = [...idx].sort((a, b) => P.score[b] - P.score[a] || a - b);
+    const byForeign = [...idx].sort((a, b) => P.score_b[b] - P.score_b[a] || a - b);
+    const found = byRisk.slice(0, k).reduce((a, i) => a + P.y[i], 0), foundB = byForeign.slice(0, k).reduce((a, i) => a + P.y[i], 0);
+    const rand = (k * dry) / n;
+    out.push({ d, name: prettyDistrict(P.districts[d]), idx, byRisk, byForeign, n, dry, k, found, foundB, rand, lift: found / rand, liftB: foundB / rand });
+  }
+  return out.sort((a, b) => b.n - a.n);
+}
+async function renderStory() {
+  const ctr = $("#story-controls"); if (!ctr) return;
+  const P = await loadPoints(story.country); if (!P) return;
+  story.list = storyDistricts(P);
+  if (!story.d || !story.list.find((x) => x.d === story.d)) {
+    const byLift = [...story.list].sort((a, b) => a.lift - b.lift);
+    story.d = byLift[Math.floor((byLift.length - 1) / 2)].d;           // the median district: typical, not the best
+  }
+  ctr.replaceChildren();
+  segmented(ctr, COUNTRIES.map((c) => [c, c]), story.country, (c) => { story.country = c; story.d = null; story.els = null; renderStory(); });
+  const lab = el("label", { text: "District " }, ctr), sel = el("select", { "aria-label": "Test district" }, lab);
+  const med = [...story.list].sort((a, b) => a.lift - b.lift)[Math.floor((story.list.length - 1) / 2)].d;
+  for (const x of story.list) el("option", { value: x.d, text: `${x.name} (${fmtInt(x.n)} points)${x.d === med ? " · typical" : ""}`, selected: x.d === story.d ? "" : null }, sel);
+  sel.addEventListener("change", () => { story.d = +sel.value; story.els = null; drawStory(); });
+  const dots = $("#story-dots"); dots.replaceChildren();
+  for (let s = 0; s < STORY_N; s++) { const b = el("button", { type: "button", "aria-label": `Step ${s + 1}` }, dots); b.addEventListener("click", () => { story.step = s; drawStory(); }); }
+  // on narrow screens the picture sits above the text: bring the card into view on every step so the change is seen
+  const go = (d) => { story.step = Math.max(0, Math.min(STORY_N - 1, story.step + d)); drawStory();
+    if (innerWidth <= 820) $(".card.story").scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" }); };
+  $("#story-back").onclick = () => go(-1);
+  $("#story-next").onclick = () => go(1);
+  drawStory();
+}
+function storyBuild(D, P) {
+  const box = $("#story-viz"); box.replaceChildren();
+  const W = Math.max(280, box.clientWidth || 520), cols = Math.max(12, Math.round(Math.sqrt(D.n * 1.4)));
+  const cell = W / cols, rows = Math.ceil(D.n / cols), H = rows * cell, r = Math.max(1.5, cell * 0.36);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `One dot per water point in ${D.name}`, class: "story-svg" }, box);
+  const els = new Map();
+  for (const i of D.idx) {
+    const c = el("circle", { r, cx: 0, cy: 0 }, svg);
+    c.addEventListener("pointermove", (e) => {
+      const lev = (col) => { const v = P.cats[col].levels[P.cats[col].codes[i]]; return v === "missing" ? "not recorded" : v; };
+      const rows = [{ value: lev("water_tech_clean"), label: "technology" }, { value: lev("water_source_clean"), label: "source" },
+        { value: P.age[i] == null ? "not recorded" : `${P.age[i]} years`, label: "age" }];
+      if (story.step >= 2) rows.push({ value: pct(P.score[i]), label: "model risk" });
+      if (story.step >= 4) rows.push({ value: P.y[i] ? "no water" : "water", label: "survey found" });
+      showTip(e, "Water point", rows);
+    });
+    c.addEventListener("pointerleave", hideTip);
+    els.set(i, c);
+  }
+  story.els = els; story.layout = { cols, cell, W, H }; story.prevOrder = null; story.built = D.d;
+}
+function storyPaint(D, P, order, paint) {
+  const { cols, cell } = story.layout, moved = story.prevOrder !== order;
+  order.forEach((i, j) => {
+    const c = story.els.get(i), x = (j % cols + 0.5) * cell, y = (Math.floor(j / cols) + 0.5) * cell;
+    c.style.transitionDelay = moved ? `${(j / order.length) * 0.6}s` : "0s";
+    c.style.transform = `translate(${x}px, ${y}px)`;
+    const p = paint(i, j); c.style.fill = p.fill; c.style.opacity = p.op ?? 1;
+    c.style.stroke = p.ring ? css("--ink") : "none"; c.style.strokeWidth = p.ring ? 1.4 : 0;
+  });
+  story.prevOrder = order;
+}
+function drawStory() {
+  const P = points[story.country], D = story.list?.find((x) => x.d === story.d); if (!P || !D) return;
+  const s = story.step, others = COUNTRIES.filter((c) => c !== story.country);
+  const risk = (i) => mix(css("--seq-lo"), css("--seq-hi"), Math.min(1, P.score[i] / Math.max(...D.idx.map((j) => P.score[j]))));
+  const wet = css("--s1"), dry = css("--s2"), neutral = css("--axis");
+  const topR = new Set(D.byRisk.slice(0, D.k)), topB = new Set(D.byForeign.slice(0, D.k));
+  const scores = D.idx.map((i) => P.score[i]), lo = Math.min(...scores), hi = Math.max(...scores);
+  // example point: the first one from the middle of the list whose attributes are all recorded
+  const complete = (i) => P.age[i] != null && ["water_tech_clean", "water_source_clean", "management_clean"].every((c) => P.cats[c].levels[P.cats[c].codes[i]] !== "missing");
+  const ex = [...D.idx.slice(Math.floor(D.n / 2)), ...D.idx].find(complete) ?? D.idx[0];
+  const lev = (col, i) => { const v = P.cats[col].levels[P.cats[col].codes[i]]; return v === "missing" ? "not recorded" : v; };
+  const vizBox = $("#story-viz"), legBox = $("#story-legend"); legBox.replaceChildren();
+  let title = "", copy = "", stats = [];
+  if (s < 7) {
+    if (story.built !== D.d || !story.els || !vizBox.querySelector(".story-svg")) storyBuild(D, P);
+  }
+  const natural = D.idx;
+  if (s === 0) {
+    title = "A district with more water points than one crew can visit";
+    copy = `<p><b>${D.name}</b>, ${story.country}, has ${fmtInt(D.n)} water points on record. This season the office has one crew and time for about 10% of them: <b>${fmtInt(D.k)} visits</b>. Which ${fmtInt(D.k)}?</p>`;
+    stats = [[fmtInt(D.n), "water points"], [fmtInt(D.k), "visits this season"]];
+    storyPaint(D, P, natural, () => ({ fill: neutral }));
+  } else if (s === 1) {
+    title = "What the office already knows";
+    copy = `<p>From earlier inventories it knows how each point was built and where it is: technology, water source, who manages it, its age and how remote it is. It does <b>not</b> know which points are dry today; finding that out is what a visit is for.</p>
+      <div class="story-example"><b>Example point (outlined)</b><span>Technology: ${lev("water_tech_clean", ex)}</span><span>Source: ${lev("water_source_clean", ex)}</span>
+      <span>Managed by: ${lev("management_clean", ex)}</span><span>Age: ${P.age[ex] == null ? "not recorded" : P.age[ex] + " years"}</span><span>Water today: unknown until visited</span></div>`;
+    legend(legBox, [{ label: "the example point", color: css("--s1") }]);
+    storyPaint(D, P, natural, (i) => ({ fill: i === ex ? css("--s1") : neutral, ring: i === ex }));
+  } else if (s === 2) {
+    title = "The model gives every point a risk score";
+    copy = `<p>The final model for ${story.country} learned from other districts of ${story.country}; it has never seen ${D.name}. From those attributes alone it scores each point between <b>${pct(lo)}</b> and <b>${pct(hi)}</b> risk of having no water. Darker means riskier.</p>`;
+    stats = [[pct(lo), "lowest risk"], [pct(hi), "highest risk"]];
+    legend(legBox, [{ label: `lower risk (${pct(lo)})`, color: css("--seq-lo") }, { label: `higher risk (${pct(hi)})`, color: css("--seq-hi") }]);
+    storyPaint(D, P, natural, (i) => ({ fill: risk(i) }));
+  } else if (s === 3) {
+    title = `Rank the points; the crew goes to the top ${fmtInt(D.k)}`;
+    copy = `<p>Sort every point by risk, riskiest first (top left). The crew's ${fmtInt(D.k)} visits go to the outlined points. Nobody has visited anything yet.</p>`;
+    legend(legBox, [{ label: "crew visits (outlined)", color: css("--ink"), kind: "ring" }, { label: "darker = riskier", color: css("--seq-hi") }]);
+    storyPaint(D, P, D.byRisk, (i) => ({ fill: risk(i), ring: topR.has(i) }));
+  } else if (s === 4) {
+    title = "What the crew found";
+    copy = `<p><b>${fmtInt(D.found)} of the ${fmtInt(D.k)} visits</b> found a point with no water (${pct(D.found / D.k)}). Visiting ${fmtInt(D.k)} points at random would find about <b>${f1(D.rand)}</b>, because ${pct(D.dry / D.n)} of this district's points are dry.</p>`
+      + (story.country === "Ethiopia" ? `<p class="note">In Ethiopia much of the ranking separates survey programs rather than pumps (<a href="#provider">provider check</a>).</p>` : "");
+    stats = [[fmtInt(D.found), "dry points found"], [f1(D.rand), "at random"], [`${f2(D.lift)}×`, "vs random"]];
+    legend(legBox, [{ label: "visited: no water", color: dry }, { label: "visited: water", color: wet }, { label: "not visited", color: neutral }]);
+    storyPaint(D, P, D.byRisk, (i) => (topR.has(i) ? { fill: P.y[i] ? dry : wet, ring: true } : { fill: risk(i), op: 0.25 }));
+  } else if (s === 5) {
+    title = "What the crew did not see";
+    copy = `<p>The survey records show <b>${fmtInt(D.dry)} dry points</b> in ${D.name}. The crew found ${fmtInt(D.found)} of them (${pct(D.found / D.dry)}). The other ${fmtInt(D.dry - D.found)} were outside the top 10%, mostly points that look ordinary on paper. A ranking makes each visit more productive; it does not find every failure.</p>`;
+    stats = [[fmtInt(D.found), "found"], [fmtInt(D.dry - D.found), "missed"], [pct(D.found / D.dry), "of dry points found"]];
+    legend(legBox, [{ label: "no water", color: dry }, { label: "water", color: wet }, { label: "outlined = visited", color: css("--ink"), kind: "ring" }]);
+    storyPaint(D, P, D.byRisk, (i) => ({ fill: P.y[i] ? dry : wet, op: P.y[i] ? 1 : 0.4, ring: topR.has(i) }));
+  } else if (s === 6) {
+    title = "What if the office borrowed a model from other countries?";
+    copy = `<p>A model trained only on ${others.join(", ").replace(/, ([^,]*)$/, " and $1")}, never on ${story.country}, picks a different top ${fmtInt(D.k)}. Its crew finds <b>${fmtInt(D.foundB)}</b> dry points, against <b>${fmtInt(D.found)}</b> with the local model and about ${f1(D.rand)} at random.</p>`;
+    stats = [[fmtInt(D.found), "local model"], [fmtInt(D.foundB), "foreign-only model"], [f1(D.rand), "at random"]];
+    legend(legBox, [{ label: "visited: no water", color: dry }, { label: "visited: water", color: wet }, { label: "not visited", color: neutral }]);
+    storyPaint(D, P, D.byForeign, (i) => (topB.has(i) ? { fill: P.y[i] ? dry : wet, ring: true } : { fill: neutral, op: 0.3 }));
+  } else {
+    title = "One district is one draw";
+    const N = story.list.length, a = story.list.filter((x) => x.found > x.rand).length, b = story.list.filter((x) => x.found > x.foundB).length;
+    copy = `<p>Across ${N} test districts in ${story.country} (at least 100 points and 5 dry ones), the local model's crew beat random visits in <b>${a} of ${N}</b> and beat the foreign-only model in <b>${b} of ${N}</b>. Results vary a lot from district to district, which is why every number on this site comes with an interval over districts.</p>
+      <p class="story-links"><a href="#results">The full results →</a> <a href="#real">Is the signal real? →</a> <a href="#limitations">Limitations →</a></p>`;
+    stats = [[`${a}/${N}`, "beat random"], [`${b}/${N}`, "beat foreign-only"]];
+    storyStrip(D);
+  }
+  $("#story-step").textContent = `Step ${s + 1} of ${STORY_N} · ${D.name}, ${story.country}`;
+  $("#story-title").textContent = title;
+  $("#story-copy").innerHTML = copy;
+  const st = $("#story-stats"); st.replaceChildren();
+  for (const [v, l] of stats) { const d = el("div", {}, st); el("b", { text: v }, d); el("span", { text: l }, d); }
+  [...$("#story-dots").children].forEach((b, j) => b.setAttribute("aria-current", j === s ? "step" : "false"));
+  $("#story-back").disabled = s === 0; $("#story-next").disabled = s === STORY_N - 1;
+  $("#story-next").textContent = s === STORY_N - 2 ? "Last step →" : "Next →";
+}
+const f1 = (v) => (+v).toFixed(1);
+function storyStrip(D) {
+  // every district's crew result relative to random visits, local vs foreign-only model; this district highlighted
+  const box = $("#story-viz"); box.replaceChildren(); story.els = null; story.built = null;
+  const L = story.list, hi = Math.max(2, ...L.flatMap((x) => [x.lift, x.liftB])) * 1.05;
+  const f = frame(el("div", { class: "chart" }, box), { h: 230, ml: 130, mb: 44 });
+  const xs = scale(0, hi, f.x0, f.x1);
+  const g = el("g", { class: "grid" }, f.svg);
+  for (const t of niceTicks(0, hi, 5)) { el("line", { x1: xs(t), x2: xs(t), y1: f.y1, y2: f.y0 }, g); el("text", { x: xs(t), y: f.y0 + 16, "text-anchor": "middle", text: `${f1(t)}×` }, f.svg); }
+  el("line", { x1: xs(1), x2: xs(1), y1: f.y1, y2: f.y0, stroke: css("--ink"), "stroke-dasharray": "4 4" }, f.svg);
+  el("text", { x: xs(1) + 4, y: f.y1 + 10, text: "random" }, f.svg);
+  el("text", { class: "axis-title", x: (f.x0 + f.x1) / 2, y: f.H - 6, "text-anchor": "middle", text: "Dry points found ÷ random expectation (crew visits the top 10%)" }, f.svg);
+  [["lift", "Local model", css("--s1")], ["liftB", "Foreign-only", css("--s2")]].forEach(([key, name, color], r) => {
+    const y = f.y1 + 40 + r * 70;
+    el("text", { x: f.x0 - 10, y: y + 4, "text-anchor": "end", class: "axis-title", text: name }, f.svg);
+    L.forEach((x, j) => {
+      const jit = ((j * 37) % 11 - 5) * 2.2, me = x.d === D.d;
+      const c = el("circle", { cx: xs(x[key]), cy: y + jit, r: me ? 7 : 4.5, fill: color, opacity: me ? 1 : 0.6, stroke: me ? css("--ink") : css("--surface"), "stroke-width": me ? 2 : 1, tabindex: 0 }, f.svg);
+      const show = (e) => showTip(e, x.name + (me ? " (this district)" : ""), [{ color, value: `${f2(x[key])}×`, label: `${name}: ${key === "lift" ? x.found : x.foundB} found vs ${f1(x.rand)} at random` }]);
+      c.addEventListener("pointermove", show); c.addEventListener("focus", show); c.addEventListener("pointerleave", hideTip); c.addEventListener("blur", hideTip);
+    });
+  });
+  legend($("#story-legend"), [{ label: "each dot = one test district", color: css("--neutral") }, { label: "large outlined dot = this district", color: css("--ink"), kind: "ring" }]);
+}
+
 /* ---------- boot ---------- */
 function renderAll() {
   renderHero(); renderDataTable(); renderHeadline(); renderRandom(); renderOperating(); renderAccuracy(); renderRegimes(); renderCountryModels(); renderFinal();
   renderProvider(); renderConcepts(); renderAblations();
   if (window.L) renderMap();
-  renderGame(); renderThreshold();
+  renderGame(); renderThreshold(); story.els = null; renderStory();
 }
 // charts whose layout depends on their container's width (tables do not)
 function renderSized() {
@@ -933,7 +1111,7 @@ const TEASER = {
   evaluation: "Whole-district test set, three training regimes, metrics", results: "How well it ranks, and what local data is worth",
   real: "Is it the pumps, or who did the survey?", errors: "Where and why the model is wrong", limitations: "What this does not show",
   conclusion: "What a ministry should take away", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
-  references: "Papers, data and software",
+  references: "Papers, data and software", story: "A district office plans a season with the model, step by step",
 };
 const chapNo = (s) => String(PAGES.indexOf(s)).padStart(2, "0");
 function buildPagers() {
@@ -979,6 +1157,7 @@ function showPage(hash, { focus = true } = {}) {
     renderSized();                                               // hidden charts were drawn at a fallback width
     if (page.id === "explore" && map) { map.invalidateSize(); drawMap(true); }
     if (page.id === "overview") { renderHeroMap(true); animateCounters(); }
+    if (page.id === "story" && story.list) { story.els = null; drawStory(); }
   }
   if (target && target !== page) target.scrollIntoView();
   else window.scrollTo(0, 0);
@@ -988,6 +1167,10 @@ document.body.classList.add("paged");
 buildPagers();
 showPage(location.hash, { focus: false });
 window.addEventListener("hashchange", () => showPage(location.hash));
+document.addEventListener("keydown", (e) => {
+  if (currentPage?.id !== "story" || !e.target.closest?.(".story") || e.target.matches("select, input")) return;
+  if (e.key === "ArrowRight") $("#story-next").click(); else if (e.key === "ArrowLeft") $("#story-back").click();
+});
 // clicking the link of the page you are on: back to its top
 NAV.forEach((a) => a.addEventListener("click", () => { if (a.getAttribute("href") === location.hash) window.scrollTo(0, 0); }));
 
