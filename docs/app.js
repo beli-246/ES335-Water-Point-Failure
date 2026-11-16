@@ -1151,7 +1151,7 @@ function showPage(hash, { focus = true } = {}) {
       if (n.scrollWidth > n.clientWidth) n.scrollTo({ left: a.offsetLeft - (n.clientWidth - a.offsetWidth) / 2 });
     } else a.removeAttribute("aria-current");
   }
-  document.title = page.id === "overview" ? "Will This Water Point Still Work?" : `${pageTitle(page)} · Will This Water Point Still Work?`;
+  document.title = page.id === "overview" ? "Will this water point still work?" : `${pageTitle(page)} · Will this water point still work?`;
   const bar = $("header.top .progress i"); if (bar) bar.style.width = `${(PAGES.indexOf(page) / (PAGES.length - 1)) * 100}%`;
   if (changed) {
     renderSized();                                               // hidden charts were drawn at a fallback width
