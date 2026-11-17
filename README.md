@@ -116,7 +116,7 @@ nothing measurable for Ethiopia, Kenya or Tanzania.
 Two results need care. Ethiopia's strong number mostly separates survey programs: knowing only the provider gives ROC-AUC
 0.83 against the model's 0.87, and within each high-failure program the model ranks at 0.51 to 0.62. Accuracy beats the rule
 "every point works" clearly only in Tanzania (64.9% at the best threshold, against 56.6%); elsewhere the gain is under one
-point. The models are for ordering visits; their yes/no calls are no better than assuming every point works.
+point. The models are for ordering visits; as yes/no labels they add almost nothing.
 
 The website has the rest: calibration and permutation importance on the
 [Results](https://beli-246.github.io/ES335-Water-Point-Failure/#results) page, the survey-provider check and the ablations
