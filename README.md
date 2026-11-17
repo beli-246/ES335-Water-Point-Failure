@@ -28,6 +28,10 @@ local data.
 | Never inputs | Status text and history, rehabilitation fields, survey source, report dates, IDs and admin names. The audit found they leak the label (`water_point_history` alone separates the classes with AUC 0.99) or identify the survey. |
 | Prediction time | The inputs describe how a point was built and where it is. In WPdx they are recorded on the same visit as the label, so the use case assumes a ministry already holds them from an earlier inventory. |
 | Scope | Cross-sectional ranking at one survey, not a forecast of when a pump will fail |
+| Test data | Whole districts held out per country, frozen in [`splits/test_districts.json`](splits/test_districts.json) before any model was fitted |
+| Final model | One per country, chosen by grouped cross-validation on training districts: Ethiopia local random forest, Kenya stacked ensemble, Tanzania local logistic regression, Uganda stacked ensemble. Scores are Platt-calibrated. |
+| Main metric | PR-AUC of the no-water class, compared across countries as skill = (PR-AUC − no-water rate) / (1 − no-water rate) |
+| Decision threshold | None fixed: the output is a ranked list and a crew visits the top k% (10% in the headline). The website's threshold slider shows what each cut-off would do. |
 
 ## Data
 
