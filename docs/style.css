@@ -47,13 +47,15 @@ code { font-size: 0.9em; background: var(--accent-wash); padding: 0 4px; border-
 pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: 13px; }
 
 header.top { position: sticky; top: 0; z-index: 1000; background: var(--page); border-bottom: 1px solid var(--border); }
-header.top .inner { max-width: 1240px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 16px; align-items: center; }
+header.top .inner { max-width: 1320px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 16px; align-items: center; }
 header.top .brand { font-weight: 600; white-space: nowrap; }
 header.top nav { display: flex; gap: 14px; overflow-x: auto; font-size: 14px; flex: 1; scrollbar-width: none; }
 /* one line at every width: on laptop screens all twelve links fit; narrower windows swipe the strip sideways,
-   and the router keeps the current page's link in view */
-@media (max-width: 1180px) { header.top .inner { gap: 12px; } header.top nav { gap: 10px; } }
-@media (max-width: 1020px) { header.top .inner { gap: 10px; padding: 8px 12px; } header.top nav { gap: 8px; font-size: 13.5px; } }
+   and the router keeps the current page's link in view. Below 1100px the site name in the header is hidden (the
+   Overview link goes to the same place) to make room for the longer menu names. */
+@media (max-width: 1180px) { header.top .inner { gap: 10px; } header.top nav { gap: 8px; } }
+@media (max-width: 1100px) { header.top .brand { display: none; } }
+@media (max-width: 1040px) { header.top .inner { padding: 8px 12px; } header.top nav { gap: 7px; font-size: 13px; } }
 .skip { position: absolute; left: 8px; top: -48px; z-index: 3000; background: var(--surface); color: var(--ink); border: 1px solid var(--border);
   border-radius: 6px; padding: 6px 10px; }
 .skip:focus { top: 8px; }

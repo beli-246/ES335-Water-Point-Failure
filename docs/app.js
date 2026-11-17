@@ -1125,7 +1125,7 @@ const TEASER = {
   preprocessing: "How raw columns become model inputs, without leakage", methods: "Preprocessing without leakage, then the baselines and models we compared",
   evaluation: "Whole-district test set, three training regimes, metrics", results: "Evaluation design, then how well it ranks and what local data is worth",
   real: "Is it the pumps, or who did the survey?", errors: "Where and why the model is wrong", limitations: "What this does not show",
-  conclusion: "What a ministry should take away, plus the course-concept appendix and references", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
+  conclusion: "What a ministry should take away, plus the course-concept appendix, references and who did what", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
   references: "Papers, data and software", story: "A district office plans a season with the model, step by step",
 };
 const chapNo = (s) => String(PAGES.indexOf(s)).padStart(2, "0");
@@ -1192,6 +1192,9 @@ NAV.forEach((a) => a.addEventListener("click", () => { if (a.getAttribute("href"
 async function boot() {
   [R, C, O] = await Promise.all(["results", "concepts", "overview"].map((n) => fetch(`data/${n}.json`).then((r) => r.json())));
   renderAll();
+  // A link to a part of a page (e.g. #references) was scrolled to before the charts above it were drawn; scroll again now.
+  const deep = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (deep && !deep.matches("main > section")) deep.scrollIntoView();
   let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(renderSized, 200); });
   const btn = $("#theme");
   btn?.addEventListener("click", () => {
