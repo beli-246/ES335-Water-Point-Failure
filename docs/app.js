@@ -1125,7 +1125,7 @@ const TEASER = {
   preprocessing: "How raw columns become model inputs, without leakage", methods: "Preprocessing without leakage, then the baselines and models we compared",
   evaluation: "Whole-district test set, three training regimes, metrics", results: "Evaluation design, then how well it ranks and what local data is worth",
   real: "Is it the pumps, or who did the survey?", errors: "Where and why the model is wrong", limitations: "What this does not show",
-  conclusion: "What a ministry should take away, plus the course-concept appendix and references", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
+  conclusion: "What a ministry should take away, plus the course-concept appendix and references", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself, and who did what",
   references: "Papers, data and software", story: "A district office plans a season with the model, step by step",
 };
 const chapNo = (s) => String(PAGES.indexOf(s)).padStart(2, "0");

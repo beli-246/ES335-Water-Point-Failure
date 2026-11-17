@@ -155,7 +155,7 @@ previous and next links, and the address (for example `#results`) move between p
 | [Errors](https://beli-246.github.io/ES335-Water-Point-Failure/#errors) | Groups and districts where predicted and observed no-water rates disagree, and the model's most confident mistakes |
 | [Limitations](https://beli-246.github.io/ES335-Water-Point-Failure/#limitations) | What the label, the data and the design cannot tell us |
 | [Conclusion](https://beli-246.github.io/ES335-Water-Point-Failure/#conclusion) | What a ministry should do with this and the lessons for method; then the [appendix](https://beli-246.github.io/ES335-Water-Point-Failure/#concepts) of seven course concepts measured on training districts (logistic regression from scratch, L1 and L2 paths, pruning, validation that ignores geography, boosting rounds, the RBF SVM grid, tuning curves) and the [references](https://beli-246.github.io/ES335-Water-Point-Failure/#references) |
-| [Reproduce](https://beli-246.github.io/ES335-Water-Point-Failure/#reproduce) | The commands and the data checksum |
+| [Reproduce](https://beli-246.github.io/ES335-Water-Point-Failure/#reproduce) | The commands, the data checksum, and the contributions table with names and roll numbers |
 
 The site is plain HTML, CSS and JavaScript in `docs/`, served by GitHub Pages from `main`, with hand-written SVG charts and a
 Leaflet map. Every result on it comes from `docs/data/*.json`, which `src/export_site.py` writes from `results/`. The page's
