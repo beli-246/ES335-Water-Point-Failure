@@ -186,9 +186,14 @@ back to the final model and compare.</p>
 CC BY 4.0, downloaded 6 November 2026 [<a href="#ref-wpdx">WPdx</a>]. One row per water point at its latest survey.</p>
 <p class="note" id="cleaning-steps"></p>
 <div class="card"><div id="data-table"></div></div>
+<h3>The model inputs</h3>
+<p>The model sees eleven inputs. How often each one is missing differs a lot by country, and the audit below traces much of that to
+who did the survey. The last column is the strongest single-feature ROC-AUC in any one country, from the audit of the raw data
+(0.5 = no signal).</p>
+<div class="card"><div id="feature-table"></div></div>
 <h3>What a full-column audit found before any modelling</h3>
-<p>We profiled every one of the 74 columns before training a model. Script: <code>src/audit_data.py</code>; report:
-<code>results/audit/data_audit.md</code>.</p>
+<p>We profiled every one of the 74 columns before training a model. Script: <a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/src/audit_data.py"><code>src/audit_data.py</code></a>; report:
+<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/results/audit/data_audit.md"><code>results/audit/data_audit.md</code></a>.</p>
 <ul class="cardlist">
 <li><b>Leakage.</b> Several columns nearly give the answer away. <code>water_point_history</code> separates working from non-working
 points with AUC 0.99, the raw <code>status</code> text 0.96, and <code>status_clean</code> is the label in other words. All are excluded.
@@ -215,7 +220,7 @@ This decides how we split the data (<a href="#evaluation">evaluation design</a>)
 <h2>Preprocessing</h2>
 <p class="takeaway"><b>0 test rows</b><span>Every transform sits inside one scikit-learn pipeline and is fitted on training folds only.</span></p>
 <p>Every transform lives inside a scikit-learn <code>Pipeline</code> and is fitted on the training folds only, so no statistic
-from validation or test points leaks into training (<code>src/features.py</code>).</p>
+from validation or test points leaks into training (<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/src/features.py"><code>src/features.py</code></a>).</p>
 <ul class="cardlist">
 <li><b>Distances and population</b> are heavy-tailed (a few points are 100+ km from a road), so they get <code>log1p</code>. This
 matters for linear models and SVMs, whose loss is dominated by extreme values; trees split on order and do not care.</li>
@@ -227,7 +232,7 @@ so its coefficient or split would be fitted to two or three examples, which is p
 <li><b>Class imbalance</b> (9–43% no water) is not reweighted. Our metrics judge the <em>order</em> of points, and class weights
 mainly shift predicted probabilities. We checked this with 5-fold grouped CV on each country's training districts: balanced weights
 for logistic regression and <code>scale_pos_weight</code> for XGBoost changed CV PR-AUC by at most 0.014, well inside the fold-to-fold
-spread of 0.03–0.11 (<code>src/extra_checks.py</code>).</li>
+spread of 0.03–0.11 (<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/src/extra_checks.py"><code>src/extra_checks.py</code></a>).</li>
 <li><b>Missing values:</b> median imputation for numbers plus a 0/1 "was missing" column; a "missing" level for categories. The
 <em>no-missing-signal</em> ablation imputes without any flag, so no model can see that a value was absent. That includes XGBoost,
 which would otherwise learn from NaN.</li>
@@ -255,7 +260,7 @@ which would otherwise learn from NaN.</li>
 <p>For each country, every candidate (5 models × <a href="#evaluation">regimes</a> A and C, plus the stack) is
 scored by 5-fold grouped CV over that country's training districts. In each fold, the held-out districts are target-country districts,
 which is exactly what the test measures. The best CV score becomes the final model. All candidates are then scored on the test
-districts, and the <a href="#final-model">results table</a> shows them all, but the test scores did not choose anything (<code>src/final.py</code>).</p>
+districts, and the <a href="#final-model">results table</a> shows them all, but the test scores did not choose anything (<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/src/final.py"><code>src/final.py</code></a>).</p>
 </section>
 
 <!-- ============================================================ -->
@@ -269,7 +274,7 @@ holding out whole districts says 0.28. So, per country, we hold out whole distri
 because the same district name occurs in two regions) covering about 20% of rows. Among 5,000 seeded random
 draws, we pick the one whose no-water rate is closest to the country's, which is a stratified group split. Districts with more than 15% of a
 country's rows are never test districts; Ethiopia's largest has 29.3%. The list was committed to the repository
-(<code>splits/test_districts.json</code>) before any model was fitted.</p>
+(<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/splits/test_districts.json"><code>splits/test_districts.json</code></a>) before any model was fitted.</p>
 <h3>Three training regimes, one test set</h3>
 <ul class="cardlist regimes">
 <li><b>A · pooled</b>The other three countries plus the target's training districts.</li>
@@ -418,7 +423,7 @@ correction over all 48 [<a href="#ref-holm">Holm 1979</a>], using z-tests with e
 correction, C − B stays significant in 10 of 16 comparisons, including all four models in Ethiopia, and A − C is significantly negative
 in 4 of 16. No comparison is significant in the opposite direction, so every conclusion keeps its direction. The four C − B gaps
 that lose significance (Uganda's logistic regression, tree and random forest, and Kenya's logistic regression) are less certain than their raw intervals suggest
-(<code>results/holm_main.csv</code>). The per-model evidence is weakest in Uganda, where only XGBoost stays significant; the headline
+(<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/results/holm_main.csv"><code>results/holm_main.csv</code></a>). The per-model evidence is weakest in Uganda, where only XGBoost stays significant; the headline
 final-model comparison against foreign-only training (four separate tests, not among the 48) excludes zero in all four countries.</p>
 <p>Use the table under the chart for every interval.</p>
 <p>Simpler models win on less data. With local data only, grouped CV chose depth-3 XGBoost in every country (depth 6 when pooled)
@@ -473,6 +478,12 @@ added after the main run, so they answer the pooling question only and were <em>
 In Tanzania, CV preferred logistic regression (0.657) over local XGBoost (0.644). On the test districts XGBoost turned out better (skill 0.34 vs 0.26),
 but the CV gap was far inside its own noise (±0.09). We report the CV choice anyway: picking the test winner would turn the test set into a
 validation set and make every reported number optimistic.</p>
+<p>Cross-validation and the test set do not agree exactly, which is expected with so few districts. The chosen model's CV PR-AUC was
+0.289 in Ethiopia (fold spread ±0.095), 0.265 in Kenya (±0.045), 0.657 in Tanzania (±0.091) and 0.302 in Uganda (±0.045); on the test
+districts it scored 0.406, 0.190, 0.580 and 0.337. Each test score has its own wide interval (Ethiopia 0.27 to 0.50) because it rests
+on 16 to 53 districts. In every country the CV winner led the runner-up by only 0.001 to 0.007, far inside the fold spread, and the
+runner-up scores within 0.012 of it on the test districts. The choice between the top two candidates rests on noise, and no
+conclusion depends on it.</p>
 <p>The stack's weights lean on the local models (local random forest +0.78 in Ethiopia, +0.80 in Uganda). Some weights are
 negative (local random forest −0.41 in Tanzania). That does not mean "this model is harmful": the base models are highly correlated, so
 the stacker uses differences between them. Stack weights are not feature importances.</p>
@@ -537,7 +548,7 @@ features carry real signal there. The local-beats-foreign gap survives in every 
 Ethiopia. Payment is missing for 64% of Ugandan and 91% of Ethiopian points, so those gains may again partly be missingness. It is a
 lead for future data collection; it does not show that collecting fees keeps pumps working.</li>
 <li>With Uganda cut to 21,000 rows, regimes A and B change by at most 0.03 PR-AUC for Ethiopia, Kenya and Tanzania, mostly within noise
-(<code>results/uganda_sub_vs_main.csv</code>), and foreign-only training still ranks Ethiopia worse than random (ROC-AUC 0.33–0.41 for the tuned
+(<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/results/uganda_sub_vs_main.csv"><code>results/uganda_sub_vs_main.csv</code></a>), and foreign-only training still ranks Ethiopia worse than random (ROC-AUC 0.33–0.41 for the tuned
 models). So Uganda's size does not explain why foreign-only training fails; differences between the surveys remain the likely cause.</li>
 </ul>
 </div>
@@ -590,6 +601,8 @@ and years (73% of Uganda's rows were reported in a single year). "Transfer to a 
 we cannot separate the two.</li>
 <li><b>Missingness is informative and provider-driven</b> (missing not at random). It helps the models in Ethiopia and Uganda, and it would not help in a
 place surveyed differently. The ablation measures how much it contributes.</li>
+<li><b>Age carries survey timing.</b> Age is the survey year minus the install year, so it partly encodes when a point was
+surveyed, which we otherwise exclude as a survey fingerprint. In Uganda 73% of rows come from a single survey year.</li>
 <li><b>Ethiopia's headline is mostly survey program.</b> Within each high-failure program the model ranks at ROC-AUC 0.51–0.62, and
 knowing only the provider gives ROC-AUC 0.83, close to the model's 0.87 (<a href="#provider">provider check</a>). Its 3.8× lift should not be read as
 pump-level knowledge.</li>
@@ -675,7 +688,7 @@ feature selection. Under L2 all of them grow smoothly and none is exactly zero. 
 <section id="reproduce">
 <h2>Reproduce</h2>
 <p class="takeaway"><b>≈15 h</b><span>One list of commands rebuilds every number on this site from the public data, which you can check against our SHA-256.</span></p>
-<p>Python 3.12. Every number on this site is written by the scripts below into <code>docs/data/</code>; the page's own code only sorts,
+<p>Python 3.12. Every number on this site is written by the scripts below into <a href="https://github.com/beli-246/ES335-Water-Point-Failure/tree/main/docs/data"><code>docs/data/</code></a>; the page's own code only sorts,
 counts and thresholds the exported test scores (crew slider, threshold slider, story and game). A full run from a clean clone took about 15 hours on a 16-thread laptop,
 12 of them for the main experiment. That run (15 November) matched our committed metrics; the only difference was the unseeded L1 path
 in the appendix, which is now seeded.</p>
@@ -701,7 +714,7 @@ python src/final.py                  # CV model selection + stack, scored once o
 python src/operating.py              # crew operating points, accuracy, random null, provider check
 python src/concepts.py               # concept experiments
 python src/export_site.py            # writes docs/data/*.json</pre>
-<p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot. To use exactly our data, start from the committed cleaned table <code>data/processed/wpdx_clean.parquet</code> (157,502 rows; CC BY 4.0 allows redistribution with attribution), or check a download against our raw file's SHA-256, <code>03eb8f845e51cd00f6dc518f9899dc620ac1be755a8326af89c127b683571f55</code>. Tests: 18 checks, including the leakage guards, the split rule and the country-interaction model. No credentials or personal data are used.</p>
+<p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot. To use exactly our data, start from the committed cleaned table <a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/data/processed/wpdx_clean.parquet"><code>data/processed/wpdx_clean.parquet</code></a> (157,502 rows; CC BY 4.0 allows redistribution with attribution), or check a download against our raw file's SHA-256, <code>03eb8f845e51cd00f6dc518f9899dc620ac1be755a8326af89c127b683571f55</code>. Tests: 18 checks, including the leakage guards, the split rule and the country-interaction model. No credentials or personal data are used.</p>
 </section>
 
 <!-- ============================================================ -->

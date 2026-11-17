@@ -67,5 +67,183 @@
    "country_no_water": 0.1728,
    "excluded_large_districts": []
   }
- }
+ },
+ "features": [
+  {
+   "feature": "age",
+   "kind": "number",
+   "missing": {
+    "Ethiopia": 0.2058,
+    "Kenya": 0.5542,
+    "Tanzania": 0.0572,
+    "Uganda": 0.1158
+   },
+   "auc": {
+    "Ethiopia": 0.505,
+    "Kenya": 0.549,
+    "Tanzania": 0.676,
+    "Uganda": 0.605
+   }
+  },
+  {
+   "feature": "water_source_clean",
+   "kind": "category",
+   "missing": {
+    "Ethiopia": 0.0069,
+    "Kenya": 0.0061,
+    "Tanzania": 0.0001,
+    "Uganda": 0.1548
+   },
+   "auc": {
+    "Ethiopia": 0.582,
+    "Kenya": 0.715,
+    "Tanzania": 0.564,
+    "Uganda": 0.533
+   }
+  },
+  {
+   "feature": "water_tech_clean",
+   "kind": "category",
+   "missing": {
+    "Ethiopia": 0.2555,
+    "Kenya": 0.2688,
+    "Tanzania": 0.0569,
+    "Uganda": 0.4662
+   },
+   "auc": {
+    "Ethiopia": 0.641,
+    "Kenya": 0.711,
+    "Tanzania": 0.593,
+    "Uganda": 0.545
+   }
+  },
+  {
+   "feature": "management_clean",
+   "kind": "category",
+   "missing": {
+    "Ethiopia": 0.2387,
+    "Kenya": 0.5463,
+    "Tanzania": 0.0233,
+    "Uganda": 0.0901
+   },
+   "auc": {
+    "Ethiopia": 0.691,
+    "Kenya": 0.692,
+    "Tanzania": 0.526,
+    "Uganda": 0.561
+   }
+  },
+  {
+   "feature": "local_population",
+   "kind": "log",
+   "missing": {
+    "Ethiopia": 0.0099,
+    "Kenya": 0.0395,
+    "Tanzania": 0.0245,
+    "Uganda": 0.1748
+   },
+   "auc": {
+    "Ethiopia": 0.515,
+    "Kenya": 0.66,
+    "Tanzania": 0.519,
+    "Uganda": 0.511
+   }
+  },
+  {
+   "feature": "distance_to_primary",
+   "kind": "log",
+   "missing": {
+    "Ethiopia": 0.0,
+    "Kenya": 0.0,
+    "Tanzania": 0.0,
+    "Uganda": 0.0
+   },
+   "auc": {
+    "Ethiopia": 0.534,
+    "Kenya": 0.564,
+    "Tanzania": 0.525,
+    "Uganda": 0.504
+   }
+  },
+  {
+   "feature": "distance_to_secondary",
+   "kind": "log",
+   "missing": {
+    "Ethiopia": 0.0,
+    "Kenya": 0.0,
+    "Tanzania": 0.0,
+    "Uganda": 0.0
+   },
+   "auc": {
+    "Ethiopia": 0.672,
+    "Kenya": 0.506,
+    "Tanzania": 0.515,
+    "Uganda": 0.5
+   }
+  },
+  {
+   "feature": "distance_to_tertiary",
+   "kind": "log",
+   "missing": {
+    "Ethiopia": 0.0,
+    "Kenya": 0.0,
+    "Tanzania": 0.0,
+    "Uganda": 0.0
+   },
+   "auc": {
+    "Ethiopia": 0.502,
+    "Kenya": 0.536,
+    "Tanzania": 0.52,
+    "Uganda": 0.513
+   }
+  },
+  {
+   "feature": "distance_to_city",
+   "kind": "log",
+   "missing": {
+    "Ethiopia": 0.0003,
+    "Kenya": 0.0023,
+    "Tanzania": 0.0,
+    "Uganda": 0.0
+   },
+   "auc": {
+    "Ethiopia": 0.506,
+    "Kenya": 0.612,
+    "Tanzania": 0.514,
+    "Uganda": 0.55
+   }
+  },
+  {
+   "feature": "distance_to_town",
+   "kind": "log",
+   "missing": {
+    "Ethiopia": 0.0,
+    "Kenya": 0.0,
+    "Tanzania": 0.0,
+    "Uganda": 0.0
+   },
+   "auc": {
+    "Ethiopia": 0.537,
+    "Kenya": 0.633,
+    "Tanzania": 0.526,
+    "Uganda": 0.519
+   }
+  },
+  {
+   "feature": "is_urban",
+   "kind": "flag",
+   "missing": {
+    "Ethiopia": 0.0,
+    "Kenya": 0.0,
+    "Tanzania": 0.0,
+    "Uganda": 0.0
+   },
+   "auc": {
+    "Ethiopia": 0.486,
+    "Kenya": 0.493,
+    "Tanzania": 0.489,
+    "Uganda": 0.502
+   }
+  }
+ ]
 }

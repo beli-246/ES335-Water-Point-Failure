@@ -299,6 +299,21 @@ function renderDataTable() {
   ], COUNTRIES);
   const cl = O.cleaning;
   $("#cleaning-steps").textContent = `${fmtInt(cl.raw_rows)} raw rows → ${fmtInt(cl.unknown_status_dropped)} with Unknown status dropped → ${fmtInt(cl.duplicates_dropped)} WPdx-flagged duplicates dropped → ${fmtInt(cl.install_year_set_missing)} impossible install years set to missing → ${fmtInt(cl.final_rows)} rows.`;
+  renderFeatureTable();
+}
+
+// The eleven model inputs: type, share missing per country, and the strongest single-feature ROC-AUC from the audit.
+function renderFeatureTable() {
+  const box = $("#feature-table"); if (!box || !O || !O.features) return;
+  box.replaceChildren();
+  const KIND = { category: "Category", log: "Number, log-scaled", number: "Number", flag: "0/1 flag" };
+  const best = (f) => { if (!f.auc) return "–"; const [c, v] = Object.entries(f.auc).sort((a, b) => b[1] - a[1])[0]; return `${f2(v)} (${c})`; };
+  table(box, [
+    { label: "Input", get: (f) => FEATURE_NAME[f.feature] || f.feature },
+    { label: "Type", get: (f) => KIND[f.kind] || f.kind },
+    ...COUNTRIES.map((c) => ({ label: `Missing, ${c}`, num: true, get: (f) => pct(f.missing[c], 1) })),
+    { label: "Best single-feature ROC-AUC", num: true, get: best },
+  ], O.features);
 }
 
 function regimeRows(c, variant = "main") {
