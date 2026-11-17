@@ -272,12 +272,12 @@ the website text.
 | Frozen whole-district test split | Beli Nilesh Dedhia | `src/splits.py`, `splits/test_districts.json` |
 | Preprocessing pipelines, models and tuning grids | Beli Nilesh Dedhia | `src/features.py`, `src/models.py` |
 | Transfer experiment (regimes A, B and C) with the ablation and pooling variants | Beli Nilesh Dedhia | `src/run_experiments.py` |
+| Logistic regression from scratch and the course-concept experiments | Beli Nilesh Dedhia | `src/lr_scratch.py`, `src/concepts.py` |
 | Website: layout, story page, game, crew map and charts | Beli Nilesh Dedhia | `docs/` |
 | Metrics, tie-aware precision at k, paired district bootstrap | Soni Poojan Deepak | `src/evaluate.py`, `src/analyze.py`, `src/compare_variants.py` |
 | Holm correction, class-weighting check and the other design checks | Soni Poojan Deepak | `src/extra_checks.py` |
 | Final-model choice by grouped CV, stacked ensemble, calibration, permutation importance | Soni Poojan Deepak | `src/final.py` |
 | Crew operating points, accuracy, random-ranking null, survey-provider check, site data export | Soni Poojan Deepak | `src/operating.py`, `src/export_site.py`, `src/performance_report.py` |
-| Logistic regression from scratch and the course-concept experiments | Soni Poojan Deepak | `src/lr_scratch.py`, `src/concepts.py` |
 | Correctness tests, README and the reproduction check | Soni Poojan Deepak | `tests/test_core.py`, `README.md` |
 
 ## Data licence and credit
