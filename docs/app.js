@@ -1122,10 +1122,10 @@ let currentPage = null;
 const TEASER = {
   overview: "The project in one page", question: "What we predict, for whom, and with what information",
   explore: "Beat the model, then plan a crew's visits on a map", data: "Where the data comes from and what the audit found",
-  preprocessing: "How raw columns become model inputs, without leakage", methods: "The baselines and the models we compared",
-  evaluation: "Whole-district test set, three training regimes, metrics", results: "How well it ranks, and what local data is worth",
+  preprocessing: "How raw columns become model inputs, without leakage", methods: "Preprocessing without leakage, then the baselines and models we compared",
+  evaluation: "Whole-district test set, three training regimes, metrics", results: "Evaluation design, then how well it ranks and what local data is worth",
   real: "Is it the pumps, or who did the survey?", errors: "Where and why the model is wrong", limitations: "What this does not show",
-  conclusion: "What a ministry should take away", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
+  conclusion: "What a ministry should take away, plus the course-concept appendix and references", concepts: "Course concepts, measured on our data", reproduce: "Rebuild every number yourself",
   references: "Papers, data and software", story: "A district office plans a season with the model, step by step",
 };
 const chapNo = (s) => String(PAGES.indexOf(s)).padStart(2, "0");

@@ -47,23 +47,26 @@ code { font-size: 0.9em; background: var(--accent-wash); padding: 0 4px; border-
 pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: 13px; }
 
 header.top { position: sticky; top: 0; z-index: 1000; background: var(--page); border-bottom: 1px solid var(--border); }
-header.top .inner { max-width: 1080px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 16px; align-items: center; }
+header.top .inner { max-width: 1240px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 16px; align-items: center; }
 header.top .brand { font-weight: 600; white-space: nowrap; }
 header.top nav { display: flex; gap: 14px; overflow-x: auto; font-size: 14px; flex: 1; scrollbar-width: none; }
-/* wide screens: wrap onto a second line so every section link is visible; phones keep the swipeable strip */
-@media (min-width: 900px) { header.top nav { flex-wrap: wrap; row-gap: 2px; overflow: visible; } }
+/* one line at every width: on laptop screens all twelve links fit; narrower windows swipe the strip sideways,
+   and the router keeps the current page's link in view */
+@media (max-width: 1180px) { header.top .inner { gap: 12px; } header.top nav { gap: 10px; } }
+@media (max-width: 1020px) { header.top .inner { gap: 10px; padding: 8px 12px; } header.top nav { gap: 8px; font-size: 13.5px; } }
 .skip { position: absolute; left: 8px; top: -48px; z-index: 3000; background: var(--surface); color: var(--ink); border: 1px solid var(--border);
   border-radius: 6px; padding: 6px 10px; }
 .skip:focus { top: 8px; }
 main:focus { outline: none; }
 html { scroll-padding-top: 56px; }   /* menu jumps land below the sticky header */
-@media (min-width: 900px) { html { scroll-padding-top: 76px; } }
 .tile .caveat { color: var(--ink-2); margin-top: 4px; }
 
 /* one section per page (JavaScript adds body.paged; without it the page is one long document) */
 body.paged main > section { display: none; padding-top: 8px; }
 body.paged main > section.current { display: block; }
 body.paged main > section > h2 { border-top: 0; padding-top: 24px; }
+/* pages that hold more than one part (Methods, Results, Conclusion): a rule above each later part */
+body.paged main > section > h2 ~ h2 { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 32px; }
 header.top a.brand { color: var(--ink); text-decoration: none; }
 header.top nav a { padding: 4px 0; }
 header.top nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--s1);

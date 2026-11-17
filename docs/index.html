@@ -14,10 +14,7 @@
 <header class="top"><div class="inner">
   <a class="brand" href="#overview">Water point failure</a>
   <nav aria-label="Sections">
-    <a href="#overview">Overview</a><a href="#story">The story</a><a href="#question">Question</a><a href="#explore">Try it</a><a href="#data">Data</a><a href="#preprocessing">Preprocessing</a>
-    <a href="#methods">Methods</a><a href="#evaluation">Evaluation</a><a href="#results">Results</a><a href="#real">Is it real?</a>
-    <a href="#errors">Errors</a><a href="#limitations">Limitations</a><a href="#conclusion">Conclusion</a><a href="#concepts">Appendix</a>
-    <a href="#reproduce">Reproduce</a><a href="#references">References</a>
+    <a href="#overview">Overview</a><a href="#story">The story</a><a href="#question">Question</a><a href="#explore">Try it</a><a href="#data">Data</a><a href="#methods">Methods</a><a href="#results">Results</a><a href="#real">Is it real?</a><a href="#errors">Errors</a><a href="#limitations">Limitations</a><a href="#conclusion">Conclusion</a><a href="#reproduce">Reproduce</a>
   </nav>
   <button id="theme" type="button" aria-label="Toggle dark mode">Theme</button>
 </div></header>
@@ -216,8 +213,8 @@ This decides how we split the data (<a href="#evaluation">evaluation design</a>)
 </section>
 
 <!-- ============================================================ -->
-<section id="preprocessing">
-<h2>Preprocessing</h2>
+<section id="methods">
+<h2 id="preprocessing">Preprocessing</h2>
 <p class="takeaway"><b>0 test rows</b><span>Every transform sits inside one scikit-learn pipeline and is fitted on training folds only.</span></p>
 <p>Every transform lives inside a scikit-learn <code>Pipeline</code> and is fitted on the training folds only, so no statistic
 from validation or test points leaks into training (<a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/src/features.py"><code>src/features.py</code></a>).</p>
@@ -238,10 +235,7 @@ spread of 0.03–0.11 (<a href="https://github.com/beli-246/ES335-Water-Point-Fa
 which would otherwise learn from NaN.</li>
 <li><b>Install year</b> is set to missing when before 1950 or after the survey year (365 values). WPdx's own duplicate flag removes 1.1% of rows.</li>
 </ul>
-</section>
 
-<!-- ============================================================ -->
-<section id="methods">
 <h2>Baselines and methods</h2>
 <p class="takeaway"><b>2 + 6 + 1</b><span>Two baselines, six models and one stacked ensemble. The final model per country is picked by cross-validation, never by the test set.</span></p>
 <div class="tablewrap"><table>
@@ -264,8 +258,8 @@ districts, and the <a href="#final-model">results table</a> shows them all, but 
 </section>
 
 <!-- ============================================================ -->
-<section id="evaluation">
-<h2>Evaluation design</h2>
+<section id="results">
+<h2 id="evaluation">Evaluation design</h2>
 <p class="takeaway"><b>≈20%</b><span>of each country's points, held out as whole districts and frozen before any model was trained, then scored once.</span></p>
 <h3>Test set: whole districts, frozen before any model was trained</h3>
 <p>Random row splits put a pump's neighbours in training and the pump in test, so the model is graded on places it has
@@ -316,10 +310,7 @@ it is a weak test of pooling. We added pooled models that know the country (<a h
 for trees and boosting, and country × every feature for logistic regression. We also ran the planned "Uganda subsampled" ablation, which
 had been dropped for time. The reason for both is visible without any test result. Test districts, features, metrics, tuning and the
 final-model choice did not change.</p>
-</section>
 
-<!-- ============================================================ -->
-<section id="results">
 <h2>Results</h2>
 <p class="takeaway"><b>1.5–3.8×</b><span>The riskiest 10% hold 1.5 to 3.8 times the overall no-water rate, in every country. A model that never saw the country does much worse.</span></p>
 <div id="results-text">
@@ -638,11 +629,8 @@ measured here: validate on held-out <em>groups</em> when data is clustered (in o
 baseline with a paired test, choose models without looking at the test set, and check which "signal" is really the data-collection process.
 That last check matters here: Ethiopia's strongest result turned out to be mostly a survey-program effect.</p>
 </div>
-</section>
 
-<!-- ============================================================ -->
-<section id="concepts">
-<h2>Appendix: course concepts, shown on our data</h2>
+<h2 id="concepts">Appendix: course concepts, shown on our data</h2>
 <p class="takeaway"><b>7 concepts</b><span>Course ideas measured on our own data, on training districts only: optimisation, regularisation, bias–variance, validation, boosting, kernels, tuning.</span></p>
 <p>This appendix supports the <a href="#methods">method choices</a>. Each panel is a course concept, measured on Uganda's <em>training</em> districts: models are fitted on some training districts and
 scored on other, held-out training districts. The frozen test districts are never touched.</p>
@@ -682,6 +670,24 @@ feature selection. Under L2 all of them grow smoothly and none is exactly zero. 
 <h3>Tuning curves from the main experiment</h3>
 <div class="card"><div class="controls" id="tune-controls"></div><div id="tune-chart"></div>
 <p class="note">Mean grouped-CV score over training districts for every grid value. Score = PR-AUC normalised by the no-water rate, averaged over the countries in the fold.</p></div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li id="ref-wpdx">Water Point Data Exchange. <em>Water Point Data Exchange Plus (WPdx+)</em>, dataset <code>eqje-vguj</code>, CC BY 4.0. data.waterpointdata.org, accessed 6 November 2026.</li>
+<li id="ref-foster">T. Foster. Predictors of sustainability for community-managed handpumps in sub-Saharan Africa: evidence from Liberia, Sierra Leone, and Uganda. <em>Environmental Science &amp; Technology</em> 47(21):12037–12046, 2013. doi:10.1021/es402086n</li>
+<li id="ref-roberts">D. R. Roberts et al. Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure. <em>Ecography</em> 40(8):913–929, 2017. doi:10.1111/ecog.02881</li>
+<li id="ref-saito">T. Saito and M. Rehmsmeier. The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. <em>PLOS ONE</em> 10(3):e0118432, 2015.</li>
+<li id="ref-moreno">J. G. Moreno-Torres, T. Raeder, R. Alaiz-Rodríguez, N. V. Chawla and F. Herrera. A unifying view on dataset shift in classification. <em>Pattern Recognition</em> 45(1):521–530, 2012.</li>
+<li id="ref-cart">L. Breiman, J. Friedman, R. Olshen and C. Stone. <em>Classification and Regression Trees</em>. Wadsworth, 1984. (Cost-complexity pruning.)</li>
+<li id="ref-rf">L. Breiman. Random forests. <em>Machine Learning</em> 45(1):5–32, 2001.</li>
+<li id="ref-xgb">T. Chen and C. Guestrin. XGBoost: a scalable tree boosting system. <em>Proc. KDD</em>, 785–794, 2016.</li>
+<li id="ref-platt">J. Platt. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In <em>Advances in Large Margin Classifiers</em>, MIT Press, 1999.</li>
+<li id="ref-wolpert">D. H. Wolpert. Stacked generalization. <em>Neural Networks</em> 5(2):241–259, 1992.</li>
+<li id="ref-efron">B. Efron and R. J. Tibshirani. <em>An Introduction to the Bootstrap</em>. Chapman &amp; Hall, 1993.</li>
+<li id="ref-holm">S. Holm. A simple sequentially rejective multiple test procedure. <em>Scandinavian Journal of Statistics</em> 6(2):65–70, 1979.</li>
+<li id="ref-sklearn">F. Pedregosa et al. Scikit-learn: machine learning in Python. <em>Journal of Machine Learning Research</em> 12:2825–2830, 2011.</li>
+<li id="ref-leaflet">Software: pandas, NumPy, XGBoost and scikit-learn for modelling; Leaflet 1.9.4 (BSD-2) for the map, with tiles © OpenStreetMap contributors (ODbL). All charts are hand-written SVG; no external code was copied.</li>
+</ol>
 </section>
 
 <!-- ============================================================ -->
@@ -715,27 +721,6 @@ python src/operating.py              # crew operating points, accuracy, random n
 python src/concepts.py               # concept experiments
 python src/export_site.py            # writes docs/data/*.json</pre>
 <p class="note">WPdx updates the dataset continuously, so a new download can differ slightly from our 6 November 2026 snapshot. To use exactly our data, start from the committed cleaned table <a href="https://github.com/beli-246/ES335-Water-Point-Failure/blob/main/data/processed/wpdx_clean.parquet"><code>data/processed/wpdx_clean.parquet</code></a> (157,502 rows; CC BY 4.0 allows redistribution with attribution), or check a download against our raw file's SHA-256, <code>03eb8f845e51cd00f6dc518f9899dc620ac1be755a8326af89c127b683571f55</code>. Tests: 18 checks, including the leakage guards, the split rule and the country-interaction model. No credentials or personal data are used.</p>
-</section>
-
-<!-- ============================================================ -->
-<section id="references">
-<h2>References</h2>
-<ol class="refs">
-<li id="ref-wpdx">Water Point Data Exchange. <em>Water Point Data Exchange Plus (WPdx+)</em>, dataset <code>eqje-vguj</code>, CC BY 4.0. data.waterpointdata.org, accessed 6 November 2026.</li>
-<li id="ref-foster">T. Foster. Predictors of sustainability for community-managed handpumps in sub-Saharan Africa: evidence from Liberia, Sierra Leone, and Uganda. <em>Environmental Science &amp; Technology</em> 47(21):12037–12046, 2013. doi:10.1021/es402086n</li>
-<li id="ref-roberts">D. R. Roberts et al. Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure. <em>Ecography</em> 40(8):913–929, 2017. doi:10.1111/ecog.02881</li>
-<li id="ref-saito">T. Saito and M. Rehmsmeier. The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. <em>PLOS ONE</em> 10(3):e0118432, 2015.</li>
-<li id="ref-moreno">J. G. Moreno-Torres, T. Raeder, R. Alaiz-Rodríguez, N. V. Chawla and F. Herrera. A unifying view on dataset shift in classification. <em>Pattern Recognition</em> 45(1):521–530, 2012.</li>
-<li id="ref-cart">L. Breiman, J. Friedman, R. Olshen and C. Stone. <em>Classification and Regression Trees</em>. Wadsworth, 1984. (Cost-complexity pruning.)</li>
-<li id="ref-rf">L. Breiman. Random forests. <em>Machine Learning</em> 45(1):5–32, 2001.</li>
-<li id="ref-xgb">T. Chen and C. Guestrin. XGBoost: a scalable tree boosting system. <em>Proc. KDD</em>, 785–794, 2016.</li>
-<li id="ref-platt">J. Platt. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In <em>Advances in Large Margin Classifiers</em>, MIT Press, 1999.</li>
-<li id="ref-wolpert">D. H. Wolpert. Stacked generalization. <em>Neural Networks</em> 5(2):241–259, 1992.</li>
-<li id="ref-efron">B. Efron and R. J. Tibshirani. <em>An Introduction to the Bootstrap</em>. Chapman &amp; Hall, 1993.</li>
-<li id="ref-holm">S. Holm. A simple sequentially rejective multiple test procedure. <em>Scandinavian Journal of Statistics</em> 6(2):65–70, 1979.</li>
-<li id="ref-sklearn">F. Pedregosa et al. Scikit-learn: machine learning in Python. <em>Journal of Machine Learning Research</em> 12:2825–2830, 2011.</li>
-<li id="ref-leaflet">Software: pandas, NumPy, XGBoost and scikit-learn for modelling; Leaflet 1.9.4 (BSD-2) for the map, with tiles © OpenStreetMap contributors (ODbL). All charts are hand-written SVG; no external code was copied.</li>
-</ol>
 </section>
 </main>
 
