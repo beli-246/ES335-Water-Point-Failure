@@ -28,6 +28,16 @@ def main():
     clean = json.loads((RESULTS / "cleaning_log.json").read_text())
     overview = {"cleaning": clean,
                 "splits": {c: {k: v for k, v in s.items() if k != "test_districts"} for c, s in splits.items()}}
+    # the model inputs: share missing per country in the cleaned table, and the audit's single-feature ROC-AUC (raw data)
+    from config import CAT_FEATURES, CLEAN, LOG_FEATURES, NUM_FEATURES
+    feats = NUM_FEATURES[:1] + CAT_FEATURES + NUM_FEATURES[1:]
+    inputs = pd.read_parquet(CLEAN, columns=["country"] + feats)
+    audit = pd.read_csv(RESULTS / "audit" / "single_feature_power.csv").set_index("column")
+    kind = lambda f: "category" if f in CAT_FEATURES else "log" if f in LOG_FEATURES else "flag" if f == "is_urban" else "number"
+    overview["features"] = [{"feature": f, "kind": kind(f),
+                             "missing": {c: round(float(inputs.loc[inputs.country == c, f].isna().mean()), 4) for c in COUNTRIES},
+                             "auc": {c: round(float(audit.loc[f, c]), 3) for c in COUNTRIES} if f in audit.index else None}
+                            for f in feats]
     (SITE_DATA / "overview.json").write_text(json.dumps(overview, indent=1))
 
     metrics = pd.concat([read(f"metrics_{v}.csv") for v in VARIANTS], ignore_index=True)
