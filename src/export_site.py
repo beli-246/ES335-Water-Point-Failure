@@ -1,4 +1,4 @@
-"""Export every number the website shows into site/data/*.json (the site never computes a result itself,
+"""Export every number the website shows into docs/data/*.json (the site never computes a result itself,
 except re-sorting the exported test-set scores for the crew-capacity slider).
 
 Usage: python src/export_site.py

@@ -18,7 +18,7 @@ from sklearn.model_selection import GroupKFold
 from scipy.stats import norm
 from sklearn.pipeline import Pipeline
 
-from config import CLEAN, COUNTRIES, RAW_CSV, RESULTS, SPLITS
+from config import CLEAN, COUNTRIES, RAW_CSV, RESULTS, SPLITS, require_raw
 from evaluate import paired_bootstrap
 from features import frame, preprocessor
 from models import MODELS
@@ -84,6 +84,7 @@ def amendment_diagnostic(df, splits):
 
 
 def main():
+    require_raw()
     out = {"snapshot": {"raw_csv": RAW_CSV.name, "raw_sha256": sha256(RAW_CSV), "raw_bytes": RAW_CSV.stat().st_size,
                         "clean_parquet_rows": int(len(pd.read_parquet(CLEAN, columns=["wpdx_id"])))}}
 

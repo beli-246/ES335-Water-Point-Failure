@@ -9,9 +9,10 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import average_precision_score as ap, roc_auc_score as auc, brier_score_loss
 
-from config import RAW_CSV, RESULTS
+from config import RAW_CSV, RESULTS, require_raw
 from evaluate import precision_at_k
 
+require_raw()
 pd.set_option("display.width", 250); pd.set_option("display.max_columns", 30)
 C = ["Ethiopia", "Kenya", "Tanzania", "Uganda"]
 choice = json.load(open(RESULTS / "final_choice.json"))
