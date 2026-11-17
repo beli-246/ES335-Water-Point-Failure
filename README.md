@@ -22,7 +22,7 @@ local data.
 
 | Item | Definition |
 |---|---|
-| Unit | One water point at its latest survey in WPdx+ (`wpdx_id`) |
+| One row | One water point at its latest survey in WPdx+ (`wpdx_id`) |
 | Target | `status_id == "No"`: no water at the point on the survey day. All four countries record it the same way. |
 | Inputs | Age, water source, technology, management, local population, five distances (roads, town, city), urban flag |
 | Never inputs | Status text and history, rehabilitation fields, survey source, report dates, IDs and admin names. The audit found they leak the label (`water_point_history` alone separates the classes with AUC 0.99) or identify the survey. |
